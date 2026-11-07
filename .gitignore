@@ -1,0 +1,29 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+*.log
+*.ipynb
+.env
+# data never lives in the code repo
+*.parquet
+*.npz
+*.npy
+*.pt
+*.csv
+data/
+work/
+build/
+release/
+private/
+*_private*
+github_export/
+# re-included after the data rules (git applies the last matching pattern): the synthetic sample, the two public
+# specification tables (only these; the research / fill sheets next to them hold raw identifiers) and test fixtures
+!sample/**
+!vtt/specs_data/fingerprint_to_platform.csv
+!vtt/specs_data/platform_specs.csv
+!tests/fixtures/*.csv
+# paper template and drafts stay local
+ITSS_Template/
+paper/

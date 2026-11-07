@@ -1,0 +1,6 @@
+{
+  "_comment": "The only allow-listable gate items. Hard rules (identifiers, paths, coordinate words, VIN, boot clocks, the driver-assistance acronym, private tokens) cannot be listed here.",
+  "email": "henryyuhangwang@gmail.com",
+  "iso_date_files": [],
+  "pre_push_iso_date_files": ["vtt/config.py", "docs/PIPELINE.md", "docs/SIZE_CLASSES.md", "docs/SIZE_INVENTORY.md"]
+}

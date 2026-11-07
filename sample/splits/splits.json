@@ -1,0 +1,15 @@
+{
+ "version": "synthetic",
+ "seed": 0,
+ "cells": [],
+ "groups": {
+  "group_0001": {
+   "split_device": "train",
+   "split_platform": "train"
+  },
+  "group_0002": {
+   "split_device": "test",
+   "split_platform": "test"
+  }
+ }
+}
