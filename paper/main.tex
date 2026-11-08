@@ -1,0 +1,63 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Built from ITSS_Template/root.tex (IEEEtran conference class). Compile from this folder:
+%   pdflatex main && bibtex main && pdflatex main && pdflatex main
+% Sections live in sections/*.tex, figures in figures/, generated tables in tables/.
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\graphicspath{{./figures/}}
+
+\title{\LARGE \bf Reading Vehicle Size and Powertrain from Motion: A Trajectory--CAN Benchmark with Held-Out Car Models, Pre-Registered Methods and Label Ceilings}
+
+% Anonymity switch: \anonymoustrue hides the author block and the repository links (double-blind submission);
+% \anonymousfalse prints them (camera-ready). Author list given by the authors on 8 Nov 2026.
+\newif\ifanonymous
+% default: anonymous (target venue IEEE IV: double-blind review); build the author version with
+%   pdflatex -jobname=main_authors "\def\withauthors{1}\input{main}"
+\ifdefined\withauthors\anonymousfalse\else\anonymoustrue\fi
+
+\ifanonymous
+\author{\parbox{\textwidth}{\centering Anonymous Authors}}
+\else
+\author{%
+	\parbox{\textwidth}{%
+		\centering
+		Yuhang Wang, Yuechen Guo, Jingxin Yang, Chuheng Wei, Suyang Chen,\\
+		Abdulaziz Alhuraish, Yiyi Wang, Jingran Sun and Hao Zhou%
+	}%
+	% TODO (authors): affiliations and contact e-mails, e.g.
+	% \thanks{$^{1}$Affiliation 1, City, Country {\tt\small email@example.org}}
+}
+\fi
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+\input{sections/00_abstract}
+\input{sections/01_intro}
+\input{sections/02_related}
+\input{sections/03_dataset}
+\input{sections/04_methods}
+\input{sections/05_experiments}
+\input{sections/06_discussion}
+\input{sections/07_conclusion}
+
+\ifanonymous\else
+\section*{Acknowledgments}
+% TODO (authors): funding and acknowledgments, or remove.
+\fi
+
+\bibliographystyle{IEEEtran}
+\bibliography{refs}
+
+\end{document}

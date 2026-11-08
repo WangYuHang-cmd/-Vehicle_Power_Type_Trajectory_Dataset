@@ -24,6 +24,12 @@ github_export/
 !vtt/specs_data/fingerprint_to_platform.csv
 !vtt/specs_data/platform_specs.csv
 !tests/fixtures/*.csv
-# paper template and drafts stay local
 ITSS_Template/
-paper/
+
+# paper build products stay out of git
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/versions/

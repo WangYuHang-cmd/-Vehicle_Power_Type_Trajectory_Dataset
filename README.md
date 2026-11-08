@@ -157,3 +157,11 @@ cell and by distance of the footprint to the class thresholds.
 features with code (`experiments/llm_features/`, one module per feature, built by `llm_features_build.py` from the
 verified proposals), which were computed for every window (`llm_features_compute.py`) and evaluated with the same
 classifiers and protocols as the plain statistics (`llm_features_eval.py`).
+
+## Paper
+
+`paper/` holds the IEEE IV 2027 manuscript draft: `main.tex` (anonymous build by default; the author build is
+`pdflatex -jobname=main_authors "\def\withauthors{1}\input{main}"`), the sections, `refs.bib`, the figures and the
+generated tables, plus `OUTLINE.md`, the single source of every number quoted in the text (each traced to the
+experiment reports), and `check_draft.py`, which scans the sources for identifiers and wording rules. Compiled PDFs:
+`paper/main.pdf` (anonymous) and `paper/main_authors.pdf`.

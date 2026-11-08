@@ -1,0 +1,28 @@
+\begin{table}[t]
+\centering
+\small
+\caption{Headline results: macro-F1 (\%) on held-out car models (protocol full), per 60-s window and per drive.}
+\label{tab:headline}
+\begin{tabular}{lcccc}
+\toprule
+ & \multicolumn{2}{c}{Size} & \multicolumn{2}{c}{BEV vs ICE} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+Model & window & drive & window & drive \\
+\midrule
+Statistics + logistic regression & 43.6 & 48.4 & 67.2 & 75.9 \\
+Statistics + gradient boosting & 49.7 & 54.7 & 69.5 & 73.2 \\
+LLM physical features + logistic regression & 32.2 & 45.4 & 67.1 & 87.5 \\
+LLM physical features + gradient boosting & 40.5 & 63.2 & 69.6 & 89.4 \\
+LLM physical + statistics + gradient boosting & 54.1 & 64.9 & 73.2 & 80.9 \\
+1-D ResNet & 53.6 $\pm$ 1.0 & 61.1 $\pm$ 1.3 & 78.4 $\pm$ 0.4 & 91.1 $\pm$ 0.8 \\
+Bi-GRU & \textbf{54.7 $\pm$ 0.3} & 62.9 $\pm$ 0.8 & 79.2 $\pm$ 0.8 & 89.0 $\pm$ 0.1 \\
+Transformer encoder & 52.5 $\pm$ 0.8 & 61.8 $\pm$ 0.9 & 77.0 $\pm$ 0.4 & 88.4 $\pm$ 0.6 \\
+Mamba-2 (SSD) & 53.1 $\pm$ 0.4 & 61.2 $\pm$ 0.3 & 77.3 $\pm$ 0.7 & 89.4 $\pm$ 0.3 \\
+Bi-GRU, recipe S9 & 53.2 $\pm$ 0.3 & \textbf{67.1 $\pm$ 0.0} & -- & -- \\
+1-D ResNet, recipe S9 & 53.2 $\pm$ 0.8 & 66.8 $\pm$ 1.7 & -- & -- \\
+Bi-GRU, recipe B5 & -- & -- & 77.0 $\pm$ 0.3 & 92.6 $\pm$ 0.1 \\
+1-D ResNet, recipe B5 & -- & -- & \textbf{79.9 $\pm$ 0.7} & \textbf{93.0 $\pm$ 0.8} \\
+Episode MIL (gated attention) & 54.2 $\pm$ 0.3 & 64.6 $\pm$ 0.5 & 78.8 $\pm$ 0.1 & 90.2 $\pm$ 0.2 \\
+\bottomrule
+\end{tabular}
+\end{table}

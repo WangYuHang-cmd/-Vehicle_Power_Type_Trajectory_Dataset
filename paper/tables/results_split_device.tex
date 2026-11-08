@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\small
+\caption{Macro-F1 (\%) on the test split with devices held out, models shared. Window-level results under the three protocols and drive-level results (mean class probability over the windows of a drive, protocol full).}
+\label{tab:results_split_device}
+\begin{tabular}{lcccccccc}
+\toprule
+Model & \multicolumn{4}{c}{Size (3 classes)} & \multicolumn{4}{c}{BEV vs ICE} \\
+\cmidrule(lr){2-5} \cmidrule(lr){6-9}
+ & full & balanced & human-only & drive & full & balanced & human-only & drive \\
+\midrule
+Statistics + logistic regression & 55.8 & 55.1 & 47.8 & 64.1 & 70.7 & 70.8 & 79.4 & 85.3 \\
+Statistics + gradient boosting & 70.8 & 67.5 & 61.8 & 76.8 & 82.7 & 84.8 & 88.9 & 90.7 \\
+LLM physical features + logistic regression & 35.3 & 38.9 & 43.8 & 53.9 & 64.1 & 62.7 & 83.9 & 91.7 \\
+LLM physical features + gradient boosting & 44.5 & 46.7 & 57.9 & 69.9 & 74.8 & 76.5 & 90.4 & 95.4 \\
+LLM physical + statistics + gradient boosting & \textbf{72.4} & \textbf{69.2} & \textbf{64.5} & \textbf{80.6} & 84.4 & 86.3 & 92.4 & 94.1 \\
+1-D ResNet & 68.4 $\pm$ 3.0 & 65.6 $\pm$ 2.1 & 59.3 $\pm$ 1.2 & 77.4 $\pm$ 2.2 & 82.4 $\pm$ 0.7 & 83.2 $\pm$ 0.4 & 93.2 $\pm$ 0.5 & 96.2 $\pm$ 0.5 \\
+Bi-GRU & 70.2 $\pm$ 0.9 & 67.7 $\pm$ 0.8 & 61.1 $\pm$ 1.7 & 78.1 $\pm$ 1.4 & \textbf{87.4 $\pm$ 0.4} & \textbf{88.3 $\pm$ 0.2} & 93.7 $\pm$ 0.6 & 96.5 $\pm$ 0.1 \\
+Transformer encoder & 68.9 $\pm$ 0.4 & 67.0 $\pm$ 0.4 & 61.3 $\pm$ 1.9 & 78.0 $\pm$ 0.2 & 86.1 $\pm$ 0.4 & 87.0 $\pm$ 0.2 & 93.8 $\pm$ 0.2 & 95.2 $\pm$ 0.7 \\
+Mamba-2 (SSD) & 69.8 & 67.7 & 60.9 & 77.8 & 87.0 & 87.3 & 92.7 & 96.7 \\
+Bi-GRU, recipe S9 & 62.9 $\pm$ 1.0 & 61.6 $\pm$ 1.1 & 63.1 $\pm$ 1.0 & 79.5 $\pm$ 0.7 & -- & -- & -- & -- \\
+1-D ResNet, recipe S9 & 64.8 $\pm$ 0.3 & 62.8 $\pm$ 0.4 & 62.9 $\pm$ 0.7 & \textbf{80.6 $\pm$ 0.1} & -- & -- & -- & -- \\
+Bi-GRU, recipe B5 & -- & -- & -- & -- & 78.8 $\pm$ 0.4 & 79.3 $\pm$ 0.5 & 92.1 $\pm$ 0.3 & 95.1 $\pm$ 0.3 \\
+1-D ResNet, recipe B5 & -- & -- & -- & -- & 83.1 $\pm$ 0.2 & 83.7 $\pm$ 0.3 & \textbf{93.9 $\pm$ 0.3} & \textbf{97.2 $\pm$ 0.3} \\
+Episode MIL (gated attention) & 68.4 & 66.4 & 61.7 & 78.8 & 86.5 & 87.6 & 93.2 & 96.1 \\
+\bottomrule
+\end{tabular}
+\end{table*}
