@@ -15,7 +15,7 @@ This page is the contract between the dataset card ("Protocols" section), `start
 
 * `split_platform` (headline): no car model (taxonomy base model, `config.HOLDOUT_KEY`) is shared between train and the
   **test** split. Only the test split is model-disjoint: the validation split is carved group-disjoint from the training
-  pool (the groups that drive no held-out model) and **shares car models with train** (release v1: 54 of its 57 car
+  pool (the groups that drive no held-out model) and **shares car models with train** (release v1: 53 of its 56 car
   models also occur in train). A validation score therefore rewards recognising a known car model; model-disjoint
   selection uses the internal folds of `experiments/internal_folds.py` (see `experiments/CAMPAIGN.md`).
 * `split_device`: identity groups are disjoint across splits; car models may be shared by every split.

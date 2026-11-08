@@ -98,10 +98,12 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out-dir", type=Path, default=REPO / "paper" / "figures")
     ap.add_argument("--achieved-size", type=float, default=None, help="achieved drive-level size macro-F1 (%%) to mark")
+    ap.add_argument("--ceiling-size", type=float, default=None,
+                    help="per-car-model majority-oracle macro-F1 (%%) to mark (default: mean over the reference runs)")
     a = ap.parse_args(argv)
     mo = pd.read_csv(ORACLES / "majority_oracle.csv")
     mo = mo[(mo["split_col"] == "split_platform") & (mo["task"] == "size") & (mo["arch"].isin(["gru", "resnet", "transformer", "mamba2"]))]
-    ceiling = 100 * mo["majority_macro_f1"].mean() if len(mo) else None
+    ceiling = a.ceiling_size if a.ceiling_size is not None else (100 * mo["majority_macro_f1"].mean() if len(mo) else None)
     achieved = a.achieved_size if a.achieved_size is not None else (100 * mo["drive_macro_f1"].mean() if len(mo) else None)
     p1 = fig_evidence(a.out_dir / "evidence_sufficiency")
     p2 = fig_footprint_noise(a.out_dir / "footprint_noise_oracle", achieved=achieved, ceiling=ceiling)
