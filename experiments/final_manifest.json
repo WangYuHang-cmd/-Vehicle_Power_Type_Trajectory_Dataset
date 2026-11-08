@@ -1,0 +1,196 @@
+{
+ "written": "7 Nov 2026",
+ "note": "Stage-5 final list fixed from the internal folds (experiments/CAMPAIGN.md). Fixed epochs = median of the folds' best epochs; the released validation split is reported only. split_device entries reuse the split_platform epoch counts (no folds exist for that scheme). Correction before the split_device MIL run: its window embeddings come from the split_device baseline checkpoints (the provenance rule rejects embeddings of another split scheme).",
+ "entries": [
+  {
+   "kind": "window",
+   "task": "size",
+   "split_col": "split_platform",
+   "model": "gru",
+   "recipe_id": "S9",
+   "fixed_epochs": 11,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "kwargs": {
+    "augment": "flip,mask,chdrop,noise",
+    "aux": "cls+fp+coral+mass+pt4",
+    "dro": true,
+    "sampling": "class_model"
+   }
+  },
+  {
+   "kind": "window",
+   "task": "size",
+   "split_col": "split_platform",
+   "model": "resnet",
+   "recipe_id": "S9",
+   "fixed_epochs": 16,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "kwargs": {
+    "augment": "flip,mask,chdrop,noise",
+    "aux": "cls+fp+coral+mass+pt4",
+    "dro": true,
+    "sampling": "class_model"
+   }
+  },
+  {
+   "kind": "window",
+   "task": "bev_ice",
+   "split_col": "split_platform",
+   "model": "gru",
+   "recipe_id": "B5",
+   "fixed_epochs": 2,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "kwargs": {
+    "augment": "flip,mask,chdrop,noise",
+    "aux": "cls+fp+mass+pt4",
+    "das_beta": 0.5,
+    "include_hybrids": true,
+    "sampling": "class_model"
+   }
+  },
+  {
+   "kind": "window",
+   "task": "bev_ice",
+   "split_col": "split_platform",
+   "model": "resnet",
+   "recipe_id": "B5",
+   "fixed_epochs": 7,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "kwargs": {
+    "augment": "flip,mask,chdrop,noise",
+    "aux": "cls+fp+mass+pt4",
+    "das_beta": 0.5,
+    "include_hybrids": true,
+    "sampling": "class_model"
+   }
+  },
+  {
+   "kind": "mil",
+   "split_col": "split_platform",
+   "pool": "gated_attn",
+   "recipe_id": "",
+   "fixed_epochs": 10,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "val_mode": "official",
+   "wemb_tags": [
+    "split_platform__size__gru__s0",
+    "split_platform__bev_ice__gru__s0"
+   ],
+   "kwargs": {}
+  },
+  {
+   "kind": "window",
+   "task": "size",
+   "split_col": "split_device",
+   "model": "gru",
+   "recipe_id": "S9",
+   "fixed_epochs": 11,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "kwargs": {
+    "augment": "flip,mask,chdrop,noise",
+    "aux": "cls+fp+coral+mass+pt4",
+    "dro": true,
+    "sampling": "class_model"
+   }
+  },
+  {
+   "kind": "window",
+   "task": "size",
+   "split_col": "split_device",
+   "model": "resnet",
+   "recipe_id": "S9",
+   "fixed_epochs": 16,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "kwargs": {
+    "augment": "flip,mask,chdrop,noise",
+    "aux": "cls+fp+coral+mass+pt4",
+    "dro": true,
+    "sampling": "class_model"
+   }
+  },
+  {
+   "kind": "window",
+   "task": "bev_ice",
+   "split_col": "split_device",
+   "model": "gru",
+   "recipe_id": "B5",
+   "fixed_epochs": 2,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "kwargs": {
+    "augment": "flip,mask,chdrop,noise",
+    "aux": "cls+fp+mass+pt4",
+    "das_beta": 0.5,
+    "include_hybrids": true,
+    "sampling": "class_model"
+   }
+  },
+  {
+   "kind": "window",
+   "task": "bev_ice",
+   "split_col": "split_device",
+   "model": "resnet",
+   "recipe_id": "B5",
+   "fixed_epochs": 7,
+   "seeds": [
+    0,
+    1,
+    2
+   ],
+   "kwargs": {
+    "augment": "flip,mask,chdrop,noise",
+    "aux": "cls+fp+mass+pt4",
+    "das_beta": 0.5,
+    "include_hybrids": true,
+    "sampling": "class_model"
+   }
+  },
+  {
+   "kind": "mil",
+   "split_col": "split_device",
+   "pool": "gated_attn",
+   "recipe_id": "",
+   "fixed_epochs": 10,
+   "seeds": [
+    0
+   ],
+   "val_mode": "official",
+   "wemb_tags": [
+    "split_device__size__gru__s0",
+    "split_device__bev_ice__gru__s0"
+   ],
+   "kwargs": {}
+  }
+ ]
+}

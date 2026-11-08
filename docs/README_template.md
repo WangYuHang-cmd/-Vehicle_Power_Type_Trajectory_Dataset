@@ -122,6 +122,9 @@ All filters are boolean expressions over `index/windows_60s.parquet` columns (pa
 | `test_full` (headline) | `eligible & task_size_eligible & (split_platform == "test")` |
 | `test_balanced` | `window_id.isin(splits/eval_balanced_size_test.parquet.window_id)` (class-balanced, at most {{bal_group_pct}} % of a class from one group and {{bal_platform_pct}} % from one car model) |
 | `test_human_only` | `test_full & human_only_strict` (no automation activity in the window nor in the {{human_guard_s}} s before it) |
+| `drive_full` | one prediction per test drive: the mean of the class-probability vectors of the drive's `test_full` windows, arg-max (a tie goes to the earlier class of the task); drives without an eligible window are excluded and counted separately |
+| `drive_human_only` | the same over the drive's `test_human_only` windows |
+| `vehicle_full` | one prediction per pseudonymous vehicle: the mean over the `test_full` windows of all its test drives; the subset of vehicles with at least two drives is reported as `vehicle_full_multi` |
 | `split_device` variants | the same filters with `split_device` in place of `split_platform`; the balanced lists of this scheme are `splits/eval_balanced_<task>_test_device.parquet` |
 
 Headline metric: macro-averaged F1 over the classes of the task on `test_full`, excluding windows with

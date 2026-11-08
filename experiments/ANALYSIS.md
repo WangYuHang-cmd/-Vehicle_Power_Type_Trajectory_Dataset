@@ -85,63 +85,63 @@ Model analysed: bi-GRU (seed 1), window macro-F1 55.1.
 
 ## Task bev_ice (split_platform)
 
-Model analysed: bi-GRU (seed 1), window macro-F1 80.1.
+Model analysed: 1-D ResNet, recipe B5 (seed 1), window macro-F1 80.9.
 
 ### Accuracy per size x powertrain cell
 
 | size | powertrain | windows | car models | accuracy |
 |---|---|---|---|---|
-| LARGE | BEV | 1589 | 3 | 84.7 % |
-| LARGE | ICE | 3463 | 9 | 76.7 % |
-| MID | BEV | 2541 | 2 | 82.1 % |
-| MID | ICE | 2751 | 13 | 78.0 % |
-| SMALL | BEV | 2064 | 5 | 63.3 % |
-| SMALL | ICE | 5868 | 9 | 92.3 % |
+| LARGE | BEV | 1589 | 3 | 68.4 % |
+| LARGE | ICE | 3463 | 9 | 86.8 % |
+| MID | BEV | 2541 | 2 | 86.6 % |
+| MID | ICE | 2751 | 13 | 81.6 % |
+| SMALL | BEV | 2064 | 5 | 71.9 % |
+| SMALL | ICE | 5868 | 9 | 86.7 % |
 | nan | ICE | 19 | 2 | 94.7 % |
 
-- human-only (strict): 4669 windows, accuracy 87.6 %, macro-F1 84.9
-- with automation activity: 13626 windows, accuracy 79.9 %, macro-F1 78.4
+- human-only (strict): 4669 windows, accuracy 87.1 %, macro-F1 84.0
+- with automation activity: 13626 windows, accuracy 81.2 %, macro-F1 79.8
 
 ### Held-out car models
 
 | car model | true class | windows | accuracy | dominant prediction (share) | footprint m^2 |
 |---|---|---|---|---|---|
-| Nissan Leaf | BEV | 945 | 53.4 % | BEV (53 %) | 4.16 |
-| Volkswagen ID.3 | BEV | 57 | 59.6 % | BEV (60 %) | 4.31 |
-| Ford F-150 Lightning | BEV | 352 | 64.2 % | BEV (64 %) | 6.41 |
-| Volkswagen ID.4 | BEV | 227 | 69.2 % | BEV (69 %) | 4.36 |
-| Genesis GV60 | BEV | 1391 | 79.6 % | BEV (80 %) | 4.73 |
-| Tesla Model S | BEV | 374 | 84.5 % | BEV (84 %) | 4.97 |
-| Tesla Model Y | BEV | 1150 | 85.2 % | BEV (85 %) | 4.73 |
-| Hyundai Ioniq | BEV | 219 | 85.8 % | BEV (86 %) | 4.21 |
-| Kia EV9 | BEV | 863 | 93.2 % | BEV (93 %) | 5.30 |
-| Genesis G80 | ICE | 173 | 39.3 % | BEV (61 %) | 4.95 |
-| Hyundai Santa Cruz | ICE | 298 | 45.3 % | BEV (55 %) | 4.94 |
-| Genesis G90 | ICE | 346 | 52.6 % | ICE (53 %) | 5.18 |
-| Hyundai Azera | ICE | 74 | 52.7 % | ICE (53 %) | 4.57 |
-| Kia Stinger | ICE | 542 | 66.8 % | ICE (67 %) | 4.51 |
-| Genesis GV70 | ICE | 782 | 70.1 % | ICE (70 %) | 4.73 |
-| Kia Carnival | ICE | 938 | 71.5 % | ICE (72 %) | 5.30 |
-| Hyundai Santa Fe | ICE | 373 | 80.2 % | ICE (80 %) | 4.57 |
-| Kia Sorento | ICE | 34 | 82.4 % | ICE (82 %) | 4.64 |
-| Hyundai Kona | ICE | 2889 | 82.9 % | ICE (75 %) | 4.02 |
-| Nissan Altima | ICE | 144 | 83.3 % | ICE (83 %) | 4.56 |
-| Ford Ranger | ICE | 109 | 83.5 % | ICE (83 %) | 5.30 |
-| Genesis GV80 | ICE | 417 | 86.1 % | ICE (86 %) | 4.96 |
-| Kia Ceed | ICE | 101 | 86.1 % | ICE (86 %) | 4.15 |
-| Kia Optima | ICE | 25 | 88.0 % | ICE (88 %) | 4.53 |
-| Kia K5 | ICE | 115 | 91.3 % | ICE (91 %) | 4.61 |
-| GWM Haval H6 | ICE | 377 | 91.5 % | ICE (92 %) | 4.48 |
-| Toyota Corolla | ICE | 1031 | 91.9 % | ICE (92 %) | 4.09 |
-| GMC Yukon | ICE | 373 | 94.4 % | ICE (94 %) | 5.14 |
-| Chevrolet Equinox | ICE | 165 | 96.4 % | ICE (96 %) | 4.30 |
-| Jeep Grand Cherokee | ICE | 212 | 96.7 % | ICE (97 %) | 4.41 |
-| Honda HR-V | ICE | 282 | 96.8 % | ICE (97 %) | 4.17 |
-| Audi Q5 | ICE | 101 | 97.0 % | ICE (97 %) | 4.53 |
-| Chevrolet Trailblazer | ICE | 102 | 97.1 % | ICE (97 %) | 4.10 |
-| Volkswagen Atlas | ICE | 515 | 97.5 % | ICE (97 %) | 5.11 |
-| Lexus RX | ICE | 121 | 97.5 % | ICE (98 %) | 4.55 |
-| Volkswagen Jetta | ICE | 431 | 98.1 % | ICE (98 %) | 4.17 |
-| Volkswagen Passat | ICE | 1300 | 98.4 % | ICE (98 %) | 4.42 |
-| Toyota Avalon | ICE | 39 | 100.0 % | ICE (100 %) | 4.47 |
-| Toyota Sienna | ICE | 308 | 100.0 % | ICE (100 %) | 5.21 |
+| Tesla Model S | BEV | 374 | 45.2 % | ICE (55 %) | 4.97 |
+| Ford F-150 Lightning | BEV | 352 | 66.5 % | BEV (66 %) | 6.41 |
+| Nissan Leaf | BEV | 945 | 66.6 % | BEV (67 %) | 4.16 |
+| Volkswagen ID.3 | BEV | 57 | 71.9 % | BEV (72 %) | 4.31 |
+| Kia EV9 | BEV | 863 | 79.3 % | BEV (79 %) | 5.30 |
+| Volkswagen ID.4 | BEV | 227 | 82.8 % | BEV (83 %) | 4.36 |
+| Hyundai Ioniq | BEV | 219 | 84.0 % | BEV (84 %) | 4.21 |
+| Tesla Model Y | BEV | 1150 | 86.0 % | BEV (86 %) | 4.73 |
+| Genesis GV60 | BEV | 1391 | 87.1 % | BEV (87 %) | 4.73 |
+| Hyundai Azera | ICE | 74 | 56.8 % | ICE (57 %) | 4.57 |
+| Nissan Altima | ICE | 144 | 68.8 % | ICE (69 %) | 4.56 |
+| Lexus RX | ICE | 121 | 70.2 % | ICE (70 %) | 4.55 |
+| Ford Ranger | ICE | 109 | 75.2 % | ICE (75 %) | 5.30 |
+| Hyundai Santa Cruz | ICE | 298 | 76.5 % | ICE (77 %) | 4.94 |
+| Toyota Corolla | ICE | 1031 | 77.8 % | ICE (78 %) | 4.09 |
+| Kia Sorento | ICE | 34 | 79.4 % | ICE (79 %) | 4.64 |
+| Hyundai Kona | ICE | 2889 | 81.2 % | ICE (72 %) | 4.02 |
+| Hyundai Santa Fe | ICE | 373 | 82.0 % | ICE (82 %) | 4.57 |
+| Genesis G90 | ICE | 346 | 82.1 % | ICE (82 %) | 5.18 |
+| Kia Stinger | ICE | 542 | 82.1 % | ICE (82 %) | 4.51 |
+| Genesis GV70 | ICE | 782 | 82.5 % | ICE (82 %) | 4.73 |
+| Audi Q5 | ICE | 101 | 83.2 % | ICE (83 %) | 4.53 |
+| Genesis GV80 | ICE | 417 | 83.2 % | ICE (83 %) | 4.96 |
+| Kia K5 | ICE | 115 | 83.5 % | ICE (83 %) | 4.61 |
+| Genesis G80 | ICE | 173 | 84.4 % | ICE (84 %) | 4.95 |
+| GWM Haval H6 | ICE | 377 | 88.3 % | ICE (88 %) | 4.48 |
+| Toyota Sienna | ICE | 308 | 88.6 % | ICE (89 %) | 5.21 |
+| Kia Carnival | ICE | 938 | 89.0 % | ICE (89 %) | 5.30 |
+| GMC Yukon | ICE | 373 | 91.2 % | ICE (91 %) | 5.14 |
+| Volkswagen Passat | ICE | 1300 | 91.3 % | ICE (91 %) | 4.42 |
+| Honda HR-V | ICE | 282 | 91.5 % | ICE (91 %) | 4.17 |
+| Kia Optima | ICE | 25 | 92.0 % | ICE (92 %) | 4.53 |
+| Kia Ceed | ICE | 101 | 92.1 % | ICE (92 %) | 4.15 |
+| Chevrolet Equinox | ICE | 165 | 92.7 % | ICE (93 %) | 4.30 |
+| Volkswagen Atlas | ICE | 515 | 94.0 % | ICE (94 %) | 5.11 |
+| Jeep Grand Cherokee | ICE | 212 | 95.8 % | ICE (96 %) | 4.41 |
+| Chevrolet Trailblazer | ICE | 102 | 96.1 % | ICE (96 %) | 4.10 |
+| Volkswagen Jetta | ICE | 431 | 96.3 % | ICE (96 %) | 4.17 |
+| Toyota Avalon | ICE | 39 | 97.4 % | ICE (97 %) | 4.47 |

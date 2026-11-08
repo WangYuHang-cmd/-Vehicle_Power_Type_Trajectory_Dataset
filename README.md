@@ -142,6 +142,14 @@ python -m experiments.run_all --models transformer,gru,resnet,mamba2
 python -m experiments.train --task bev_ice --split-col split_platform --model mamba2   # one configuration
 ```
 
+The method-research campaign that followed the first round is documented in `experiments/CAMPAIGN.md` (pre-registration,
+gates and log), `experiments/ORACLES.md` (zero-training ceilings: aggregation rules, ensembles, vehicle pooling, evidence
+sufficiency, footprint-noise and curb-mass oracles), `experiments/INTERNAL_FOLDS.md` (model-disjoint folds used for every
+selection), `experiments/RECIPE.md` (training-recipe sweep on the folds), `experiments/AGGREGATION.md` (drive- and
+vehicle-level aggregation study) and the drive- / vehicle-level protocols in `docs/PROTOCOLS.md`. The episode-centric
+multiple-instance model lives in `experiments/episodes.py`, `episodes_build.py`, `window_embed.py`, `mil_data.py`,
+`mil_models.py` and `mil_train.py`; `experiments/eval_final.py` is the frozen final evaluation over `final_manifest.json`.
+
 Requirements beyond the build environment: PyTorch (CUDA recommended) and scikit-learn. `experiments/ANALYSIS.md`
 (from `python -m experiments.analysis`) breaks the test predictions down by held-out car model, by size x powertrain
 cell and by distance of the footprint to the class thresholds.

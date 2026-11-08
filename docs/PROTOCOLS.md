@@ -13,8 +13,12 @@ This page is the contract between the dataset card ("Protocols" section), `start
 
 ## Split columns
 
-* `split_platform` (headline): no car model (taxonomy base model, `config.HOLDOUT_KEY`) is shared between train and the evaluation splits.
-* `split_device`: identity groups are disjoint across splits; car models may be shared.
+* `split_platform` (headline): no car model (taxonomy base model, `config.HOLDOUT_KEY`) is shared between train and the
+  **test** split. Only the test split is model-disjoint: the validation split is carved group-disjoint from the training
+  pool (the groups that drive no held-out model) and **shares car models with train** (release v1: 54 of its 57 car
+  models also occur in train). A validation score therefore rewards recognising a known car model; model-disjoint
+  selection uses the internal folds of `experiments/internal_folds.py` (see `experiments/CAMPAIGN.md`).
+* `split_device`: identity groups are disjoint across splits; car models may be shared by every split.
 
 Both are columns of the drives and windows indexes; a group is in exactly one split per column. The balanced
 evaluation lists exist once per scheme: `splits/eval_balanced_<task>_<split>.parquet` belongs to `split_platform`
@@ -43,6 +47,43 @@ The same masks with `split = "validation"` or `"train"` select the other splits 
 * Confusion matrix (rows = true, columns = predicted) written as CSV when an output directory is given.
 
 Predictions are passed as a `pandas.Series` indexed by `window_id`, a dict, or an array aligned with the selection.
+
+## Drive- and vehicle-level protocols (`starter_kit.eval.evaluate_units`)
+
+The window protocols score every 60 s window on its own. The unit-level protocols score one prediction per drive or
+per vehicle, built from the same per-window class probabilities; a model is run on the windows exactly as before and
+its probability vectors are then pooled per unit.
+
+| unit protocol | windows used | unit | definition |
+|---|---|---|---|
+| `drive_full` | `test_full` | `drive_id` | mean of the per-window probability vectors of the drive's selected windows -> arg-max |
+| `drive_human_only` | `test_human_only` | `drive_id` | the same over the drive's human-only (strict) windows |
+| `vehicle_full` | `test_full` | `vehicle_id` | mean over the selected windows of all the vehicle's drives in the split (drives pooled, every window the same weight) -> arg-max |
+| `vehicle_full_multi` | `test_full` | `vehicle_id` | `vehicle_full` restricted to vehicles with at least two drives among the units of `drive_full` |
+
+Rules:
+
+* **Population**: the drives (vehicles) of the chosen split with a class label of the task. A unit without any selected
+  window (a drive shorter than one window, a drive without a human-only window under `drive_human_only`, ...) is
+  excluded from the metrics and counted as `n_units_without_windows` (exact when the drives index is passed as
+  `drives=`; from the windows index alone, drives without any listed window are invisible).
+* **Aggregation**: the arithmetic mean of the probability vectors; the prediction is the arg-max; a tie goes to the
+  earlier class in the task's class order (SMALL < MID < LARGE; BEV < ICE). The probabilities may be given as a table
+  indexed by `window_id` (one column per class), as an `(n, k)` array aligned with the window selection, or as hard
+  labels (turned into one-hot vectors). The variants `logodds / median / confidence / trimmed / vote` of
+  `aggregate_windows` exist for the aggregation studies only and are not protocols.
+* **Truth** of a unit is the label of its drive(s); all windows of a drive, and all drives of a vehicle, carry the same
+  label.
+* **Metrics**: the window metric dict (`n`, `macro_f1`, `balanced_acc`, `accuracy`, `per_class_recall`, `support`,
+  `confusion`, `classes`) plus `n_units`, `n_units_without_windows`, `n_windows_used`, `n_models` (car models among
+  the units), `macro_f1_supported` / `n_units_supported` (units whose size x powertrain cell is not `low_support_cell`;
+  the flag applies through the unit's cell) and `ci95_macro_f1`: the 2.5 and 97.5 percentiles of the macro-F1 under a
+  cluster bootstrap over car models (1,000 resamples, seed 0; a resample draws car models with replacement and keeps
+  every unit of a drawn model once per draw; identity groups are the fallback cluster when no car model is known).
+* **Results JSON** of the experiments: `result["unit_level"] = {"drive_full": ..., "drive_human_only": ...,
+  "vehicle_full": ..., "vehicle_full_multi": ...}` with these dicts; the older key `drive_level` (mean probability per
+  drive under `test_full` / `test_human_only`) is kept unchanged and equals `drive_full` / `drive_human_only` without
+  the extra counts and the interval.
 
 ## Reference features (`starter_kit.features.window_features`)
 

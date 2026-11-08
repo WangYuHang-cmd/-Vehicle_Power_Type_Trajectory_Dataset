@@ -25,6 +25,8 @@ REPO = Path(__file__).resolve().parents[1]
 TEX_NAMES = {"feat_logreg": "Statistics + logistic regression", "feat_hgb": "Statistics + gradient boosting",
              "feat_llm_logreg": "LLM physical features + logistic regression", "feat_llm_hgb": "LLM physical features + gradient boosting",
              "feat_llmstats_hgb": "LLM physical + statistics + gradient boosting",
+             "gru__S9": "Bi-GRU, recipe S9", "resnet__S9": "1-D ResNet, recipe S9", "gru__B5": "Bi-GRU, recipe B5", "resnet__B5": "1-D ResNet, recipe B5",
+             "episode_mil": "Episode MIL (gated attention)", "episode_mil_meanlogit": "Episode MIL (mean logit)",
              "resnet": "1-D ResNet", "gru": "Bi-GRU", "transformer": "Transformer encoder", "mamba2": "Mamba-2 (SSD)",
              "mamba1": "Mamba-1 (S6)"}
 PROTOCOL_TEX = {"test_full": "full", "test_balanced": "balanced", "test_human_only": "human-only"}

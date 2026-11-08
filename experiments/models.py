@@ -5,6 +5,12 @@ of width d_model); the ResNet works on the raw 10 Hz signal. The Mamba blocks ar
 the published algorithms (Dao & Gu 2024 "state space duality" chunked scan for Mamba-2; the selective scan of Gu & Dao
 2023 for Mamba-1); no custom CUDA kernels are needed. Classification uses bidirectional blocks (forward and reversed
 scans, summed), as is usual for non-causal sequence classification.
+
+Every network shares one API (SequenceClassifier): `tokens(x)` -> (B, L, d) features, `embed(x)` -> z (the pooled
+vector after Head.fc1), `forward(x)` -> (B, n_classes) logits (unchanged), `forward_all(x)` -> dict with `cls`, `emb`
+and the optional extra heads (`coral` ordinal logits, `fp` / `mass` regressions, `pt4` four-class powertrain, `dom`
+conditional domain logits through a gradient-reversal layer). `Head.norm` keeps receiving the pooled feature and
+`Head.fc2` stays the classification layer, so saved checkpoints and forward hooks keep working.
 """
 from __future__ import annotations
 
@@ -44,8 +50,26 @@ class ConvStem(nn.Module):
         return self.drop(self.norm(x))
 
 
+def pool_tokens(h: torch.Tensor) -> torch.Tensor:
+    """(B, L, d) -> (B, 2d): mean and max over the tokens."""
+    return torch.cat([h.mean(1), h.amax(1)], dim=-1)
+
+
+class Pool(nn.Module):
+    """mean + max pooling over tokens -> LayerNorm -> fc -> GELU -> dropout -> z (B, d_out)."""
+
+    def __init__(self, d: int, d_out: int | None = None, dropout: float = 0.1):
+        super().__init__()
+        self.norm = nn.LayerNorm(2 * d)
+        self.fc = nn.Linear(2 * d, d_out or d)
+        self.drop = nn.Dropout(dropout)
+
+    def forward(self, h: torch.Tensor) -> torch.Tensor:          # h: (B, L, d)
+        return self.drop(F.gelu(self.fc(self.norm(pool_tokens(h)))))
+
+
 class Head(nn.Module):
-    """mean + max pooling over tokens -> LayerNorm -> MLP -> logits."""
+    """mean + max pooling over tokens -> LayerNorm -> MLP -> logits; `embed` stops before the last layer."""
 
     def __init__(self, d: int, n_classes: int, dropout: float = 0.1):
         super().__init__()
@@ -54,9 +78,127 @@ class Head(nn.Module):
         self.drop = nn.Dropout(dropout)
         self.fc2 = nn.Linear(d, n_classes)
 
+    def embed(self, h: torch.Tensor) -> torch.Tensor:            # h: (B, L, d) -> z: (B, d)
+        return self.drop(F.gelu(self.fc1(self.norm(pool_tokens(h)))))
+
     def forward(self, h: torch.Tensor) -> torch.Tensor:          # h: (B, L, d)
-        z = torch.cat([h.mean(1), h.amax(1)], dim=-1)
-        return self.fc2(self.drop(F.gelu(self.fc1(self.norm(z)))))
+        return self.fc2(self.embed(h))
+
+
+class CoralHead(nn.Module):
+    """CORAL ordinal head (Cao, Mirjalili & Raschka 2020): K-1 logits = w.z + b_j with one shared weight vector and
+    biases ordered b_0 >= b_1 >= ... through a cumulative softplus, so P(y > j) = sigmoid(logit_j) is non-increasing in
+    j for every input (rank consistency)."""
+
+    def __init__(self, d: int, n_classes: int):
+        super().__init__()
+        if n_classes < 2:
+            raise ValueError("CORAL needs at least two classes")
+        self.n_classes = n_classes
+        self.fc = nn.Linear(d, 1, bias=False)
+        self.b0 = nn.Parameter(torch.zeros(1))
+        self.delta = nn.Parameter(torch.zeros(max(0, n_classes - 2)))
+
+    def biases(self) -> torch.Tensor:
+        steps = F.softplus(self.delta)
+        return self.b0 - torch.cat([torch.zeros(1, device=steps.device, dtype=steps.dtype), torch.cumsum(steps, 0)])
+
+    def forward(self, z: torch.Tensor) -> torch.Tensor:          # (B, d) -> (B, K-1)
+        return self.fc(z) + self.biases()[None, :].to(z.dtype)
+
+
+def coral_targets(y: torch.Tensor, n_classes: int) -> torch.Tensor:
+    """(B,) class indices -> (B, K-1) binary targets t_j = 1[y > j]."""
+    j = torch.arange(n_classes - 1, device=y.device)
+    return (y[:, None] > j[None, :]).to(torch.float32)
+
+
+def coral_predict(logits: torch.Tensor) -> torch.Tensor:
+    """(B, K-1) CORAL logits -> (B, K) class probabilities P(y = j) = P(y > j-1) - P(y > j), clipped at 0 and
+    renormalised (exact when the logits are rank-consistent)."""
+    s = torch.sigmoid(logits.float())
+    one = torch.ones_like(s[:, :1])
+    zero = torch.zeros_like(s[:, :1])
+    cum = torch.cat([one, s, zero], dim=1)                         # P(y > -1) = 1, ..., P(y > K-1) = 0
+    p = (cum[:, :-1] - cum[:, 1:]).clamp_min(0.0)
+    return p / p.sum(1, keepdim=True).clamp_min(1e-12)
+
+
+class GradReverse(torch.autograd.Function):
+    """Identity forward; the gradient is multiplied by -lambda on the way back."""
+
+    @staticmethod
+    def forward(ctx, x: torch.Tensor, lam: float) -> torch.Tensor:
+        ctx.lam = lam
+        return x.view_as(x)
+
+    @staticmethod
+    def backward(ctx, g: torch.Tensor):
+        return -ctx.lam * g, None
+
+
+def grad_reverse(x: torch.Tensor, lam: float = 1.0) -> torch.Tensor:
+    return GradReverse.apply(x, lam)
+
+
+class ConditionalDomainHead(nn.Module):
+    """Conditional domain classifier (CDAN style): the reversed embedding is multiplied with the class posterior
+    (outer product, d x K) and mapped to one logit per car model; training it with cross-entropy pushes the encoder
+    towards class-conditional invariance across car models."""
+
+    def __init__(self, d: int, n_models: int, n_classes: int, hidden: int | None = None):
+        super().__init__()
+        self.d, self.n_classes = d, n_classes
+        hidden = hidden or d
+        self.fc1 = nn.Linear(d * n_classes, hidden)
+        self.fc2 = nn.Linear(hidden, n_models)
+
+    def forward(self, z: torch.Tensor, cls_logits: torch.Tensor, lam: float = 1.0) -> torch.Tensor:
+        f = grad_reverse(z, lam)
+        g = torch.softmax(cls_logits.detach().float(), dim=-1).to(f.dtype)
+        h = (f[:, :, None] * g[:, None, :]).reshape(z.shape[0], self.d * self.n_classes)
+        return self.fc2(F.gelu(self.fc1(h)))
+
+
+class MultiHead(nn.Module):
+    """Named linear heads on the embedding z: {name: width}; the name "coral" builds a CoralHead whose width is the
+    number of classes (it emits K-1 logits). forward(z) -> {name: output}."""
+
+    def __init__(self, d: int, heads: dict[str, int]):
+        super().__init__()
+        self.heads = nn.ModuleDict({k: (CoralHead(d, int(n)) if k == "coral" else nn.Linear(d, int(n))) for k, n in heads.items()})
+
+    def forward(self, z: torch.Tensor) -> dict[str, torch.Tensor]:
+        return {k: m(z) for k, m in self.heads.items()}
+
+
+class SequenceClassifier(nn.Module):
+    """Shared API of the window classifiers (subclasses define the layers, `tokens(x)` and `self.head`)."""
+
+    def _init_heads(self, d_z: int, n_classes: int, heads: dict[str, int] | None) -> None:
+        self.n_classes = n_classes
+        heads = dict(heads or {})
+        n_dom = heads.pop("dom", None)
+        self.heads = MultiHead(d_z, heads) if heads else None
+        self.domain = ConditionalDomainHead(d_z, int(n_dom), n_classes) if n_dom else None
+
+    def tokens(self, x: torch.Tensor) -> torch.Tensor:           # (B, L, C) -> (B, L', d)
+        raise NotImplementedError
+
+    def embed(self, x: torch.Tensor) -> torch.Tensor:            # (B, L, C) -> (B, d_z)
+        return self.head.embed(self.tokens(x))
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:          # (B, L, C) -> (B, n_classes)
+        return self.head.fc2(self.embed(x))
+
+    def forward_all(self, x: torch.Tensor, grl_lambda: float = 1.0) -> dict[str, torch.Tensor]:
+        z = self.embed(x)
+        out = {"cls": self.head.fc2(z), "emb": z}
+        if self.heads is not None:
+            out.update(self.heads(z))
+        if self.domain is not None:
+            out["dom"] = self.domain(z, out["cls"], grl_lambda)
+        return out
 
 
 # ----------------------------------------------------------------------------- 1-D ResNet on the raw signal
@@ -77,8 +219,8 @@ class ResBlock1d(nn.Module):
         return F.gelu(x + s)
 
 
-class ResNet1D(nn.Module):
-    def __init__(self, in_ch: int, n_classes: int, widths=(64, 128, 256), dropout: float = 0.1):
+class ResNet1D(SequenceClassifier):
+    def __init__(self, in_ch: int, n_classes: int, widths=(64, 128, 256), dropout: float = 0.1, heads: dict[str, int] | None = None):
         super().__init__()
         self.stem = nn.Sequential(nn.Conv1d(in_ch, widths[0], 7, stride=2, padding=3, bias=False), nn.BatchNorm1d(widths[0]), nn.GELU())
         blocks, cin = [], widths[0]
@@ -87,29 +229,31 @@ class ResNet1D(nn.Module):
             cin = w
         self.blocks = nn.Sequential(*blocks)
         self.head = Head(cin, n_classes, dropout)
+        self._init_heads(cin, n_classes, heads)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        h = self.blocks(self.stem(x.transpose(1, 2)))
-        return self.head(h.transpose(1, 2))
+    def tokens(self, x: torch.Tensor) -> torch.Tensor:
+        return self.blocks(self.stem(x.transpose(1, 2))).transpose(1, 2)
 
 
 # ----------------------------------------------------------------------------- GRU
-class GRUNet(nn.Module):
-    def __init__(self, in_ch: int, n_classes: int, d: int = 128, n_layers: int = 2, dropout: float = 0.1):
+class GRUNet(SequenceClassifier):
+    def __init__(self, in_ch: int, n_classes: int, d: int = 128, n_layers: int = 2, dropout: float = 0.1,
+                 heads: dict[str, int] | None = None):
         super().__init__()
         self.stem = ConvStem(in_ch, d, dropout)
         self.gru = nn.GRU(d, d, num_layers=n_layers, batch_first=True, bidirectional=True, dropout=dropout if n_layers > 1 else 0.0)
         self.head = Head(2 * d, n_classes, dropout)
+        self._init_heads(2 * d, n_classes, heads)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def tokens(self, x: torch.Tensor) -> torch.Tensor:
         h, _ = self.gru(self.stem(x))
-        return self.head(h)
+        return h
 
 
 # ----------------------------------------------------------------------------- Transformer encoder
-class TransformerNet(nn.Module):
+class TransformerNet(SequenceClassifier):
     def __init__(self, in_ch: int, n_classes: int, d: int = 128, n_layers: int = 4, n_heads: int = 4, ff: int = 256,
-                 dropout: float = 0.1, max_len: int = 256):
+                 dropout: float = 0.1, max_len: int = 256, heads: dict[str, int] | None = None):
         super().__init__()
         self.stem = ConvStem(in_ch, d, dropout)
         self.pos = nn.Parameter(torch.zeros(1, max_len, d))
@@ -118,12 +262,12 @@ class TransformerNet(nn.Module):
         self.enc = nn.TransformerEncoder(layer, n_layers)
         self.norm = nn.LayerNorm(d)
         self.head = Head(d, n_classes, dropout)
+        self._init_heads(d, n_classes, heads)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def tokens(self, x: torch.Tensor) -> torch.Tensor:
         h = self.stem(x)
         h = h + self.pos[:, : h.shape[1]]
-        h = self.norm(self.enc(h))
-        return self.head(h)
+        return self.norm(self.enc(h))
 
 
 # ----------------------------------------------------------------------------- Mamba-2 (SSD)
@@ -268,9 +412,9 @@ class BiSSMLayer(nn.Module):
         return x + self.drop(y)
 
 
-class MambaNet(nn.Module):
+class MambaNet(SequenceClassifier):
     def __init__(self, in_ch: int, n_classes: int, d: int = 128, n_layers: int = 4, dropout: float = 0.1, version: int = 2,
-                 d_state: int | None = None):
+                 d_state: int | None = None, heads: dict[str, int] | None = None):
         super().__init__()
         self.stem = ConvStem(in_ch, d, dropout)
         if version == 2:
@@ -282,29 +426,41 @@ class MambaNet(nn.Module):
         self.layers = nn.ModuleList([BiSSMLayer(d, make, dropout) for _ in range(n_layers)])
         self.norm = RMSNorm(d)
         self.head = Head(d, n_classes, dropout)
+        self._init_heads(d, n_classes, heads)
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def tokens(self, x: torch.Tensor) -> torch.Tensor:
         h = self.stem(x)
         for layer in self.layers:
             h = layer(h)
-        return self.head(self.norm(h))
+        return self.norm(h)
 
 
 # ----------------------------------------------------------------------------- factory
 MODELS = ("resnet", "gru", "transformer", "mamba2", "mamba1")
 
 
-def build_model(name: str, in_ch: int, n_classes: int, d: int = 128, n_layers: int = 4, dropout: float = 0.1) -> nn.Module:
+HEAD_KEYS = ("coral", "fp", "mass", "pt4", "dom")
+
+
+def build_model(name: str, in_ch: int, n_classes: int, d: int = 128, n_layers: int = 4, dropout: float = 0.1,
+                heads: dict[str, int] | None = None) -> nn.Module:
+    """A window classifier; `heads` = optional extra heads {name: width} on the embedding ("coral": number of classes,
+    "fp" / "mass": 1, "pt4": 4, "dom": number of car models). Without heads the module is the plain classifier whose
+    forward(x) gives (B, n_classes) logits."""
+    if heads:
+        bad = sorted(set(heads) - set(HEAD_KEYS))
+        if bad:
+            raise ValueError(f"unknown heads {bad}; choose from {HEAD_KEYS}")
     if name == "resnet":
-        return ResNet1D(in_ch, n_classes, dropout=dropout)
+        return ResNet1D(in_ch, n_classes, dropout=dropout, heads=heads)
     if name == "gru":
-        return GRUNet(in_ch, n_classes, d=d, n_layers=2, dropout=dropout)
+        return GRUNet(in_ch, n_classes, d=d, n_layers=2, dropout=dropout, heads=heads)
     if name == "transformer":
-        return TransformerNet(in_ch, n_classes, d=d, n_layers=n_layers, dropout=dropout)
+        return TransformerNet(in_ch, n_classes, d=d, n_layers=n_layers, dropout=dropout, heads=heads)
     if name == "mamba2":
-        return MambaNet(in_ch, n_classes, d=d, n_layers=n_layers, dropout=dropout, version=2)
+        return MambaNet(in_ch, n_classes, d=d, n_layers=n_layers, dropout=dropout, version=2, heads=heads)
     if name == "mamba1":
-        return MambaNet(in_ch, n_classes, d=d, n_layers=n_layers, dropout=dropout, version=1)
+        return MambaNet(in_ch, n_classes, d=d, n_layers=n_layers, dropout=dropout, version=1, heads=heads)
     raise ValueError(f"unknown model {name!r}; choose from {MODELS}")
 
 

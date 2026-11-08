@@ -21,10 +21,15 @@ from experiments.data import PROTOCOLS, WindowData  # noqa: E402
 from experiments.train import EXP_ROOT, run  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
-ORDER = ["feat_logreg", "feat_hgb", "feat_llm_logreg", "feat_llm_hgb", "feat_llmstats_hgb", "resnet", "gru", "transformer", "mamba2", "mamba1"]
+ORDER = ["feat_logreg", "feat_hgb", "feat_llm_logreg", "feat_llm_hgb", "feat_llmstats_hgb", "resnet", "gru", "transformer", "mamba2", "mamba1",
+         "gru__S9", "resnet__S9", "gru__B5", "resnet__B5", "episode_mil", "episode_mil_meanlogit"]
 NAMES = {"feat_logreg": "hand-crafted features + logistic regression", "feat_hgb": "hand-crafted features + gradient boosting",
          "feat_llm_logreg": "LLM physical features + logistic regression", "feat_llm_hgb": "LLM physical features + gradient boosting",
          "feat_llmstats_hgb": "LLM physical + hand-crafted features + gradient boosting",
+         "gru__S9": "bi-GRU, recipe S9 (model-balanced sampling, footprint/CORAL/mass/powertrain heads, augmentation, group-DRO)",
+         "resnet__S9": "1-D ResNet, recipe S9", "gru__B5": "bi-GRU, recipe B5 (model-balanced sampling, aux heads with hybrids, augmentation, DAS down-weighting)",
+         "resnet__B5": "1-D ResNet, recipe B5", "episode_mil": "episode MIL (gated attention over transients + window embeddings)",
+         "episode_mil_meanlogit": "episode MIL (learned reliability-weighted mean of instance logits)",
          "resnet": "1-D ResNet (10 Hz)", "gru": "bi-GRU", "transformer": "Transformer encoder", "mamba2": "Mamba-2 (SSD), bidirectional",
          "mamba1": "Mamba-1 (S6), bidirectional"}
 
@@ -51,7 +56,7 @@ def _agg(vals: list[float]) -> str:
 def render(results: list[dict]) -> str:
     L = ["# Classification results (60-s windows, official input channels only)", "",
          "Macro-F1 in percent; mean ± std over seeds when several seeds ran. `window` = one prediction per 60-s window, "
-         "`drive` = mean class probability over the windows of a drive. Protocols follow docs/PROTOCOLS.md: `full` = every "
+         "`drive` = mean class probability over the windows of a drive, `vehicle` = the same over all test drives of a vehicle. Protocols follow docs/PROTOCOLS.md: `full` = every "
          "eligible test window, `balanced` = the published class-balanced list, `human` = windows without any driving "
          "automation activity (strict). Chance level for macro-F1 is about 33 (size) and 50 (BEV vs ICE); the always-majority "
          "predictor scores below that.", ""]
@@ -62,8 +67,8 @@ def render(results: list[dict]) -> str:
             sub = [r for r in results if r["split_col"] == split_col and r["task"] == task]
             if not sub:
                 continue
-            L += [f"### {tname}", "", "| model | params | window full | window balanced | window human-only | drive full | drive human-only | best val | seeds |",
-                  "|---|---|---|---|---|---|---|---|---|"]
+            L += [f"### {tname}", "", "| model | params | window full | window balanced | window human-only | drive full | drive human-only | vehicle full | best val | seeds |",
+                  "|---|---|---|---|---|---|---|---|---|---|"]
             by_model: dict[str, list[dict]] = {}
             for r in sub:
                 by_model.setdefault(r["model"], []).append(r)
@@ -76,6 +81,7 @@ def render(results: list[dict]) -> str:
                          f"{cell(lambda r: r['protocols']['test_human_only']['macro_f1'])} | "
                          f"{cell(lambda r: r['drive_level']['test_full']['macro_f1'])} | "
                          f"{cell(lambda r: r['drive_level']['test_human_only']['macro_f1'])} | "
+                         f"{cell(lambda r: ((r.get('unit_level') or {}).get('vehicle_full') or {}).get('macro_f1'))} | "
                          f"{cell(lambda r: r.get('val_macro_f1'))} | {len(rs)} |")
             L.append("")
             # per-class recall of the full protocol for the best model

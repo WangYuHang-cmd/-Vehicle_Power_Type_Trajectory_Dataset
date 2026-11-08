@@ -169,3 +169,281 @@ def evaluate(windows: pd.DataFrame, y_pred, task: str, protocol: str = "test_ful
         res["confusion_csv"] = str(write_confusion_csv(res["confusion"], labels, Path(out_dir) / f"{tag}_confusion.csv"))
         res["per_cell"].to_csv(Path(out_dir) / f"{tag}_per_cell.csv", index=False)
     return res
+
+
+# ----------------------------------------------------------------------------- drive- and vehicle-level protocols
+# unit protocol -> the window protocol that selects the evidence, the unit column and the minimum number of drives per unit
+UNIT_PROTOCOLS = {
+    "drive_full": dict(windows="test_full", unit_col="drive_id", min_drives=1),
+    "drive_human_only": dict(windows="test_human_only", unit_col="drive_id", min_drives=1),
+    "vehicle_full": dict(windows="test_full", unit_col="vehicle_id", min_drives=1),
+    "vehicle_full_multi": dict(windows="test_full", unit_col="vehicle_id", min_drives=2),
+}
+# window -> unit aggregation rules; "mean" is the official rule, the others exist for the aggregation studies
+AGGREGATIONS = ("mean", "logodds", "median", "confidence", "trimmed", "vote")
+LOGODDS_CLIP = 1e-4
+TRIM_FRAC = 0.2
+
+
+def one_hot(labels, classes) -> np.ndarray:
+    """(n, k) float64 one-hot matrix of class labels; a label outside `classes` (or None) raises."""
+    classes = list(classes)
+    pos = {c: i for i, c in enumerate(classes)}
+    lab = np.asarray(list(labels), dtype=object)
+    bad = [x for x in lab if x not in pos]
+    if bad:
+        raise ValueError(f"{len(bad)} label(s) outside the classes {classes} (or missing)")
+    out = np.zeros((len(lab), len(classes)), dtype=np.float64)
+    out[np.arange(len(lab)), [pos[x] for x in lab]] = 1.0
+    return out
+
+
+def _prob_columns(probs: pd.DataFrame, classes: list) -> list:
+    cols = list(probs.columns)
+    if all(c in cols for c in classes):
+        return classes
+    if all(f"p_{c}" in cols for c in classes):
+        return [f"p_{c}" for c in classes]
+    if all(i in cols for i in range(len(classes))):
+        return list(range(len(classes)))
+    raise ValueError(f"probability table needs the columns {classes} (or p_<class>, or 0..{len(classes) - 1})")
+
+
+def probs_matrix(windows_sub: pd.DataFrame, probs, classes) -> np.ndarray:
+    """(n, k) float64 class probabilities aligned with `windows_sub`.
+
+    Accepted forms: a DataFrame indexed by window_id with one column per class (named by class, `p_<class>` or
+    0..k-1); a label Series / dict indexed by window_id (-> one-hot); an (n, k) array aligned with the selection; a
+    label sequence aligned with the selection (-> one-hot). A selected window without an entry raises."""
+    classes = list(classes)
+    ids = windows_sub["window_id"].astype(str).to_numpy()
+    if isinstance(probs, dict):
+        probs = pd.Series(probs, dtype=object)
+    if isinstance(probs, pd.DataFrame):
+        df = probs[_prob_columns(probs, classes)].copy()
+        df.index = df.index.astype(str)
+        if not df.index.is_unique:
+            raise ValueError("duplicate window_id in the probability table")
+        m = df.reindex(ids).to_numpy(dtype=np.float64)
+        missing = int(np.isnan(m).any(axis=1).sum())
+        if missing:
+            raise ValueError(f"{missing} selected window(s) have no probabilities")
+        return m
+    if isinstance(probs, pd.Series):
+        s = probs.copy()
+        s.index = s.index.astype(str)
+        if not s.index.is_unique:
+            raise ValueError("duplicate window_id in the label series")
+        return one_hot(s.reindex(ids).to_numpy(object), classes)
+    arr = np.asarray(probs)
+    if arr.ndim == 2:
+        if arr.shape != (len(ids), len(classes)):
+            raise ValueError(f"probabilities of shape {arr.shape} for {len(ids)} selected windows and {len(classes)} classes")
+        return arr.astype(np.float64)
+    if arr.ndim == 1:
+        if len(arr) != len(ids):
+            raise ValueError(f"{len(arr)} labels for {len(ids)} selected windows")
+        return one_hot(arr.astype(object), classes)
+    raise ValueError("probs must be a DataFrame, a Series, a dict, an (n, k) array or a label sequence")
+
+
+def _label_column(windows_sub: pd.DataFrame, classes: list) -> str:
+    for t in TASKS.values():
+        if tuple(t["classes"]) == tuple(classes):
+            return t["label"]
+    for col in ("size_class", "powertrain"):
+        if col in windows_sub and windows_sub[col].dropna().isin(classes).all():
+            return col
+    raise ValueError(f"no label column of the windows index holds the classes {classes}")
+
+
+def _sum_by(codes: np.ndarray, M: np.ndarray, n_units: int) -> np.ndarray:
+    return np.stack([np.bincount(codes, weights=M[:, j], minlength=n_units) for j in range(M.shape[1])], axis=1)
+
+
+def aggregate_windows(windows_sub: pd.DataFrame, probs, unit_col: str, classes, how: str = "mean",
+                      label_col: str | None = None) -> pd.DataFrame:
+    """One row per unit (`unit_col` value) of the selected windows: unit, truth, pred, n_windows, n_drives, p_<class>...
+
+    how = "mean" (official): mean of the per-window probability vectors; "logodds": mean per-class log-odds with the
+    probabilities clipped to [1e-4, 1 - 1e-4], mapped back through the logistic function and renormalised; "median":
+    per-class median, renormalised; "confidence": mean weighted by (max p - 1/k), plain mean when every weight is 0;
+    "trimmed": per-class mean after dropping the lowest and highest 20 % of the windows (plain mean when fewer than
+    5 windows); "vote": share of windows whose arg-max is the class. pred = arg-max of the aggregated vector, ties go
+    to the earlier class in the task's class order. truth = the label of the unit's first selected window."""
+    classes = list(classes)
+    k = len(classes)
+    if how not in AGGREGATIONS:
+        raise ValueError(f"unknown aggregation {how!r}; choose from {AGGREGATIONS}")
+    P = probs_matrix(windows_sub, probs, classes)
+    label_col = label_col or _label_column(windows_sub, classes)
+    codes, uniq = pd.factorize(windows_sub[unit_col].astype(str).to_numpy(), sort=True)
+    n_units = len(uniq)
+    counts = np.bincount(codes, minlength=n_units).astype(np.float64)
+    mean = _sum_by(codes, P, n_units) / counts[:, None] if n_units else np.zeros((0, k))
+    if how == "mean":
+        agg = mean
+    elif how == "logodds":
+        Q = np.clip(P, LOGODDS_CLIP, 1.0 - LOGODDS_CLIP)
+        L = _sum_by(codes, np.log(Q) - np.log1p(-Q), n_units) / counts[:, None]
+        agg = 1.0 / (1.0 + np.exp(-L))
+        agg = agg / agg.sum(axis=1, keepdims=True)
+    elif how == "confidence":
+        w = P.max(axis=1) - 1.0 / k
+        ws = np.bincount(codes, weights=w, minlength=n_units)
+        num = _sum_by(codes, P * w[:, None], n_units)
+        pos = ws > 0
+        agg = mean.copy()
+        agg[pos] = num[pos] / ws[pos, None]
+    elif how == "vote":
+        agg = np.zeros((n_units, k))
+        np.add.at(agg, (codes, P.argmax(axis=1)), 1.0)
+        agg = agg / counts[:, None]
+    else:                                                   # median / trimmed: per-unit blocks
+        order = np.argsort(codes, kind="stable")
+        bounds = np.flatnonzero(np.diff(codes[order])) + 1
+        agg = np.zeros((n_units, k))
+        for u, rows in enumerate(np.split(order, bounds) if n_units else []):
+            block = P[rows]
+            if how == "median":
+                v = np.median(block, axis=0)
+            else:
+                t = int(np.floor(TRIM_FRAC * len(rows)))
+                v = np.sort(block, axis=0)[t:len(rows) - t].mean(axis=0) if len(rows) - 2 * t > 0 else block.mean(axis=0)
+            s = v.sum()
+            agg[u] = v / s if s > 0 else block.mean(axis=0)
+    pred = agg.argmax(axis=1) if n_units else np.zeros(0, dtype=int)
+    first = np.unique(codes, return_index=True)[1] if n_units else np.zeros(0, dtype=int)
+    truth = windows_sub[label_col].to_numpy(object)[first]
+    out = pd.DataFrame({"unit": uniq, "truth": truth, "pred": np.array([classes[i] for i in pred], dtype=object),
+                        "n_windows": counts.astype(np.int64)})
+    if "drive_id" in windows_sub and unit_col != "drive_id":
+        nd = pd.Series(windows_sub["drive_id"].astype(str).to_numpy()).groupby(codes).nunique()
+        out["n_drives"] = nd.reindex(range(n_units)).fillna(0).astype(np.int64).to_numpy()
+    else:
+        out["n_drives"] = 1
+    for j, c in enumerate(classes):
+        out[f"p_{c}"] = agg[:, j]
+    return out
+
+
+def macro_f1_from_confusion(cm: np.ndarray) -> float:
+    """Unweighted mean F1 over the classes with support, from a (k, k) confusion matrix (rows = true)."""
+    f1s = []
+    for c in range(cm.shape[0]):
+        tp = cm[c, c]; fn = cm[c].sum() - tp; fp = cm[:, c].sum() - tp
+        if tp + fn == 0:
+            continue
+        f1s.append(2 * tp / (2 * tp + fp + fn) if (2 * tp + fp + fn) else 0.0)
+    return float(np.mean(f1s)) if f1s else float("nan")
+
+
+def unit_metrics(y_true, y_pred, classes) -> dict:
+    """Metric dict in the shape of experiments.train.metrics: n, macro_f1, balanced_acc, accuracy, per_class_recall,
+    support, confusion (rows = true), classes; labels are class names."""
+    classes = list(classes)
+    cm = confusion_matrix(y_true, y_pred, classes)
+    n = int(cm.sum())
+    rec = [cm[c, c] / cm[c].sum() for c in range(len(classes)) if cm[c].sum() > 0]
+    return dict(n=n, macro_f1=macro_f1_from_confusion(cm), balanced_acc=float(np.mean(rec)) if rec else float("nan"),
+                accuracy=float(np.trace(cm) / n) if n else float("nan"),
+                per_class_recall={c: (float(cm[i, i] / cm[i].sum()) if cm[i].sum() else None) for i, c in enumerate(classes)},
+                support={c: int(cm[i].sum()) for i, c in enumerate(classes)}, confusion=cm.tolist(), classes=classes)
+
+
+def cluster_bootstrap_ci(y_true, y_pred, clusters, classes, n_boot: int = 1000, seed: int = 0) -> list[float] | None:
+    """95 % percentile interval of the macro-F1 under a cluster bootstrap: the clusters (car models) are resampled
+    with replacement, every unit of a drawn cluster enters once per draw. None with fewer than two clusters."""
+    classes = list(classes)
+    k = len(classes)
+    pos = {c: i for i, c in enumerate(classes)}
+    codes, uniq = pd.factorize(np.asarray([str(c) for c in clusters], dtype=object))
+    M = len(uniq)
+    if M < 2:
+        return None
+    ti = np.array([pos[x] for x in y_true]); pi = np.array([pos[x] for x in y_pred])
+    cms = np.zeros((M, k, k))
+    np.add.at(cms, (codes, ti, pi), 1.0)
+    rng = np.random.default_rng(seed)
+    vals = np.empty(n_boot)
+    for b in range(n_boot):
+        cnt = np.bincount(rng.integers(0, M, size=M), minlength=M).astype(np.float64)
+        vals[b] = macro_f1_from_confusion(np.tensordot(cnt, cms, axes=(0, 0)))
+    vals = vals[np.isfinite(vals)]
+    if not len(vals):
+        return None
+    return [float(np.percentile(vals, 2.5)), float(np.percentile(vals, 97.5))]
+
+
+def _unit_attributes(sub: pd.DataFrame, unit_col: str) -> pd.DataFrame:
+    """Per-unit car model (`model`), group_id and low-support flag from the selected windows."""
+    key = sub[unit_col].astype(str)
+    out = pd.DataFrame(index=pd.Index(sorted(key.unique()), name="unit"))
+    for col in ("model", "group_id"):
+        if col in sub:
+            out[col] = sub.groupby(key)[col].first().reindex(out.index)
+    if "low_support_cell" in sub:
+        out["low_support_cell"] = sub.groupby(key)["low_support_cell"].apply(lambda s: bool(s.fillna(False).astype(bool).any())).reindex(out.index)
+    return out
+
+
+def _unit_population(table: pd.DataFrame, task: str, split_col: str, split: str, unit_col: str, min_drives: int) -> set:
+    """Units (drives or vehicles) of the split with a class label of the task, from the drives index or, lacking it,
+    from the windows index (drives without any listed window are then invisible)."""
+    t = TASKS[task]
+    m = (table[split_col].to_numpy(object) == split) & table[t["label"]].isin(t["classes"]).to_numpy()
+    if t["eligible"] is not None and t["eligible"] in table:
+        m &= table[t["eligible"]].fillna(False).to_numpy(bool)
+    rows = table[m]
+    if min_drives > 1 and "drive_id" in rows:
+        nd = rows.groupby(rows[unit_col].astype(str))["drive_id"].nunique()
+        return set(nd.index[nd >= min_drives])
+    return set(rows[unit_col].astype(str))
+
+
+def evaluate_units(windows: pd.DataFrame, probs, task: str, protocol: str = "drive_full", split_col: str = HEADLINE_SPLIT_COL,
+                   split: str = "test", out_dir: Path | None = None, name: str | None = None, n_boot: int = 1000, seed: int = 0,
+                   drives: pd.DataFrame | None = None, how: str = "mean") -> dict:
+    """Drive- or vehicle-level evaluation (docs/PROTOCOLS.md, "Drive- and vehicle-level protocols").
+
+    The unit protocol selects windows with its window protocol (`test_full` or `test_human_only`), aggregates the
+    per-window probability vectors per unit (`how`, official rule "mean"), predicts the arg-max (ties -> earlier
+    class) and scores the units: the metric dict of `unit_metrics` plus n_units, n_units_without_windows (units of
+    the split with a task label but no selected window; exact when the drives index is passed as `drives`),
+    n_windows_used, n_models, macro_f1_supported / n_units_supported (units outside low-support cells) and
+    ci95_macro_f1 (cluster bootstrap over car models, fallback identity groups; n_boot resamples, `seed`).
+    `probs` takes the forms accepted by `probs_matrix`. Writes <tag>_units.csv and <tag>_confusion.csv to out_dir."""
+    if protocol not in UNIT_PROTOCOLS:
+        raise ValueError(f"unknown unit protocol {protocol!r}; choose from {tuple(UNIT_PROTOCOLS)}")
+    spec = UNIT_PROTOCOLS[protocol]
+    t = TASKS[task]
+    classes = list(t["classes"])
+    sub = windows[protocol_mask(windows, task, spec["windows"], split_col, split)]
+    units = aggregate_windows(sub, probs, spec["unit_col"], classes, how=how, label_col=t["label"])
+    units = units.merge(_unit_attributes(sub, spec["unit_col"]), left_on="unit", right_index=True, how="left")
+    if spec["min_drives"] > 1:
+        units = units[units["n_drives"] >= spec["min_drives"]].reset_index(drop=True)
+    population = _unit_population(drives if drives is not None else windows, task, split_col, split, spec["unit_col"], spec["min_drives"])
+    res = dict(task=task, protocol=protocol, window_protocol=spec["windows"], unit_col=spec["unit_col"], split_col=split_col,
+               split=split, how=how)
+    res.update(unit_metrics(units["truth"], units["pred"], classes))
+    res["n_units"] = int(len(units))
+    res["n_units_without_windows"] = int(len(population - set(units["unit"].astype(str))))
+    res["n_windows_used"] = int(units["n_windows"].sum())
+    res["n_drives_used"] = int(units["n_drives"].sum())
+    cluster_col = "model" if "model" in units and units["model"].notna().any() else ("group_id" if "group_id" in units else None)
+    res["n_models"] = int(units["model"].nunique()) if "model" in units else -1
+    res["cluster_col"] = cluster_col
+    res["ci95_macro_f1"] = (cluster_bootstrap_ci(units["truth"], units["pred"], units[cluster_col].astype(str), classes, n_boot, seed)
+                            if cluster_col is not None and len(units) else None)
+    supported = ~units["low_support_cell"].fillna(False).astype(bool).to_numpy() if "low_support_cell" in units else np.ones(len(units), bool)
+    res["macro_f1_supported"] = macro_f1(units["truth"].to_numpy(object)[supported], units["pred"].to_numpy(object)[supported], classes)
+    res["n_units_supported"] = int(supported.sum())
+    if out_dir is not None:
+        tag = name or f"{task}_{protocol}_{split_col}_{split}"
+        out_dir = Path(out_dir)
+        out_dir.mkdir(parents=True, exist_ok=True)
+        units.to_csv(out_dir / f"{tag}_units.csv", index=False)
+        res["units_csv"] = str(out_dir / f"{tag}_units.csv")
+        res["confusion_csv"] = str(write_confusion_csv(np.array(res["confusion"]), classes, out_dir / f"{tag}_confusion.csv"))
+    return res

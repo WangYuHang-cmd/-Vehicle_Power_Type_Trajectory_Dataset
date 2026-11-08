@@ -240,3 +240,234 @@ def test_balanced_lists_per_split_scheme(sample):
         m2 = EV.protocol_mask(w, "size", "test_balanced", split_col="split_device", balanced_ids=set(plat.window_id))
     assert (w.split_device[m2] == "test").all() and 0 < m2.sum() < len(plat)
     shutil.rmtree(d, ignore_errors=True)
+
+
+# ----------------------------------------------------------------------------- drive- and vehicle-level protocols
+def unit_frame() -> pd.DataFrame:
+    """Hand-built windows index: drive A (vehicle V1, two eligible human-only windows), drive B (V1, two eligible windows with
+    automation), drive C (V2, one ineligible window), drive D (V3, train split). Labels are consistent per drive."""
+    rows = []
+
+    def add(drive, vehicle, group, w, eligible, human, powertrain, split="test"):
+        rows.append(dict(window_id=f"{drive}_w{w}", drive_id=drive, vehicle_id=vehicle, group_id=group, model=f"car_{vehicle}",
+                         eligible=eligible, task_size_eligible=True, task_bev_ice_eligible=True, size_class="MID", powertrain=powertrain,
+                         split_platform=split, split_device=split, human_only_strict=human, low_support_cell=False))
+    add("drive_A", "V1", "G1", 0, True, True, "ICE"); add("drive_A", "V1", "G1", 1, True, True, "ICE")
+    add("drive_B", "V1", "G1", 0, True, False, "ICE"); add("drive_B", "V1", "G1", 1, True, False, "ICE")
+    add("drive_C", "V2", "G2", 0, False, True, "BEV")
+    add("drive_D", "V3", "G3", 0, True, True, "BEV", split="train")
+    return pd.DataFrame(rows)
+
+
+def unit_drives() -> pd.DataFrame:
+    """Drives index matching unit_frame plus drive E (vehicle V4, test, no window at all)."""
+    return pd.DataFrame([dict(drive_id="drive_A", vehicle_id="V1", group_id="G1", model="car_V1", powertrain="ICE", size_class="MID"),
+                         dict(drive_id="drive_B", vehicle_id="V1", group_id="G1", model="car_V1", powertrain="ICE", size_class="MID"),
+                         dict(drive_id="drive_C", vehicle_id="V2", group_id="G2", model="car_V2", powertrain="BEV", size_class="MID"),
+                         dict(drive_id="drive_D", vehicle_id="V3", group_id="G3", model="car_V3", powertrain="BEV", size_class="MID"),
+                         dict(drive_id="drive_E", vehicle_id="V4", group_id="G4", model="car_V4", powertrain="BEV", size_class="MID")]
+                        ).assign(split_platform=lambda d: np.where(d.drive_id == "drive_D", "train", "test"),
+                                 split_device=lambda d: np.where(d.drive_id == "drive_D", "train", "test"),
+                                 task_size_eligible=True, task_bev_ice_eligible=True)
+
+
+def test_unit_protocol_populations_and_tie_rule():
+    w = unit_frame()
+    sub = w[EV.protocol_mask(w, "bev_ice", "test_full")]
+    assert sorted(sub.drive_id.unique()) == ["drive_A", "drive_B"]
+    # drive A leans ICE, drive B is an exact tie -> earlier class (BEV) by the tie rule
+    probs = pd.DataFrame({"BEV": [0.2, 0.3, 0.5, 0.5], "ICE": [0.8, 0.7, 0.5, 0.5]}, index=sub.window_id)
+    res = EV.evaluate_units(w, probs, "bev_ice", "drive_full")
+    assert res["protocol"] == "drive_full" and res["window_protocol"] == "test_full" and res["unit_col"] == "drive_id"
+    assert res["n_units"] == 2 and res["n_units_without_windows"] == 1 and res["n_windows_used"] == 4 and res["n_models"] == 1
+    assert res["confusion"] == [[0, 0], [1, 1]] and res["accuracy"] == 0.5 and res["support"] == {"BEV": 0, "ICE": 2}
+    assert res["macro_f1"] == pytest.approx(2 * 1 / (2 * 1 + 0 + 1)) and res["per_class_recall"] == {"BEV": None, "ICE": 0.5}
+    assert res["ci95_macro_f1"] is None and res["cluster_col"] == "model"              # one car model: no interval
+    with_drives = EV.evaluate_units(w, probs, "bev_ice", "drive_full", drives=unit_drives())
+    assert with_drives["n_units_without_windows"] == 2                                  # drive E has no listed window at all
+    human = EV.evaluate_units(w, probs, "bev_ice", "drive_human_only", drives=unit_drives())
+    assert human["n_units"] == 1 and human["n_units_without_windows"] == 3 and human["n_windows_used"] == 2 and human["accuracy"] == 1.0
+    veh = EV.evaluate_units(w, probs, "bev_ice", "vehicle_full", drives=unit_drives())
+    assert veh["n_units"] == 1 and veh["n_drives_used"] == 2 and veh["n_windows_used"] == 4 and veh["n_units_without_windows"] == 2
+    assert veh["accuracy"] == 1.0                                                          # the pooled mean leans ICE
+    multi = EV.evaluate_units(w, probs, "bev_ice", "vehicle_full_multi", drives=unit_drives())
+    assert multi["n_units"] == 1 and multi["n_units_without_windows"] == 0 and multi["n_drives_used"] == 2
+    flipped = probs.copy(); flipped.loc["drive_A_w0"] = [0.9, 0.1]                     # vehicle-level tie: 0.5 / 0.5 over 4 windows
+    tie = EV.evaluate_units(w, flipped, "bev_ice", "vehicle_full")
+    assert abs(tie["accuracy"]) == 0.0 and tie["confusion"] == [[0, 0], [1, 0]]
+    with pytest.raises(ValueError):
+        EV.evaluate_units(w, probs.iloc[:3], "bev_ice", "drive_full")                    # a selected window without probabilities
+    with pytest.raises(ValueError):
+        EV.evaluate_units(w, probs, "bev_ice", "nope")
+    assert list(EV.UNIT_PROTOCOLS) == ["drive_full", "drive_human_only", "vehicle_full", "vehicle_full_multi"]
+
+
+def test_unit_protocols_on_synthetic_sample(sample, tmp_path):
+    root, _ = sample
+    windows = L.load_index("windows", root=root); drives = L.load_index("drives", root=root)
+    sub = windows[EV.protocol_mask(windows, "bev_ice", "test_full")]
+    assert sub.vehicle_id.nunique() == 1 and sub.drive_id.nunique() == 2 and (sub.powertrain == "ICE").all()
+    tie = pd.DataFrame({"BEV": 0.5, "ICE": 0.5}, index=sub.window_id)
+    res = EV.evaluate_units(windows, tie, "bev_ice", "drive_full", drives=drives, out_dir=tmp_path, name="tie")
+    assert res["n_units"] == 2 and res["n_units_without_windows"] == 0 and res["accuracy"] == 0.0 and res["support"] == {"BEV": 0, "ICE": 2}
+    assert Path(res["units_csv"]).exists() and Path(res["confusion_csv"]).exists()
+    units = pd.read_csv(res["units_csv"])
+    assert list(units.columns[:5]) == ["unit", "truth", "pred", "n_windows", "n_drives"] and set(units.pred) == {"BEV"}
+    ice = pd.DataFrame({"BEV": 0.49, "ICE": 0.51}, index=sub.window_id)
+    for prot, n_units in (("drive_full", 2), ("vehicle_full", 1), ("vehicle_full_multi", 1)):
+        r = EV.evaluate_units(windows, ice, "bev_ice", prot, drives=drives)
+        assert r["n_units"] == n_units and r["macro_f1"] == 1.0 and r["n_windows_used"] == len(sub) and r["macro_f1_supported"] == 1.0
+    hum = EV.evaluate_units(windows, ice, "bev_ice", "drive_human_only", drives=drives)
+    hsub = windows[EV.protocol_mask(windows, "bev_ice", "test_human_only")]
+    assert hum["n_units"] == hsub.drive_id.nunique() and hum["n_windows_used"] == len(hsub) and 0 < hum["n_units"] <= 2
+
+
+def test_one_hot_fallback_and_probs_matrix():
+    w = unit_frame()
+    sub = w[EV.protocol_mask(w, "bev_ice", "test_full")]
+    labels = pd.Series(sub.powertrain.to_numpy(), index=sub.window_id)
+    M = EV.probs_matrix(sub, labels, ("BEV", "ICE"))
+    assert M.shape == (4, 2) and M.dtype == np.float64 and (M.sum(1) == 1).all() and (M[:, 1] == 1).all()
+    assert (EV.probs_matrix(sub, dict(zip(sub.window_id, sub.powertrain)), ("BEV", "ICE")) == M).all()      # dict of labels
+    assert (EV.probs_matrix(sub, list(sub.powertrain), ("BEV", "ICE")) == M).all()                            # aligned label list
+    assert (EV.probs_matrix(sub, pd.DataFrame({"p_BEV": M[:, 0], "p_ICE": M[:, 1]}, index=sub.window_id), ("BEV", "ICE")) == M).all()
+    assert (EV.probs_matrix(sub, pd.DataFrame(M, index=sub.window_id), ("BEV", "ICE")) == M).all()             # columns 0..k-1
+    by_label = EV.evaluate_units(w, labels, "bev_ice", "drive_full")
+    by_table = EV.evaluate_units(w, pd.DataFrame(M, index=sub.window_id, columns=["BEV", "ICE"]), "bev_ice", "drive_full")
+    by_array = EV.evaluate_units(w, M, "bev_ice", "drive_full")
+    assert by_label["macro_f1"] == by_table["macro_f1"] == by_array["macro_f1"] == 1.0
+    assert by_label["confusion"] == by_table["confusion"] == by_array["confusion"] == [[0, 0], [0, 2]]
+    with pytest.raises(ValueError):
+        EV.one_hot(["BEV", "nope"], ("BEV", "ICE"))
+    with pytest.raises(ValueError):
+        EV.probs_matrix(sub, pd.DataFrame({"x": 1.0}, index=sub.window_id), ("BEV", "ICE"))
+    with pytest.raises(ValueError):
+        EV.probs_matrix(sub, M[:3], ("BEV", "ICE"))
+    with pytest.raises(ValueError):
+        EV.probs_matrix(sub, pd.DataFrame(M, index=["a", "a", "b", "c"], columns=["BEV", "ICE"]), ("BEV", "ICE"))   # duplicate ids
+
+
+def test_aggregate_windows_variants():
+    sub = pd.DataFrame({"window_id": [f"d1_w{i}" for i in range(3)] + ["d2_w0"], "drive_id": ["d1"] * 3 + ["d2"], "vehicle_id": ["v1"] * 4,
+                        "powertrain": ["BEV"] * 3 + ["ICE"]})
+    P = np.array([[0.9, 0.1], [0.6, 0.4], [0.2, 0.8], [0.3, 0.7]])
+    mean = EV.aggregate_windows(sub, P, "drive_id", ("BEV", "ICE"))
+    assert list(mean.columns) == ["unit", "truth", "pred", "n_windows", "n_drives", "p_BEV", "p_ICE"]
+    assert mean.unit.tolist() == ["d1", "d2"] and mean.truth.tolist() == ["BEV", "ICE"] and mean.pred.tolist() == ["BEV", "ICE"]
+    assert mean.n_windows.tolist() == [3, 1] and mean.n_drives.tolist() == [1, 1] and mean.p_BEV[0] == pytest.approx(1.7 / 3)
+    vote = EV.aggregate_windows(sub, P, "drive_id", ("BEV", "ICE"), how="vote")
+    assert vote.p_BEV[0] == pytest.approx(2 / 3) and vote.pred[0] == "BEV"
+    med = EV.aggregate_windows(sub, P, "drive_id", ("BEV", "ICE"), how="median")
+    assert med.p_BEV[0] == pytest.approx(0.6)
+    lo = EV.aggregate_windows(sub, P, "drive_id", ("BEV", "ICE"), how="logodds")
+    logit = lambda p: np.log(p / (1 - p))                                                   # noqa: E731
+    assert lo.p_BEV[0] == pytest.approx(1 / (1 + np.exp(-(logit(0.9) + logit(0.6) + logit(0.2)) / 3)))
+    conf = EV.aggregate_windows(sub, P, "drive_id", ("BEV", "ICE"), how="confidence")       # weights 0.4, 0.1, 0.3
+    assert conf.p_BEV[0] == pytest.approx((0.9 * 0.4 + 0.6 * 0.1 + 0.2 * 0.3) / 0.8)
+    trim3 = EV.aggregate_windows(sub, P, "drive_id", ("BEV", "ICE"), how="trimmed")       # 3 windows: nothing trimmed
+    assert trim3.p_BEV[0] == pytest.approx(mean.p_BEV[0])
+    sub5 = pd.DataFrame({"window_id": [f"d_w{i}" for i in range(5)], "drive_id": "d", "powertrain": "BEV"})
+    P5 = np.array([[0.0, 1.0], [0.4, 0.6], [0.5, 0.5], [0.6, 0.4], [1.0, 0.0]])
+    trim5 = EV.aggregate_windows(sub5, P5, "drive_id", ("BEV", "ICE"), how="trimmed")       # drops the 0.0 and the 1.0
+    assert trim5.p_BEV[0] == pytest.approx(0.5) and trim5.pred[0] == "BEV"                  # exact tie -> earlier class
+    veh = EV.aggregate_windows(sub, P, "vehicle_id", ("BEV", "ICE"))
+    assert veh.n_drives.tolist() == [2] and veh.n_windows.tolist() == [4] and veh.truth.tolist() == ["BEV"]
+    with pytest.raises(ValueError):
+        EV.aggregate_windows(sub, P, "drive_id", ("BEV", "ICE"), how="nope")
+    assert EV.AGGREGATIONS == ("mean", "logodds", "median", "confidence", "trimmed", "vote")
+
+
+def test_unit_metrics_and_cluster_bootstrap():
+    y = ["A", "A", "B", "B", "C", "C"]
+    p = ["A", "B", "B", "B", "C", "A"]
+    m = EV.unit_metrics(y, p, ["A", "B", "C"])
+    assert m["n"] == 6 and m["confusion"] == [[1, 1, 0], [0, 2, 0], [1, 0, 1]] and m["classes"] == ["A", "B", "C"]
+    assert m["macro_f1"] == pytest.approx((0.5 + 0.8 + 2 / 3) / 3) and m["balanced_acc"] == pytest.approx((0.5 + 1.0 + 0.5) / 3)
+    assert m["accuracy"] == pytest.approx(4 / 6) and m["support"] == {"A": 2, "B": 2, "C": 2} and m["per_class_recall"]["B"] == 1.0
+    assert EV.unit_metrics(["A", "A"], ["A", "B"], ["A", "B", "C"])["macro_f1"] == pytest.approx(2 / 3)   # only supported classes count
+    assert EV.macro_f1_from_confusion(np.array(m["confusion"])) == pytest.approx(m["macro_f1"])
+    clusters = ["m1", "m1", "m2", "m2", "m3", "m3"]
+    assert EV.cluster_bootstrap_ci(y, y, clusters, ["A", "B", "C"], n_boot=50) == [1.0, 1.0]
+    assert EV.cluster_bootstrap_ci(y, p, ["m1"] * 6, ["A", "B", "C"]) is None                 # one cluster: no interval
+    ci = EV.cluster_bootstrap_ci(y, p, clusters, ["A", "B", "C"], n_boot=200, seed=0)
+    assert 0.0 <= ci[0] <= ci[1] <= 1.0 and ci == EV.cluster_bootstrap_ci(y, p, clusters, ["A", "B", "C"], n_boot=200, seed=0)
+
+
+def test_evaluate_units_reproduces_saved_drive_level():
+    import json
+    results = C.DATA_ROOT / "experiments" / "results"
+    windows_path = C.DATA_ROOT / "build" / "index" / "windows.parquet"
+    saved = sorted(results.glob("*_probs.npz")) if results.exists() else []
+    if not windows_path.exists() or not saved:
+        pytest.skip("saved runs or the windows index are not available")
+    preferred = results / "split_platform__size__gru__s0_probs.npz"
+    path = preferred if preferred.exists() else saved[0]
+    tag = path.name[: -len("_probs.npz")]
+    r = json.loads((results / f"{tag}.json").read_text())
+    z = np.load(path, allow_pickle=True)
+    classes = list(EV.TASKS[r["task"]]["classes"])
+    probs = pd.DataFrame(z["probs"], index=z["window_id"].astype(str), columns=classes)
+    windows = pd.read_parquet(windows_path)
+    for protocol, key in (("drive_full", "test_full"), ("drive_human_only", "test_human_only")):
+        res = EV.evaluate_units(windows, probs, r["task"], protocol, split_col=r["split_col"], n_boot=100)
+        ref = r["drive_level"][key]
+        assert abs(res["macro_f1"] - ref["macro_f1"]) < 1e-9 and res["n_units"] == ref["n_drives"] and res["confusion"] == ref["confusion"]
+        assert abs(res["balanced_acc"] - ref["balanced_acc"]) < 1e-9 and res["n"] == ref["n"]
+        assert res["ci95_macro_f1"] is not None and 0.0 <= res["ci95_macro_f1"][0] <= res["ci95_macro_f1"][1] <= 1.0
+        assert res["n_models"] > 1 and res["n_windows_used"] > res["n_units"] and res["n_units_supported"] <= res["n_units"]
+
+
+def test_regen_probs_checkpoint_roundtrip(tmp_path):
+    torch = pytest.importorskip("torch")
+    from experiments import regen_probs as RP
+    from experiments.models import build_model
+    torch.manual_seed(0)
+    channels = list(C.OFFICIAL_INPUTS)
+    m = build_model("transformer", len(channels), 3, d=32, n_layers=1, dropout=0.0).eval()
+    ck = dict(state={k: v.clone() for k, v in m.state_dict().items()}, mean=np.zeros(len(channels), np.float32), std=np.ones(len(channels), np.float32),
+              cfg=dict(d=32, n_layers=1, dropout=0.0), task="size", split_col="split_platform", model="transformer", channels=channels,
+              classes=("SMALL", "MID", "LARGE"))
+    path = tmp_path / "split_platform__size__transformer__s9.pt"
+    torch.save(ck, path)
+    torch.save(ck, tmp_path / "split_device__size__gru__s0.pt")
+    assert RP.list_checkpoints(tmp_path, "split_platform__size__*") == [path] and len(RP.list_checkpoints(tmp_path)) == 2
+    model, prep, ck2 = RP.load_checkpoint(path, torch.device("cpu"))
+    assert ck2["task"] == "size" and not model.training
+    x = torch.randn(2, 600, len(channels))
+    with torch.no_grad():
+        assert torch.allclose(model(prep(x)), m(prep(x)))
+    lo, hi = RP.clip_bounds(channels)
+    assert lo[channels.index("v_mps")] == -1.0 and hi[channels.index("v_mps")] == 60.0 and np.isinf(lo[channels.index("gas_pressed")])
+    assert RP.SUFFIX == "_valprobs.npz"
+
+
+def test_oracle_helpers():
+    from experiments import oracles as O
+    lo, hi = O.wilson_ci(5, 10)
+    assert 0.23 < lo < 0.24 and 0.76 < hi < 0.77 and np.isnan(O.wilson_ci(0, 0)[0]) and O.wilson_ci(10, 10)[1] == 1.0
+    assert O.bin_label((1, 2)) == "1-2" and O.bin_label((65, None)) == ">64" and O.bin_label((0, 0)) == "0"
+    assert O.in_bin(np.array([0, 1, 2, 3]), (1, 2)).tolist() == [False, True, True, False] and O.in_bin(np.array([64, 65]), (65, None)).tolist() == [False, True]
+    fp = np.array([4.0, 4.5, 5.0, 4.43, 4.88, 4.9])
+    assert O.size_class_of(fp, (4.43, 4.88)).tolist() == [0, 1, 2, 1, 1, 2]
+    truth = O.size_class_of(fp, (4.43, 4.88))
+    df = O.footprint_noise_oracle(fp, np.arange(len(fp)), truth, (4.43, 4.88), sigmas=(0.0, 0.3), taus=(0.0, 0.3), n_rep=5, seed=0)
+    assert len(df) == 4 and df.loc[(df.sigma == 0) & (df.tau == 0), "macro_f1_mean"].item() == 1.0 and (df.macro_f1_mean <= 1.0).all()
+    mass = np.array([1000.0, 1100.0, 1500.0, 1600.0, 2000.0, 2100.0])
+    y = np.array([0, 0, 1, 1, 2, 2])
+    c1, c2, f1 = O.fit_mass_cuts(mass, y)
+    assert 1100 < c1 < 1500 and 1600 < c2 < 2000 and f1 == 1.0 and O.apply_mass_cuts(mass, c1, c2).tolist() == y.tolist()
+    assert np.isnan(O.fit_mass_cuts(np.array([1.0, 1.0]), np.array([0, 1]))[0])
+    units = pd.DataFrame({"unit": ["a", "b", "c", "d", "e"], "truth": ["X", "X", "Y", "Y", "Y"], "pred": ["X", "Y", "Y", "X", "Y"]})
+    car = pd.Series({"a": "m1", "b": "m1", "c": "m2", "d": "m2", "e": "m2"})
+    assert O.majority_prediction(units, car, ["X", "Y"]).tolist() == ["X", "X", "Y", "Y", "Y"]      # m1 tie -> earlier class X
+    vote = O.vote_over_members([units, units.assign(pred=["Y", "Y", "Y", "X", "X"]), units.assign(pred=["X", "X", "X", "X", "X"])], ["X", "Y"])
+    assert vote.pred.tolist() == ["X", "Y", "Y", "X", "X"]
+    sep = O.separability_table(pd.DataFrame([dict(car_model="H1", size_class="MID", footprint=4.5, n_drives=3, accuracy=0.5, majority_correct=True)]),
+                               pd.DataFrame([dict(car_model="T1", size_class="MID", footprint=4.52), dict(car_model="T2", size_class="SMALL", footprint=4.4),
+                                             dict(car_model="T3", size_class="LARGE", footprint=4.95)]))
+    assert sep.nearest_other_class_model.tolist() == ["T2"] and sep.footprint_gap.iloc[0] == pytest.approx(0.1)
+    sub = pd.DataFrame({"window_id": ["w0", "w1", "w2"], "drive_id": ["d", "d", "e"], "moving_frac": [0.6, 0.2, 0.9], "n_accel_ep": [1, 0, 0],
+                        "n_decel_ep": [0, 0, 0], "human_only_strict": [True, False, False]})
+    assert O.window_mask(sub, "moving").tolist() == [True, False, True] and O.window_mask(sub, "episodes").tolist() == [True, False, False]
+    assert O.window_mask(sub, "human").tolist() == [True, False, False] and O.window_mask(sub, "all").all()
+    assert O.window_f1(np.array([[0.9, 0.1], [0.2, 0.8]]), np.array([0, 1]), 2) == 1.0
