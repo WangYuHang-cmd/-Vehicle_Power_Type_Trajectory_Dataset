@@ -17,7 +17,7 @@ for f in tex:
             hard.append(f"{f.name}:{i}: forbidden driver-assistance acronym: {line.strip()[:100]}")
         if re.search(r"[^\x00-\x7f]", line):
             hard.append(f"{f.name}:{i}: non-ASCII: {line.strip()[:100]}")
-        if re.search(r"\b[0-9a-f]{16}\b", body) or re.search(r"\d{4}-\d{2}-\d{2}", body) or re.search(r"/home/|/data/|/mnt/|/tmp/", body):
+        if re.search(r"\b[0-9a-f]{16}\b", body) or re.search(r"\d{4}-\d{2}-\d{2}", body) or re.search(r"/(?:home|data|mnt|tmp)/", body):
             hard.append(f"{f.name}:{i}: identifier / date / path: {line.strip()[:100]}")
         if re.search(r"[\w.]+@[\w.]+\.\w+", body):
             hard.append(f"{f.name}:{i}: e-mail: {line.strip()[:100]}")

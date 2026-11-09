@@ -33,3 +33,4 @@ paper/*.blg
 paper/*.log
 paper/*.out
 paper/versions/
+paper/IEEEtran.cls
