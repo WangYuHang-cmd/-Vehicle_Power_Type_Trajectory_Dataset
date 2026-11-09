@@ -176,12 +176,15 @@ def gate_mask(text) -> str:
 
 
 def load_allow(path: Path | None = None) -> dict:
-    """gate_allow.json: {'email': str, 'iso_date_files': [...], 'pre_push_iso_date_files': [...]}."""
+    """gate_allow.json: {'email': str, 'iso_date_files': [...], 'pre_push_iso_date_files': [...],
+    'history_accepted': [{'blob': <40-hex git blob sha>, 'rule': str, 'reason': str}, ...]} (see
+    pre_push.accepted_history: reviewed findings in already-published history, bound to the immutable blob)."""
     p = Path(path) if path else ALLOW_PATH
     allow = json.loads(p.read_text()) if p.exists() else {}
     allow.setdefault("email", "")
     allow.setdefault("iso_date_files", [])
     allow.setdefault("pre_push_iso_date_files", [])
+    allow.setdefault("history_accepted", [])
     return allow
 
 

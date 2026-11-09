@@ -148,8 +148,27 @@ def blob_contents(repo: Path, shas: list[str]):
         pos += size + 1
 
 
-def check_history(repo: Path, allow: dict, forbidden, private) -> list[Finding]:
+def accepted_history(allow: dict) -> dict[tuple[str, str], str]:
+    """(blob sha, rule) -> reason for findings in already-published history that were reviewed and found harmless
+    (gate_allow.json "history_accepted"). A pushed commit cannot be fixed without rewriting public history, so the
+    acceptance is bound to the immutable blob content: a blob with any other content, under any path, is a new finding.
+    An entry needs a 40-hex blob sha, a rule name and a non-empty reason; anything else is ignored. Blobs that were
+    ever stored under tests/ are never accepted (the tests directory has no allow-list). The sha is written in
+    gate_allow.json with dashes between 8-hex groups so that the allow-list itself does not look like an identifier to
+    the hex rules; dashes and spaces are removed here."""
+    out: dict[tuple[str, str], str] = {}
+    for e in allow.get("history_accepted", []) or []:
+        sha = str(e.get("blob", "")).lower().replace("-", "").replace(" ", "")
+        rule, reason = str(e.get("rule", "")), str(e.get("reason", "")).strip()
+        if len(sha) == 40 and all(c in "0123456789" + "abcdef" for c in sha) and rule and reason:   # no 16-hex literal here
+            out[(sha, rule)] = reason
+    return out
+
+
+def check_history(repo: Path, allow: dict, forbidden, private) -> tuple[list[Finding], list[str]]:
     findings: list[Finding] = []
+    warnings: list[str] = []
+    accepted = accepted_history(allow)
     blobs = history_blobs(repo)
     shas = sorted(blobs)
     sizes = {}
@@ -172,13 +191,17 @@ def check_history(repo: Path, allow: dict, forbidden, private) -> list[Finding]:
         paths = sorted(blobs[sha])
         path = next((p for p in paths if p.startswith("tests/")), paths[0])   # strictest view of a shared blob
         for f in scan_source(path, data.decode(errors="replace"), allow, forbidden, private):
+            reason = accepted.get((sha, f.rule))
+            if reason is not None and not any(p.startswith("tests/") for p in paths):
+                warnings.append(f"accepted history finding {f.rule} in {gate_mask(path)} (blob {sha[:12]}): {reason}")
+                continue
             f.rule = "HISTORY_" + f.rule
             findings.append(f)
     for path in sorted({p for paths in blobs.values() for p in paths}):
         for f in scan_path_names(path):
             f.rule = "HISTORY_" + f.rule
             findings.append(f)
-    return findings
+    return findings, warnings
 
 
 def check_authors(repo: Path, forbidden) -> tuple[list[Finding], list[str]]:
@@ -255,7 +278,9 @@ def run(repo: Path, private_root: Path | None = None, allow: dict | None = None,
             rep.findings += scan_parquet_names(repo, path, forbidden, private)
         rep.n_files += 1
         rep.n_bytes += size
-    rep.findings += check_history(repo, allow, forbidden, private)
+    f, w = check_history(repo, allow, forbidden, private)
+    rep.findings += f
+    rep.warnings += w
     f, w = check_authors(repo, forbidden)
     rep.findings += f
     rep.warnings += w

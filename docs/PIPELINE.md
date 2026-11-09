@@ -204,7 +204,9 @@ Append-only deviations / additions agreed per module (the stage table above stay
 - Gate findings are aggregated per (gate, rule, file[, column]) with a hit count; paths / columns / details are masked
   (`vtt.gate.rules.gate_mask`). Hard rules: HEX16, HEX12, ROUTE_DATE, ROUTE_NUM, PATHS, COORD, VIN, MONO, ANON_AUTH, ACRONYM
   (the driver-assistance acronym; only the citation token and the single README bibtex fence are exempt), FORBIDDEN, EXACT (G9);
-  allow-listable via `vtt/gate/gate_allow.json`: ISO_DATE per file and the one contact e-mail. Deviation: G3 compares column NAMES
+  allow-listable via `vtt/gate/gate_allow.json`: ISO_DATE per file and the one contact e-mail; in addition, findings inside
+  already-pushed git blobs can be accepted one by one (`history_accepted`: blob sha + rule + reason, reported as a warning), since
+  public history is never rewritten (approved for six harmless hits of the first paper commit on 9 Nov 2026). Deviation: G3 compares column NAMES
   (exact list) like `vtt.schema.check_public_parquet`; a dtype drift is reported as a warning, not a finding. G5 flags `|x| >= 1e9`
   in numeric and sequence columns outside `COUNTER_ALLOW` and a `t_s` that does not start at 0 or is not strictly increasing.
   Extra tree checks: required files, `index/drives.file` == the `data/` file set, drive-id uniqueness, pseudonym formats.

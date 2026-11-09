@@ -162,3 +162,34 @@ def test_coord_rule_applies_to_names_not_to_source_prose(root):
     commit_file(repo, "vtt/labels.py", f"X = '{hex16(2)}'\n", "leak")           # identifier rules unchanged
     rep = pre_push.run(repo, private_root=None, python=sys.executable)
     assert ("HEX16", "vtt/labels.py", "") in {(f.rule, f.path, f.column) for f in rep.findings}
+
+
+def blob_sha(repo: Path, rev_path: str) -> str:
+    return subprocess.run(["git", "-C", str(repo), "rev-parse", rev_path], check=True, capture_output=True).stdout.decode().strip()
+
+
+def test_accepted_history_finding_is_bound_to_the_blob(root):
+    """A reviewed finding in already-published history can be accepted for one blob sha and one rule, with a reason;
+    the gate then warns instead of failing. Another blob, a missing reason, another rule or a tests/ path do not."""
+    repo = make_repo(root)
+    commit_file(repo, "notes.md", "contact someone@" + "example.org for details\n", "leak")
+    sha = blob_sha(repo, "HEAD:notes.md")
+    commit_file(repo, "notes.md", "contact address removed\n", "fix")
+    base = {"email": "", "iso_date_files": [], "pre_push_iso_date_files": []}
+    rep = pre_push.run(repo, private_root=None, allow=dict(base), python=sys.executable)
+    assert any(f.rule == "HISTORY_EMAIL" for f in rep.findings), rep.counts()
+    dashed = "-".join(sha[i:i + 8] for i in range(0, 40, 8))          # the form used in gate_allow.json
+    good = dict(base, history_accepted=[{"blob": dashed, "rule": "EMAIL", "reason": "example address in a test"}])
+    rep = pre_push.run(repo, private_root=None, allow=good, python=sys.executable)
+    assert not any(f.rule == "HISTORY_EMAIL" for f in rep.findings), rep.counts()
+    assert any("accepted history finding EMAIL" in w for w in rep.warnings), rep.warnings
+    rep = pre_push.run(repo, private_root=None, allow=dict(base, history_accepted=[{"blob": sha, "rule": "EMAIL", "reason": "plain sha"}]), python=sys.executable)
+    assert not any(f.rule == "HISTORY_EMAIL" for f in rep.findings), rep.counts()
+    for bad in ({"blob": "0" * 40, "rule": "EMAIL", "reason": "x"}, {"blob": sha, "rule": "EMAIL", "reason": ""},
+                {"blob": sha, "rule": "PATHS", "reason": "x"}, {"blob": sha[:12], "rule": "EMAIL", "reason": "x"}):
+        rep = pre_push.run(repo, private_root=None, allow=dict(base, history_accepted=[bad]), python=sys.executable)
+        assert any(f.rule == "HISTORY_EMAIL" for f in rep.findings), bad
+    # the same content under tests/ is never accepted
+    commit_file(repo, "tests/notes_tests.py", "contact someone@" + "example.org for details\n", "tests copy")
+    rep = pre_push.run(repo, private_root=None, allow=good, python=sys.executable)
+    assert any(f.rule in ("EMAIL", "HISTORY_EMAIL") for f in rep.findings), rep.counts()
