@@ -14,7 +14,11 @@ and the unit-level protocols drive_full / drive_human_only / vehicle_full / vehi
 <data-root>/experiments/recipe/results/<tag>.json + <tag>_oof.npz (predictions on the held-out car models); a non-fold
 run that skips the test split goes to <data-root>/experiments/results_notest (run_paths), because experiments/results is
 rendered into RESULTS.md and needs the test protocols. include_hybrids lets the HEV / PHEV windows of the bev_ice task
-train without a class label (auxiliary heads only). Prints counts and metrics only.
+train without a class label (auxiliary heads only). `channels` (opt-in) restricts the input to a channel subset: every
+other channel is set to NaN, i.e. to the missing value 0, on train, validation and test (reduced-input variants for the
+external transfer test, experiments/transfer/); `tag_prefix` replaces the split column at the front of the tag (e.g.
+transfer__<task>__<model>__<recipe>__s<seed>) so such variants do not collide with the published runs. Prints counts and
+metrics only.
 """
 from __future__ import annotations
 
@@ -34,7 +38,7 @@ import torch.nn.functional as F
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from vtt import config as C  # noqa: E402
-from experiments.data import PROTOCOLS, TASKS, Augment, Preprocess, WindowData, iterate_batches  # noqa: E402
+from experiments.data import PROTOCOLS, TASKS, Augment, Preprocess, WindowData, channel_keep, iterate_batches  # noqa: E402
 from experiments.models import MODELS, build_model, coral_predict, coral_targets, n_params  # noqa: E402
 from experiments import internal_folds as IF  # noqa: E402
 
@@ -370,15 +374,19 @@ def _select_metric(select_on: str, data: WindowData, va: np.ndarray, probs: np.n
 
 
 def run_paths(task: str, split_col: str, model_name: str, seed: int, recipe_id: str = "", fold: int | None = None,
-              eval_test: bool = True, out_dir: Path | None = None, ckpt_dir: Path | None = None) -> tuple[str, str, Path, Path]:
+              eval_test: bool = True, out_dir: Path | None = None, ckpt_dir: Path | None = None,
+              tag_prefix: str | None = None) -> tuple[str, str, Path, Path]:
     """(tag, model key, results folder, checkpoint folder) of a run. Non-fold runs keep the published layout: tag
     split_col__task__model[__recipe_id]__sSEED, results in experiments/results (rendered into RESULTS.md by run_all) and
     checkpoints in experiments/ckpt; one that skips the test split has no protocols for that table, so it goes to
-    experiments/results_notest (an explicit experiments/results is refused). Fold runs: tag
+    experiments/results_notest (an explicit experiments/results is refused). `tag_prefix` replaces the split column at the
+    front of a non-fold tag (reduced-input variants: transfer__task__model__recipe_id__sSEED). Fold runs: tag
     foldK__task__model__recipe_id__sSEED under experiments/recipe/{results,ckpt}."""
     model_key = model_name if not recipe_id else f"{model_name}__{recipe_id}"
+    if tag_prefix is not None and (not tag_prefix or "__" in tag_prefix or "/" in tag_prefix):
+        raise ValueError(f"tag_prefix must be a non-empty name without '__' or '/', got {tag_prefix!r}")
     if fold is None:
-        tag = f"{split_col}__{task}__{model_key}__s{seed}"
+        tag = f"{tag_prefix or split_col}__{task}__{model_key}__s{seed}"
         out = Path(out_dir or (EXP_ROOT / "results" if eval_test else NOTEST_ROOT))
         if not eval_test and out.resolve() == (EXP_ROOT / "results").resolve():
             raise ValueError("a non-fold run without the test split cannot be written to experiments/results (RESULTS.md needs the "
@@ -394,7 +402,8 @@ def run(task: str, split_col: str, model_name: str, seed: int = 0, data: WindowD
         unit_power: float = 0.5, das_beta: float = 0.0, augment: str = "", fold: int | None = None, folds: dict | None = None,
         select_on: str = "val_window_f1", fixed_epochs: int | None = None, decision: str = "softmax", adv_lambda: float = 0.0,
         dro: bool = False, eval_test: bool = True, predict_train: bool = False, save_emb: bool = False, limit_train: int = 0,
-        recipe_id: str = "", limit_val: int = 0, ckpt_dir: Path | None = None, include_hybrids: bool = False, **hp) -> dict:
+        recipe_id: str = "", limit_val: int = 0, ckpt_dir: Path | None = None, include_hybrids: bool = False,
+        channels: list[str] | str | None = None, tag_prefix: str | None = None, **hp) -> dict:
     """Train one configuration and write its results JSON (+ npz predictions); returns the result dict.
 
     aux: heads joined by "+" out of cls / coral / fp / mass / pt4; sampling: class | class_model (model-balanced inside
@@ -410,12 +419,21 @@ def run(task: str, split_col: str, model_name: str, seed: int = 0, data: WindowD
     windows whose task label is known but outside the task classes (bev_ice: HEV / PHEV, WindowData.extra_mask) without
     a class label (y = -1: ignored by the cls / CORAL losses, drawn in proportion to their number, never cut-mixed) so
     the pt4 / mass / fp heads train on them (plan stage S4). A non-fold run with eval_test=False is written to
-    experiments/results_notest (run_paths): experiments/results is rendered into RESULTS.md and needs the test protocols."""
+    experiments/results_notest (run_paths): experiments/results is rendered into RESULTS.md and needs the test protocols.
+    channels (opt-in, comma string or list of channel names): every channel outside the list is set to NaN, i.e. to the
+    missing value 0, on train, validation and test (Preprocess / Augment `keep`); the list is stored as cfg["channels"]
+    in the checkpoint and the results JSON (absent / None = every channel, the default). tag_prefix replaces the split
+    column at the front of the tag (run_paths)."""
     cfg = dict(DEFAULTS)
     cfg["lr"] = LR_BY_MODEL.get(model_name, cfg["lr"])
     cfg.update({k: v for k, v in hp.items() if v is not None})
     if fixed_epochs:
         cfg["epochs"] = int(fixed_epochs)
+    if isinstance(channels, str):
+        channels = [c for c in channels.split(",") if c]
+    if channels is not None:
+        channels = list(dict.fromkeys(str(c) for c in channels))
+        cfg["channels"] = channels
     aux_parts = _parts(aux, AUX_PARTS, "+", "aux parts") or ["cls"]
     aug_parts = _parts(augment, AUGMENTS, ",", "augmentations")
     if sampling not in SAMPLING:
@@ -432,10 +450,11 @@ def run(task: str, split_col: str, model_name: str, seed: int = 0, data: WindowD
     k = len(classes)
     if decision in ("fp", "avg") and k != len(C.FOOTPRINT_THRESHOLDS_M2) + 1:
         raise ValueError("footprint-bucket decisions apply to the size task only")
-    tag, model_key, out_dir, ckpt_dir = run_paths(task, split_col, model_name, seed, recipe_id, fold, eval_test, out_dir, ckpt_dir)
+    tag, model_key, out_dir, ckpt_dir = run_paths(task, split_col, model_name, seed, recipe_id, fold, eval_test, out_dir, ckpt_dir, tag_prefix)
     out_dir.mkdir(parents=True, exist_ok=True)
     ckpt_dir.mkdir(parents=True, exist_ok=True)
     data = data or WindowData()
+    keep = None if channels is None else channel_keep(data.channels, channels)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -499,7 +518,7 @@ def run(task: str, split_col: str, model_name: str, seed: int = 0, data: WindowD
     if adv_lambda > 0:
         heads["dom"] = n_models
     mean, std = data.norm_stats(tr, seed=seed)
-    prep = Preprocess(mean, std, data.clip_lo, data.clip_hi).to(device)
+    prep = Preprocess(mean, std, data.clip_lo, data.clip_hi, keep=keep).to(device)
     model = build_model(model_name, len(data.channels), k, d=cfg["d"], n_layers=cfg["n_layers"], dropout=cfg["dropout"],
                         heads=heads or None).to(device)
     use_all = bool(heads)
@@ -507,14 +526,15 @@ def run(task: str, split_col: str, model_name: str, seed: int = 0, data: WindowD
     if aug_parts:
         aug = Augment(data.channels, mean, std, p_flip=0.5 if "flip" in aug_parts else 0.0, p_mask=0.5 if "mask" in aug_parts else 0.0,
                       p_chdrop=0.1 if "chdrop" in aug_parts else 0.0, noise=0.02 if "noise" in aug_parts else 0.0,
-                      p_cutmix=0.25 if "cutmix" in aug_parts else 0.0).to(device)
+                      p_cutmix=0.25 if "cutmix" in aug_parts else 0.0, keep=keep).to(device)
         aug.train()
     dro_state = GroupDRO(n_models, eta=float(cfg.get("dro_eta", 1.0))) if dro else None
     amp = model_name not in NO_AMP and device.type == "cuda"
     log(f"[{tag}] train={len(tr)} val={len(va)} test={len(te)} params={n_params(model)} amp={amp} "
         f"class_counts={np.bincount(y_all[tr][y_all[tr] >= 0], minlength=k).tolist()} extra={n_extra} aux={'+'.join(aux_parts)} sampling={sampling} "
         f"augment={augment or '-'} decision={decision} select_on={select_on}"
-        + (f" fold={fold} heldout_models={len(heldout)}" if fold is not None else ""))
+        + (f" fold={fold} heldout_models={len(heldout)}" if fold is not None else "")
+        + (f" channels={int(keep.sum())}/{len(data.channels)}" if keep is not None else ""))
 
     # ---- optimisation
     opt = torch.optim.AdamW(model.parameters(), lr=cfg["lr"], weight_decay=cfg["wd"], betas=(0.9, 0.98))
@@ -635,7 +655,8 @@ def run(task: str, split_col: str, model_name: str, seed: int = 0, data: WindowD
                   loss_parts=best["parts"], aux="+".join(aux_parts), sampling=sampling, unit_power=unit_power, das_beta=das_beta,
                   augment=augment, select_on=select_on, fixed_epochs=fixed_epochs, adv_lambda=adv_lambda, dro=bool(dro),
                   eval_test=bool(eval_test), limit_train=int(limit_train), fp_sigma=sigma, heldout_models=heldout,
-                  best_select_metric=best["metric"], include_hybrids=bool(include_hybrids), n_train_extra=n_extra)
+                  best_select_metric=best["metric"], include_hybrids=bool(include_hybrids), n_train_extra=n_extra,
+                  channels=channels)
     (out_dir / f"{tag}.json").write_text(json.dumps(result, indent=1))
     msg = f"[{tag}] DONE best_epoch={best['epoch'] + 1} val_f1={val_metrics['macro_f1']:.4f} val_drive_f1={inner['drive_full']['macro_f1']:.4f}"
     if eval_test:
@@ -678,12 +699,15 @@ def main(argv=None) -> int:
     ap.add_argument("--limit-train", type=int, default=0)
     ap.add_argument("--limit-val", type=int, default=0)
     ap.add_argument("--recipe-id", default="")
+    ap.add_argument("--channels", default=None, help="opt-in input subset, channel names joined by ',': the others become missing (0)")
+    ap.add_argument("--tag-prefix", default=None, help="replaces the split column at the front of the tag (e.g. transfer)")
     a = ap.parse_args(argv)
     run(a.task, a.split_col, a.model, a.seed, epochs=a.epochs, batch=a.batch, lr=a.lr, d=a.d, n_layers=a.n_layers,
         patience=a.patience, out_dir=a.out_dir, aux=a.aux, sampling=a.sampling, unit_power=a.unit_power, das_beta=a.das_beta,
         augment=a.augment, fold=a.fold, select_on=a.select_on, fixed_epochs=a.fixed_epochs, decision=a.decision,
         adv_lambda=a.adv_lambda, dro=a.dro, eval_test=not a.no_test, predict_train=a.predict_train, save_emb=a.save_emb,
-        limit_train=a.limit_train, limit_val=a.limit_val, recipe_id=a.recipe_id, include_hybrids=a.include_hybrids, ckpt_dir=a.ckpt_dir)
+        limit_train=a.limit_train, limit_val=a.limit_val, recipe_id=a.recipe_id, include_hybrids=a.include_hybrids, ckpt_dir=a.ckpt_dir,
+        channels=a.channels, tag_prefix=a.tag_prefix)
     return 0
 
 

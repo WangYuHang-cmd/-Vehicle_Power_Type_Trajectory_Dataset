@@ -20,7 +20,7 @@ torch = pytest.importorskip("torch")
 from vtt import config as C  # noqa: E402
 from experiments import internal_folds as IF  # noqa: E402
 from experiments import models as M  # noqa: E402
-from experiments.data import (BINARY_CHANNELS, FLIP_CHANNELS, Augment, WindowData, iterate_batches)  # noqa: E402
+from experiments.data import (BINARY_CHANNELS, FLIP_CHANNELS, Augment, Preprocess, WindowData, channel_keep, iterate_batches)  # noqa: E402
 from experiments.features_baseline import STATS, window_features  # noqa: E402
 from experiments.train import (EXP_ROOT, NOTEST_ROOT, PROTOCOLS, RECIPE_ROOT, UNIT_PROTOCOLS, GroupDRO, aggregate_probs,  # noqa: E402
                                balanced_accuracy, class_probs_from_regression, confusion, decide, drive_level, macro_f1, metrics,
@@ -275,6 +275,70 @@ def test_mask_chdrop_noise_cutmix_augmentations():
     out = aug(xa, y=torch.tensor([-1, -1, 1, 1]), model_id=torch.tensor([1, 2, 3, 4]))
     assert torch.equal(out[0], xa[0]) and torch.equal(out[1], xa[1])   # windows without a class label are neither cut nor partners
     assert (out[2] == 3.0).any() and (out[3] == 2.0).any()
+
+
+# ----------------------------------------------------------------------------- opt-in channel mask (reduced-input variants)
+V3 = ["v_mps", "a_mps2", "standstill"]
+
+
+def test_channel_keep_mask_names_and_errors():
+    keep = channel_keep(CHANNELS, V3)
+    assert keep.dtype == bool and keep.sum() == 3 and [c for c, k in zip(CHANNELS, keep) if k] == V3
+    assert np.array_equal(channel_keep(CHANNELS, "v_mps,a_mps2,standstill,"), keep)      # comma string, trailing comma ignored
+    assert np.array_equal(channel_keep(CHANNELS, V3 + ["v_mps"]), keep)                  # duplicates ignored
+    with pytest.raises(ValueError):
+        channel_keep(CHANNELS, ["v_mps", "speed"])                                      # unknown name
+    with pytest.raises(ValueError):
+        channel_keep(CHANNELS, [])                                                      # nothing kept
+
+
+def test_preprocess_channel_mask_makes_masked_channels_missing_and_default_unchanged():
+    torch.manual_seed(0)
+    C_ = len(CHANNELS)
+    mean = np.random.default_rng(0).normal(size=C_).astype(np.float32)
+    std = np.random.default_rng(1).uniform(0.5, 2.0, size=C_).astype(np.float32)
+    lo = np.full(C_, -3.0, np.float32); hi = np.full(C_, 3.0, np.float32)
+    x = torch.randn(2, 600, C_) * 2
+    x[0, :10, 0] = float("nan")                                                        # NaN input stays the missing value 0
+    ref = Preprocess(mean, std, lo, hi)(x)
+    manual = torch.nan_to_num((torch.clamp(x, -3.0, 3.0) - torch.as_tensor(mean)) / torch.as_tensor(std), nan=0.0)
+    assert torch.allclose(ref, manual) and (ref[0, :10, 0] == 0).all()                  # keep=None: the published behaviour
+    keep = channel_keep(CHANNELS, V3)
+    out = Preprocess(mean, std, lo, hi, keep=keep)(x)
+    kept = torch.as_tensor(keep)
+    assert (out[:, :, ~kept] == 0).all()                                               # masked channels -> exactly 0 on every sample
+    assert torch.equal(out[:, :, kept], ref[:, :, kept])                               # kept channels untouched
+    assert out.shape == ref.shape and torch.isfinite(out).all()
+
+
+def test_augment_keep_mask_resets_masked_channels_and_default_unchanged():
+    torch.manual_seed(0)
+    C_ = len(CHANNELS)
+    mean = np.zeros(C_, np.float32); std = np.ones(C_, np.float32)
+    mean[CHANNELS.index("lead_valid")] = 0.6; std[CHANNELS.index("lead_valid")] = 0.5
+    keep = channel_keep(CHANNELS, ["v_mps", "a_mps2", "standstill", "das_enabled", "steer_angle_deg", "yaw_rate_radps"])
+    kept = torch.as_tensor(keep)
+    x = torch.ones(8, 600, C_)
+    x[:, :, ~kept] = 0.0                                                               # what Preprocess(keep) hands over
+    aug = Augment(CHANNELS, mean, std, p_flip=0.5, p_mask=1.0, mask_s=(3.0, 3.0), p_chdrop=1.0, noise=0.1, keep=keep).train()
+    out = aug(x)
+    assert (out[:, :, ~kept] == 0).all()                                               # no noise, no lead_valid fill-in on masked channels
+    assert not torch.equal(out[:, :, kept], x[:, :, kept])                             # kept channels are still augmented
+    torch.manual_seed(0)
+    ref = Augment(CHANNELS, mean, std, p_flip=0.5, p_mask=1.0, mask_s=(3.0, 3.0), p_chdrop=1.0, noise=0.1).train()(x)
+    assert (ref[:, :, ~kept] != 0).any()                                               # keep=None: masked-by-hand channels get noise as before
+    lv = CHANNELS.index("lead_valid")
+    assert ((ref[:, :, lv] == (0.0 - 0.6) / 0.5).sum(1) >= 30).all()                   # ... and the lead_valid fill-in (span or group drop)
+
+
+def test_run_paths_tag_prefix_replaces_the_split_column():
+    tag, key, out, ck = run_paths("size", "split_platform", "gru", 1, recipe_id="V3", tag_prefix="transfer")
+    assert tag == "transfer__size__gru__V3__s1" and key == "gru__V3" and out == EXP_ROOT / "results" and ck == EXP_ROOT / "ckpt"
+    assert run_paths("size", "split_platform", "gru", 1)[0] == "split_platform__size__gru__s1"       # default unchanged
+    assert run_paths("size", "split_platform", "gru", 1, recipe_id="V3", fold=0, eval_test=False, tag_prefix="transfer")[0] == "fold0__size__gru__V3__s1"
+    for bad in ("", "a__b", "x/y"):
+        with pytest.raises(ValueError):
+            run_paths("size", "split_platform", "gru", 1, tag_prefix=bad)
 
 
 # ----------------------------------------------------------------------------- internal folds
@@ -617,3 +681,28 @@ def test_run_smoke_final_with_test_protocols_hybrids_dro_and_adversary(tmp_path)
     assert ck["heads"] == {"mass": 1, "pt4": 4, "dom": len(data.model_codes)} and ck["recipe_id"] == "smoke" and ck["fold"] is None
     m = M.build_model("gru", len(ck["channels"]), len(ck["classes"]), d=32, n_layers=1, heads=ck["heads"])
     m.load_state_dict(ck["state"], strict=True)
+
+
+@pytest.mark.skipif(not HAVE_CACHE, reason="tensor cache absent")
+def test_run_smoke_channel_subset_variant_records_mask_and_reloads(tmp_path):
+    from experiments.regen_probs import load_checkpoint
+    from experiments.run_all import load_results
+    from experiments.train import predict_probs, run
+    data = WindowData(in_ram=False)
+    r = run("size", "split_platform", "gru", seed=0, data=data, out_dir=tmp_path, ckpt_dir=tmp_path, log=lambda s: None,
+            aux="cls+fp", augment="flip,mask,chdrop,noise", fixed_epochs=1, eval_test=True, limit_train=800, limit_val=300,
+            recipe_id="smoke", channels=",".join(V3), tag_prefix="transfer", d=32, n_layers=1, eval_batch=1024)
+    assert r["tag"] == "transfer__size__gru__smoke__s0" and r["split_col"] == "split_platform" and r["channels"] == V3
+    assert r["cfg"]["channels"] == V3 and set(r["protocols"]) == set(PROTOCOLS) and r["unit_level"]["vehicle_full"]["n_units"] > 0
+    ck = torch.load(tmp_path / f"{r['tag']}.pt", map_location="cpu", weights_only=False)
+    assert ck["cfg"]["channels"] == V3 and list(ck["channels"]) == CHANNELS                 # subset in cfg, tensor order unchanged
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model, prep, _ = load_checkpoint(tmp_path / f"{r['tag']}.pt", device)                 # strict load with the fp head
+    assert prep.drop is not None and prep.drop.sum().item() == len(CHANNELS) - 3
+    z = np.load(tmp_path / f"{r['tag']}_probs.npz")
+    te = data.indices("size", "split_platform", "test")[:256]
+    again = predict_probs(model, prep, data, te, device, 256, amp=False)
+    assert np.allclose(again, z["probs"][:256], atol=2e-3)                                 # the reloaded mask reproduces the saved probabilities
+    x = prep(data.batch(te[:8]).to(device))
+    assert (x[:, :, [i for i, c in enumerate(CHANNELS) if c not in V3]] == 0).all()
+    assert load_results(tmp_path) == [] and len(load_results(tmp_path, official_only=False)) == 1   # kept out of the official tables

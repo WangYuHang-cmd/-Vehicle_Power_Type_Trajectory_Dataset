@@ -27,7 +27,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from vtt import config as C  # noqa: E402
-from experiments.data import CLIP, Preprocess, WindowData  # noqa: E402
+from experiments.data import CLIP, Preprocess, WindowData, channel_keep  # noqa: E402
 from experiments.models import build_model  # noqa: E402
 from experiments.train import macro_f1, predict_probs  # noqa: E402
 
@@ -53,12 +53,14 @@ def clip_bounds(channels: list[str]) -> tuple[np.ndarray, np.ndarray]:
 
 
 def load_checkpoint(path: Path, device: torch.device) -> tuple[torch.nn.Module, Preprocess, dict]:
-    """Rebuild the network of a checkpoint, load its weights (strict; the non-strict fallback prints key counts) and
-    its pre-processing; returns (model in eval mode on `device`, prep, checkpoint dict)."""
+    """Rebuild the network of a checkpoint (with its auxiliary heads, `heads`, when it has them), load its weights (strict;
+    the non-strict fallback prints key counts) and its pre-processing; returns (model in eval mode on `device`, prep,
+    checkpoint dict). A reduced-input checkpoint (cfg["channels"], experiments.train.run(channels=...)) gets the same
+    channel mask in its Preprocess, so the channels it never saw stay the missing value 0."""
     ck = torch.load(Path(path), map_location="cpu", weights_only=False)
     cfg = ck["cfg"]
     model = build_model(ck["model"], len(ck["channels"]), len(ck["classes"]), d=cfg["d"], n_layers=cfg["n_layers"],
-                        dropout=cfg["dropout"])
+                        dropout=cfg["dropout"], heads=ck.get("heads") or None)
     try:
         model.load_state_dict(ck["state"], strict=True)
     except RuntimeError:
@@ -66,7 +68,8 @@ def load_checkpoint(path: Path, device: torch.device) -> tuple[torch.nn.Module, 
         info = model.load_state_dict(ck["state"], strict=False)
         print(f"[{Path(path).stem}] non-strict load: missing={len(info.missing_keys)} unexpected={len(info.unexpected_keys)}", flush=True)
     lo, hi = clip_bounds(list(ck["channels"]))
-    prep = Preprocess(np.asarray(ck["mean"], dtype=np.float32), np.asarray(ck["std"], dtype=np.float32), lo, hi).to(device)
+    keep = channel_keep(list(ck["channels"]), cfg["channels"]) if cfg.get("channels") else None
+    prep = Preprocess(np.asarray(ck["mean"], dtype=np.float32), np.asarray(ck["std"], dtype=np.float32), lo, hi, keep=keep).to(device)
     return model.to(device).eval(), prep, ck
 
 

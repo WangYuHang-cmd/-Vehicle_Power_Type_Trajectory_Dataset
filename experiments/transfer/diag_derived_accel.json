@@ -1,0 +1,606 @@
+{
+ "generated": "9 Nov 2026 21:29",
+ "n_max": 8000,
+ "tasks": {
+  "size": {
+   "n_windows": 8000,
+   "n_drives": 1058,
+   "variants": {
+    "V3 speed-only": {
+     "CAN aEgo (as trained)": {
+      "window": {
+       "accuracy": 0.48,
+       "macro_f1": 0.425077,
+       "recall": [
+        0.587483,
+        0.386512,
+        0.30581
+       ],
+       "pred_share": [
+        0.50225,
+        0.309625,
+        0.188125
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.521739,
+       "macro_f1": 0.450076,
+       "recall": [
+        0.703237,
+        0.350943,
+        0.28692
+       ],
+       "pred_share": [
+        0.590737,
+        0.257089,
+        0.152174
+       ]
+      }
+     },
+     "a := smooth_derivative(v), 0.5 s (ULTra-AV / OpenACC / microSIM / UGA / A2D2 / Tesla)": {
+      "window": {
+       "accuracy": 0.4495,
+       "macro_f1": 0.336984,
+       "recall": [
+        0.632937,
+        0.359336,
+        0.06789
+       ],
+       "pred_share": [
+        0.615,
+        0.33675,
+        0.04825
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.434783,
+       "macro_f1": 0.328574,
+       "recall": [
+        0.586331,
+        0.475472,
+        0.033755
+       ],
+       "pred_share": [
+        0.562382,
+        0.414934,
+        0.022684
+       ]
+      }
+     },
+     "a := smooth_derivative(v), 1.0 s": {
+      "window": {
+       "accuracy": 0.486375,
+       "macro_f1": 0.344388,
+       "recall": [
+        0.738465,
+        0.274786,
+        0.068502
+       ],
+       "pred_share": [
+        0.71525,
+        0.2325,
+        0.05225
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.468809,
+       "macro_f1": 0.328267,
+       "recall": [
+        0.728417,
+        0.316981,
+        0.029536
+       ],
+       "pred_share": [
+        0.712665,
+        0.253308,
+        0.034026
+       ]
+      }
+     },
+     "v smoothed 0.5 s + derived a (GNSS-spline-like)": {
+      "window": {
+       "accuracy": 0.4765,
+       "macro_f1": 0.325303,
+       "recall": [
+        0.734125,
+        0.266734,
+        0.04159
+       ],
+       "pred_share": [
+        0.719,
+        0.23725,
+        0.04375
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.454631,
+       "macro_f1": 0.300644,
+       "recall": [
+        0.728417,
+        0.279245,
+        0.008439
+       ],
+       "pred_share": [
+        0.729679,
+        0.256144,
+        0.014178
+       ]
+      }
+     },
+     "v held at 1 Hz + derived a, 1.0 s (VED-like)": {
+      "window": {
+       "accuracy": 0.492,
+       "macro_f1": 0.311311,
+       "recall": [
+        0.797168,
+        0.205838,
+        0.02263
+       ],
+       "pred_share": [
+        0.787875,
+        0.1735,
+        0.038625
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.480151,
+       "macro_f1": 0.297291,
+       "recall": [
+        0.820144,
+        0.181132,
+        0.016878
+       ],
+       "pred_share": [
+        0.826087,
+        0.1569,
+        0.017013
+       ]
+      }
+     }
+    },
+    "V2 longitudinal-only": {
+     "CAN aEgo (as trained)": {
+      "window": {
+       "accuracy": 0.415625,
+       "macro_f1": 0.34794,
+       "recall": [
+        0.560302,
+        0.180674,
+        0.313761
+       ],
+       "pred_share": [
+        0.554625,
+        0.20925,
+        0.236125
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.441399,
+       "macro_f1": 0.3491,
+       "recall": [
+        0.661871,
+        0.135849,
+        0.265823
+       ],
+       "pred_share": [
+        0.65879,
+        0.160681,
+        0.180529
+       ]
+      }
+     },
+     "a := smooth_derivative(v), 0.5 s (ULTra-AV / OpenACC / microSIM / UGA / A2D2 / Tesla)": {
+      "window": {
+       "accuracy": 0.42175,
+       "macro_f1": 0.33808,
+       "recall": [
+        0.599589,
+        0.170609,
+        0.250765
+       ],
+       "pred_share": [
+        0.598625,
+        0.1995,
+        0.201875
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.435728,
+       "macro_f1": 0.312095,
+       "recall": [
+        0.708633,
+        0.116981,
+        0.151899
+       ],
+       "pred_share": [
+        0.720227,
+        0.148393,
+        0.13138
+       ]
+      }
+     },
+     "a := smooth_derivative(v), 1.0 s": {
+      "window": {
+       "accuracy": 0.418,
+       "macro_f1": 0.333194,
+       "recall": [
+        0.596619,
+        0.150981,
+        0.26422
+       ],
+       "pred_share": [
+        0.600625,
+        0.18375,
+        0.215625
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.433837,
+       "macro_f1": 0.320592,
+       "recall": [
+        0.688849,
+        0.109434,
+        0.198312
+       ],
+       "pred_share": [
+        0.701323,
+        0.136106,
+        0.162571
+       ]
+      }
+     },
+     "v smoothed 0.5 s + derived a (GNSS-spline-like)": {
+      "window": {
+       "accuracy": 0.421875,
+       "macro_f1": 0.335044,
+       "recall": [
+        0.605299,
+        0.160544,
+        0.248318
+       ],
+       "pred_share": [
+        0.607125,
+        0.190375,
+        0.2025
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.44518,
+       "macro_f1": 0.320628,
+       "recall": [
+        0.721223,
+        0.120755,
+        0.160338
+       ],
+       "pred_share": [
+        0.725898,
+        0.143667,
+        0.130435
+       ]
+      }
+     },
+     "v held at 1 Hz + derived a, 1.0 s (VED-like)": {
+      "window": {
+       "accuracy": 0.420125,
+       "macro_f1": 0.329456,
+       "recall": [
+        0.605756,
+        0.122798,
+        0.284404
+       ],
+       "pred_share": [
+        0.606,
+        0.15525,
+        0.23875
+       ]
+      },
+      "drive": {
+       "n": 1058,
+       "accuracy": 0.435728,
+       "macro_f1": 0.30935,
+       "recall": [
+        0.706835,
+        0.071698,
+        0.206751
+       ],
+       "pred_share": [
+        0.717391,
+        0.100189,
+        0.18242
+       ]
+      }
+     }
+    }
+   }
+  },
+  "bev_ice": {
+   "n_windows": 8000,
+   "n_drives": 802,
+   "variants": {
+    "V3 speed-only": {
+     "CAN aEgo (as trained)": {
+      "window": {
+       "accuracy": 0.770625,
+       "macro_f1": 0.747459,
+       "recall": [
+        0.68711,
+        0.81372
+       ],
+       "pred_share": [
+        0.35675,
+        0.64325
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.86783,
+       "macro_f1": 0.857699,
+       "recall": [
+        0.765079,
+        0.934292
+       ],
+       "pred_share": [
+        0.340399,
+        0.659601
+       ]
+      }
+     },
+     "a := smooth_derivative(v), 0.5 s (ULTra-AV / OpenACC / microSIM / UGA / A2D2 / Tesla)": {
+      "window": {
+       "accuracy": 0.721875,
+       "macro_f1": 0.646453,
+       "recall": [
+        0.381932,
+        0.89729
+       ],
+       "pred_share": [
+        0.19775,
+        0.80225
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.746883,
+       "macro_f1": 0.700713,
+       "recall": [
+        0.450794,
+        0.938398
+       ],
+       "pred_share": [
+        0.214464,
+        0.785536
+       ]
+      }
+     },
+     "a := smooth_derivative(v), 1.0 s": {
+      "window": {
+       "accuracy": 0.695625,
+       "macro_f1": 0.640818,
+       "recall": [
+        0.448035,
+        0.823384
+       ],
+       "pred_share": [
+        0.269,
+        0.731
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.725686,
+       "macro_f1": 0.699681,
+       "recall": [
+        0.549206,
+        0.839836
+       ],
+       "pred_share": [
+        0.312968,
+        0.687032
+       ]
+      }
+     },
+     "v smoothed 0.5 s + derived a (GNSS-spline-like)": {
+      "window": {
+       "accuracy": 0.710875,
+       "macro_f1": 0.644773,
+       "recall": [
+        0.410577,
+        0.865833
+       ],
+       "pred_share": [
+        0.22825,
+        0.77175
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.729426,
+       "macro_f1": 0.693966,
+       "recall": [
+        0.495238,
+        0.880903
+       ],
+       "pred_share": [
+        0.266833,
+        0.733167
+       ]
+      }
+     },
+     "v held at 1 Hz + derived a, 1.0 s (VED-like)": {
+      "window": {
+       "accuracy": 0.644625,
+       "macro_f1": 0.59767,
+       "recall": [
+        0.445097,
+        0.747584
+       ],
+       "pred_share": [
+        0.318,
+        0.682
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.649626,
+       "macro_f1": 0.63414,
+       "recall": [
+        0.565079,
+        0.704312
+       ],
+       "pred_share": [
+        0.401496,
+        0.598504
+       ]
+      }
+     }
+    },
+    "V2 longitudinal-only": {
+     "CAN aEgo (as trained)": {
+      "window": {
+       "accuracy": 0.768,
+       "macro_f1": 0.742579,
+       "recall": [
+        0.666544,
+        0.820352
+       ],
+       "pred_share": [
+        0.345375,
+        0.654625
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.874065,
+       "macro_f1": 0.863512,
+       "recall": [
+        0.75873,
+        0.948665
+       ],
+       "pred_share": [
+        0.329177,
+        0.670823
+       ]
+      }
+     },
+     "a := smooth_derivative(v), 0.5 s (ULTra-AV / OpenACC / microSIM / UGA / A2D2 / Tesla)": {
+      "window": {
+       "accuracy": 0.728375,
+       "macro_f1": 0.709025,
+       "recall": [
+        0.691149,
+        0.747584
+       ],
+       "pred_share": [
+        0.40175,
+        0.59825
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.862843,
+       "macro_f1": 0.856857,
+       "recall": [
+        0.838095,
+        0.87885
+       ],
+       "pred_share": [
+        0.402743,
+        0.597257
+       ]
+      }
+     },
+     "a := smooth_derivative(v), 1.0 s": {
+      "window": {
+       "accuracy": 0.6085,
+       "macro_f1": 0.603661,
+       "recall": [
+        0.731546,
+        0.545007
+       ],
+       "pred_share": [
+        0.549125,
+        0.450875
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.630923,
+       "macro_f1": 0.628982,
+       "recall": [
+        0.895238,
+        0.459959
+       ],
+       "pred_share": [
+        0.679551,
+        0.320449
+       ]
+      }
+     },
+     "v smoothed 0.5 s + derived a (GNSS-spline-like)": {
+      "window": {
+       "accuracy": 0.69375,
+       "macro_f1": 0.679901,
+       "recall": [
+        0.713551,
+        0.683532
+       ],
+       "pred_share": [
+        0.451625,
+        0.548375
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.805486,
+       "macro_f1": 0.802414,
+       "recall": [
+        0.866667,
+        0.765914
+       ],
+       "pred_share": [
+        0.482544,
+        0.517456
+       ]
+      }
+     },
+     "v held at 1 Hz + derived a, 1.0 s (VED-like)": {
+      "window": {
+       "accuracy": 0.542125,
+       "macro_f1": 0.541518,
+       "recall": [
+        0.742931,
+        0.438507
+       ],
+       "pred_share": [
+        0.62325,
+        0.37675
+       ]
+      },
+      "drive": {
+       "n": 802,
+       "accuracy": 0.527431,
+       "macro_f1": 0.509095,
+       "recall": [
+        0.91746,
+        0.275154
+       ],
+       "pred_share": [
+        0.800499,
+        0.199501
+       ]
+      }
+     }
+    }
+   }
+  }
+ }
+}

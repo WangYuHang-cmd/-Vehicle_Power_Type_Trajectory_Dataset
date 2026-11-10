@@ -34,13 +34,18 @@ NAMES = {"feat_logreg": "hand-crafted features + logistic regression", "feat_hgb
          "mamba1": "Mamba-1 (S6), bidirectional"}
 
 
-def load_results(results_dir: Path) -> list[dict]:
+def load_results(results_dir: Path, official_only: bool = True) -> list[dict]:
+    """Every results JSON of the folder; with official_only (default) the reduced-input variants (cfg["channels"] set by
+    experiments.train.run(channels=...), tags transfer__*) are left out, because the tables are for the official inputs."""
     out = []
     for p in sorted(results_dir.glob("*.json")):
         try:
-            out.append(json.loads(p.read_text()))
+            r = json.loads(p.read_text())
         except ValueError:
             continue
+        if official_only and (r.get("cfg") or {}).get("channels"):
+            continue
+        out.append(r)
     return out
 
 

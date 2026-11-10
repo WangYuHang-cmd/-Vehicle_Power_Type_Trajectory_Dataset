@@ -7,7 +7,9 @@ its curb mass / wheelbase are merged onto the windows for the auxiliary regressi
 windows with a known label outside the task classes (HEV / PHEV for bev_ice) that may train without a class label.
 Pre-processing =
 per-channel clipping of heavy tails, standardisation with train statistics, NaN -> 0 (lead channels carry their own
-validity flag `lead_valid`). `Augment` works in the standardised domain, after `Preprocess`.
+validity flag `lead_valid`). `Augment` works in the standardised domain, after `Preprocess`. Both take an optional
+channel mask `keep` (`channel_keep`): channels outside the mask are set to NaN before the clip, i.e. to the missing
+value 0, so a reduced-input variant trains and evaluates exactly as a dataset without those channels is scored.
 """
 from __future__ import annotations
 
@@ -45,6 +47,19 @@ FLIP_CHANNELS = ("steer_angle_deg", "steer_rate_degps", "steer_torque_norm", "ya
 BINARY_CHANNELS = ("gas_pressed", "brake_pressed", "steer_pressed", "standstill", "das_enabled", "lead_valid")
 CHANNEL_GROUPS = {"lead": ("lead_valid", "lead_d_m", "lead_v_rel_mps", "lead_speed_mps", "lead_a_slope_mps2", "thw_s", "ttc_s"),
                   "torque": ("steer_torque_norm",), "pedals": ("gas_pressed", "brake_pressed")}
+
+
+def channel_keep(channels: list[str], subset) -> np.ndarray:
+    """(C,) bool mask of the channels to keep: `subset` is a comma-separated string or an iterable of channel names, every
+    name must be one of `channels` (the tensor order) and at least one channel must stay; duplicates are ignored."""
+    names = [c for c in subset.split(",") if c] if isinstance(subset, str) else [str(c) for c in subset]
+    bad = sorted(set(names) - set(channels))
+    if bad:
+        raise ValueError(f"unknown channels {bad}; choose from {list(channels)}")
+    keep = np.array([c in set(names) for c in channels], dtype=bool)
+    if not keep.any():
+        raise ValueError("the channel mask keeps no channel")
+    return keep
 
 
 def balanced_list_name(task: str, split: str, split_col: str) -> str:
@@ -231,17 +246,21 @@ class WindowData:
 
 
 class Preprocess(torch.nn.Module):
-    """clip -> standardise -> NaN to 0, on the device."""
+    """clip -> standardise -> NaN to 0, on the device. `keep` ((C,) bool, see `channel_keep`): channels outside the mask
+    are set to NaN first, so they come out as the missing value 0 on every split; None (default) keeps every channel."""
 
-    def __init__(self, mean: np.ndarray, std: np.ndarray, lo: np.ndarray, hi: np.ndarray):
+    def __init__(self, mean: np.ndarray, std: np.ndarray, lo: np.ndarray, hi: np.ndarray, keep: np.ndarray | None = None):
         super().__init__()
         self.register_buffer("mean", torch.as_tensor(mean))
         self.register_buffer("std", torch.as_tensor(std))
         self.register_buffer("lo", torch.as_tensor(np.nan_to_num(lo, neginf=-1e30, posinf=1e30)))
         self.register_buffer("hi", torch.as_tensor(np.nan_to_num(hi, neginf=-1e30, posinf=1e30)))
+        self.register_buffer("drop", None if keep is None else torch.as_tensor(~np.asarray(keep, dtype=bool)))
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x.float()
+        if self.drop is not None:
+            x = x.masked_fill(self.drop, float("nan"))
         x = torch.maximum(torch.minimum(x, self.hi), self.lo)
         x = (x - self.mean) / self.std
         return torch.nan_to_num(x, nan=0.0, posinf=0.0, neginf=0.0)
@@ -260,11 +279,13 @@ class Augment(nn.Module):
     cutmix (p_cutmix, needs y and model_id): a span of the window is replaced by the same span of another window of the
     same class and a different car model from the batch (labels unchanged; windows without a class label, y = -1, are
     neither cut nor used as a partner).
+    keep ((C,) bool, `channel_keep`): channels outside the mask are reset to the missing value 0 after every augmentation
+    (no noise, no lead_valid fill-in on a masked channel); None (default) leaves every channel to the augmentations.
     No speed or amplitude scaling and no time reversal (both change the vehicle signature)."""
 
     def __init__(self, channels: list[str], mean: np.ndarray | None = None, std: np.ndarray | None = None, p_flip: float = 0.5,
                  p_mask: float = 0.5, mask_s: tuple[float, float] = (3.0, 15.0), p_chdrop: float = 0.1, noise: float = 0.02,
-                 p_cutmix: float = 0.0, hz: int = C.NOMINAL_HZ):
+                 p_cutmix: float = 0.0, hz: int = C.NOMINAL_HZ, keep: np.ndarray | None = None):
         super().__init__()
         self.channels = list(channels)
         self.p_flip, self.p_mask, self.p_chdrop, self.noise, self.p_cutmix = float(p_flip), float(p_mask), float(p_chdrop), float(noise), float(p_cutmix)
@@ -287,6 +308,7 @@ class Augment(nn.Module):
         self.register_buffer("cont_mask", cont)
         self.register_buffer("group_table", gtab)
         self.register_buffer("lead_valid_zero", torch.tensor(lv0, dtype=torch.float32))
+        self.register_buffer("drop", None if keep is None else torch.as_tensor(~np.asarray(keep, dtype=bool)))
 
     def _spans(self, B: int, L: int, active: torch.Tensor) -> torch.Tensor:
         """(B, L) bool: one random span of mask_len samples per active row."""
@@ -338,6 +360,8 @@ class Augment(nn.Module):
                 x[:, :, self.lead_valid] = torch.where(lvdrop[:, None], self.lead_valid_zero.to(x.dtype), x[:, :, self.lead_valid])
         if self.noise > 0:
             x = x + torch.randn_like(x) * self.noise * self.cont_mask
+        if self.drop is not None:
+            x = x.masked_fill(self.drop, 0.0)
         return x
 
 
