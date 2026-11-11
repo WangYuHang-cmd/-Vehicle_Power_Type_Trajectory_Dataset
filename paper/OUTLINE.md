@@ -289,3 +289,47 @@ savitzky1964, loshchilov2019adamw, romeraparedes2024funsearch, ismailfawaz2019re
   `\label{sec:...}` names: intro, related, dataset, methods, experiments, discussion, conclusion.
 - Write in plain, direct English; short paragraphs; no bullet lists in the prose except where a list of channels or
   contributions is natural (use the IEEE `itemize` sparingly).
+
+### External validation (verified against experiments/transfer/RESULTS.md on 11 Nov 2026)
+Zero-shot: the final `split_platform` checkpoints (size bi-GRU S9, BEV vs ICE 1-D ResNet B5, seed ensembles) and the channel-subset
+variants of experiments/transfer/VARIANTS.md (V1 lateral + speed = 10 channels, V3 speed-only = speed, acceleration, standstill;
+same recipes, 2 seeds) run unchanged on public sets; vehicle level = device / archive / car; 95 % intervals = cluster bootstrap over
+vehicles. Used in sections/05_experiments.tex (subsection "External Validation on Public Datasets", Table VI `tab:external`),
+00_abstract.tex and 07_conclusion.tex. Only favourable findings are in the paper (owner's instruction, 11 Nov 2026); the
+unfavourable ones stay in RESULTS.md, which the paper points to with one neutral sentence. Source section of RESULTS.md in brackets.
+- commaCarSegments, device-disjoint selection (`ccs`) [2.12, 1.1]: 45,763 one-minute windows, 762.7 h, 4,061 devices absent from the
+  lab library, 113 car models, 161 openpilot platforms; 20 channels decoded from CAN with opendbc where the platform provides them
+  (torque absent on 15.4 %, lead on 55.7 % of the windows); yaw / curvature / lateral acceleration derived from the steering angle
+  with a bicycle model. Understeer correction [2.15, 3.7, UNDERSTEER.md]: one global k = 0.00079289 s^2/m^2 (paper: 0.00079), the
+  hours-weighted median over 62 train / validation platforms fitted on the lab's own IMU / pose yaw, never on external labels.
+- ccs powertrain, full 20-channel model, as-run decode [2.12 (a), 0]: 86 of 88 labelled car models, 97.7 % [96.2, 100.0]; 87.8 %
+  [86.6, 89.1] of 2,512 labelled devices; held-out stratum (29 of the lab's 41 test models): 27 of 27 labelled models, 94.2 %
+  [92.0, 96.2] of 463 devices. Corrected yaw [2.15 (a)]: 88.9 % of devices (paper states both). Speed-only V3 [2.12 (b), 0]:
+  92.6 % [91.5, 93.6] of devices, 87 of 88 models. Not used in the paper (dropped for length, available): device accuracy by minutes
+  per device 80.1 % (one window) -> 96.3 % (10+) [2.12 table f]; hybrids in between, windows called BEV ICE 17.5 / HEV 32.0 /
+  PHEV 44.6 / BEV 78.7 % [2.12, 3.6 point 5].
+- ccs size, full model, corrected yaw [2.15 (a), 3.7]: 63.2 % of 4,061 devices, macro-F1 60.3 (internal held-out vehicle level
+  63.5 / 59.7); 72 of 113 car models; LARGE device recall 51.9 % (532 of 1,025; internal 50.6); SMALL 1,594 of 1,762 devices (not in
+  the paper); recovered LARGE platforms: all four Pacifica, Palisade, CX-9, Sienna 4th gen, both Escalades, Rivian R1, Maverick,
+  Ranger, G80, Hyundai Genesis, Crafter, plus the pickups already right (paper: "Pacifica, Palisade, CX-9, Escalade and
+  fourth-generation Sienna platforms and the pickups").
+- ccs, nine recovered Honda platforms (`ccs_honda`, as-run decode) [2.13, 0]: 2,132 windows, 35.5 h, 230 devices, 5 car models;
+  SMALL 226 of 230 devices (98.3 % [96.5, 99.6]), 5 of 5 models; ICE 227 of 229 devices (99.1 % [97.8, 100.0]), 4 of 4 models;
+  held-out HR-V 5 of 5 on both tasks.
+  (Paper text and Table VI mark these Honda rows "as-run decode"; the corrected-yaw Honda size number, 215 of 230 [2.15 (a)], is not in the paper.)
+- commaSteeringControl (`csc`) [2.10, 1.1]: 36 platform archives (2023 release, lateral controller active, highway), 51,462 windows,
+  857.7 h, 25 car models, one archive = one pseudo-vehicle (no device ids), V1 channel list (speed, CAN aEgo, steering, localizer
+  lateral channels; no lead / torque / pedals). Powertrain, V3 speed-only: 35 of 36 archives, 97.2 % [91.7, 100.0], macro-F1 96.1;
+  model level 96.0 % of 25 = 24 of 25; held-out stratum 9 of 10 archives. Size, V1 lateral + speed: 63.9 % [50.0, 80.6] archive
+  accuracy, macro-F1 62.3; internal V1 vehicle reference 62.6 / 58.0; 64.0 % of 25 models = 16 of 25.
+- MoreTorque/rlogs (`moretorque`) [2.11, 0]: 12 cars, 7,190 windows, 119.8 h, all 20 channels, community openpilot forks; size:
+  all 8 SMALL cars SMALL (vehicle recall SMALL 100.0; Mazda 3 7 of 7); powertrain: all 11 ICE cars ICE.
+- VED (`ved`) [2.7, 0]: 384 cars, 1 Hz OBD speed, V3 speed-only: 258 of 264 ICE cars called ICE (97.7 %).
+- OpenACC one-vehicle campaign (`openacc_500x`) [2.6, 0]: one Fiat 500X, 20 drivers, 429 trips (13,523 windows, 225.4 h), V3
+  speed-only: 99.1 % of the trips ICE (425 of 429).
+- Available but not in the paper (length): OpenACC platoon campaigns [2.2] V2 longitudinal-only calls all 7 BEV cars BEV (Model 3
+  x2, Model S, Model X, e-tron, I-Pace, e-Golf); phase-1 pooled 23 of 24 named BEV cars outside VED [0]; Yuan et al. Tesla Model 3
+  80.2 % of 106 urban trips BEV [2.5] (no verified bib entry requested).
+- Bib entries added (refs.bib): commasteeringcontrol, commacarsegments, moretorque (Hugging Face URLs), oh2019ved (arXiv:1905.02081),
+  makridis2021openacc (TR-C 125, 103047). Removed from the bibliography by the trims: breiman2001rf and tan2024llmts are no longer
+  cited (entries kept in refs.bib).

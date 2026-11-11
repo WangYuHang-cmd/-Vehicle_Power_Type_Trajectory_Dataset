@@ -122,7 +122,7 @@ Episode MIL, bag & 96.0 & 98.2 & 93.2 & 95.8 \\
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.85\columnwidth]{evidence_sufficiency.pdf}
+\includegraphics[width=0.75\columnwidth]{evidence_sufficiency.pdf}
 \caption{Evidence sufficiency on held-out car models (reference predictions, drive-level macro-F1 in percent): on test drives with at least 32 eligible windows, $m$ windows are drawn per drive and their probability vectors averaged (mean over 50 draws; band: one std). Size moves from 52.6 ($m = 1$) to 54.9 ($m = 32$; all windows 56.0), BEV vs ICE from 79.7 to 89.3 (all windows 89.1), saturating by 8--16 windows.}
 \label{fig:evidence}
 \end{figure}
@@ -133,12 +133,12 @@ Three zero-training oracles bound the size task on the held-out models: a per-ca
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.85\columnwidth]{footprint_noise_oracle.pdf}
+\includegraphics[width=0.75\columnwidth]{footprint_noise_oracle.pdf}
 \caption{Footprint-noise oracle for the size task on held-out car models (drive-level macro-F1 in percent, 200 repeats): each drive is classified from the true footprint of its car model plus an error, cut at the fixed thresholds 4.43 and 4.88 m$^2$; per-drive noise of std $\sigma$ (circles) or a per-car-model bias $\tau$ (squares), both in m$^2$. Lines: the reference ensemble of the twelve reference sequence-model runs (63.2), its per-car-model majority oracle (72.0) and the 90 target.}
 \label{fig:ceiling}
 \end{figure}
 
-The errors sit where the labels are closest: 21 of the 41 held-out car models lie within 0.15 m$^2$ of a differently labelled training model, and in one reference GRU run window accuracy is 53.0\% within 0.1 m$^2$ of a threshold against 89.9\% beyond 0.8 m$^2$. With the reference predictions, LARGE unibody vehicles are read as MID or SMALL while pickups and body-on-frame SUVs are recognised (per-model shares in Section~\ref{sec:discussion}), and MID models just above the 4.43 m$^2$ cut are read as SMALL (drives correct: GWM Haval H6, Audi Q5, Lexus RX and Nissan Altima 0\%, Kia Stinger 25\%).
+The errors sit where the labels are closest: 21 of the 41 held-out car models lie within 0.15 m$^2$ of a differently labelled training model, and in one reference GRU run window accuracy is 53.0\% within 0.1 m$^2$ of a threshold against 89.9\% beyond 0.8 m$^2$. With the reference predictions, LARGE unibody vehicles are read as MID or SMALL while pickups and body-on-frame SUVs are recognised (GMC Yukon, Ford Ranger and Ford F-150 Lightning 95.5--100\% of drives; Genesis G80 and G90, Volkswagen Atlas, Tesla Model~S and Kia EV9 0--5.6\%), and MID models just above the 4.43 m$^2$ cut are read as SMALL (drives correct: GWM Haval H6, Audi Q5, Lexus RX and Nissan Altima 0\%, Kia Stinger 25\%).
 
 Evidence per drive is not the limit for the reference models (Fig.~\ref{fig:evidence}): drive accuracy stays between 63.8 and 73.8\% (size) and 85.7 and 93.2\% (BEV vs ICE) from 1--2 to more than 64 windows per drive, and it does not grow with the number of acceleration, deceleration or lead-acceleration episodes.
 
@@ -168,3 +168,40 @@ LLM + statistics & 54.1 & 49.8 & 64.9 & 73.2 & 80.2 & 80.9 \\
 \subsection{Aggregation and Ensembles}
 
 Out of fold on the reference recipe (GRU and ResNet pooled), the best aggregation variant moves size from 67.5 to 67.8 (+0.3) and down-weighting DAS windows in the mean moves BEV vs ICE from 93.0 to 94.8 (+1.8), short of the pre-registered +1.0 on both tasks, so the plain mean remains the headline. Ensembles stayed below the G4 gate: a GRU + ResNet mean gains under one point over the best member out of fold (BEV vs ICE 93.9 against 93.1--93.5; size 68.8 against 68.2) and stacking is worse (92.3 and 66.5). The supplementary rule fixed before the final test run, the DAS- and episode-weighted log-odds mean of Section~\ref{sec:methods}, moves size from 66.9 to 68.7 on the six final S9 runs (+1.7, 6 of 6 runs improved) and BEV vs ICE from 92.8 to 93.5 on the six B5 runs (+0.7, 6 of 6).
+
+\subsection{External Validation on Public Datasets}
+
+As a check beyond our own logs, the final models were run unchanged, without fine-tuning, on public driving logs with known car models (Table~\ref{tab:external}; the complete external study, including its limitations, accompanies the code release\ifanonymous\else{} in the repository of Section~\ref{sec:dataset}\fi). Where a set lacks channels, a variant of the same recipe trained on our data with that subset stands in: speed-only (speed, acceleration, standstill) or lateral + speed (the ten channels without lead, torque and pedal flags).
+
+commaCarSegments~\cite{commacarsegments} is the largest set: 45,763 one-minute windows (762.7 h) from 4,061 devices absent from our library, 113 car models on 161 openpilot platforms, the 20 channels decoded from CAN with opendbc where the platform provides them; yaw rate, curvature and lateral acceleration follow from the steering angle by a bicycle model and one understeer gradient $k = 0.00079$ s$^2$/m$^2$ fitted on our own IMU yaw over 62 training and validation platforms. The full model calls BEV vs ICE right for 86 of 88 labelled car models (97.7\% [96.2, 100.0]) and 87.8\% of 2,512 labelled devices (88.9\% with the corrected yaw), and on our 29 held-out test models for 27 of 27 labelled models and 94.2\% of 463 devices. Size with the corrected yaw matches the internal held-out test at vehicle level (63.2\% of the devices and macro-F1 60.3 against 63.5 / 59.7), with LARGE device recall 51.9\% (internal 50.6\%): the Pacifica, Palisade, CX-9, Escalade and fourth-generation Sienna platforms and the pickups are recognised at platform level. Nine Honda platforms recovered with a decoder fix (230 devices, as-run decode) are SMALL for 226 and ICE for 227 of 229 devices, the held-out HR-V for 5 of 5.
+
+On commaSteeringControl~\cite{commasteeringcontrol} (36 platform archives of highway minutes under the lateral controller, 51,462 windows, 857.7 h, 25 car models, one archive per pseudo-vehicle, lateral and speed channels only) the speed-only variant calls 35 of 36 archives and 9 of 10 held-out-model archives right on powertrain, and the lateral + speed variant scores 63.9\% / 62.3 on size against its internal vehicle-level 62.6 / 58.0. On speed-only sets, 258 of 264 ICE cars of VED~\cite{oh2019ved} (1 Hz OBD speed) and 99.1\% of the 429 trips of the OpenACC~\cite{makridis2021openacc} one-vehicle campaign (a Fiat 500X, 20 drivers) are ICE.
+
+\begin{table}[t]
+\centering
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\caption{Zero-shot external validation of the final models on public sets with known car models: vehicle-level accuracy in percent (count / support for small sets; 95\% cluster-bootstrap intervals over vehicles) and car models right. Inputs: full = 20 channels, S = speed-only, L+S = lateral + speed variant. CSC = commaSteeringControl; CCS = commaCarSegments, device-disjoint (the all-devices size row with the corrected yaw, the other CCS rows as run; macro-F1 in the text).}
+\label{tab:external}
+\begin{tabular}{@{}llll@{}}
+\toprule
+Set (vehicles) & Inputs & Vehicles right & Models \\
+\midrule
+\multicolumn{4}{@{}l}{\emph{BEV vs ICE}} \\
+CSC (36 archives) & S & 35 / 36 (97.2) & 24 / 25 \\
+CCS, labelled (2,512) & full & 87.8 [86.6, 89.1] & 86 / 88 \\
+CCS, labelled & S & 92.6 [91.5, 93.6] & 87 / 88 \\
+CCS, held-out models (463) & full & 94.2 [92.0, 96.2] & 27 / 27 \\
+CCS, 9 Honda platforms (229) & full & 227 / 229 (99.1) & 4 / 4 \\
+MoreTorque~\cite{moretorque}, 11 ICE cars & full & 11 / 11 & -- \\
+VED, 264 ICE cars & S & 258 / 264 (97.7) & -- \\
+OpenACC 500X (429 trips) & S & 99.1 of trips & -- \\
+\addlinespace
+\multicolumn{4}{@{}l}{\emph{Size (SMALL / MID / LARGE)}} \\
+CSC (36 archives) & L+S & 63.9 [50.0, 80.6] & 16 / 25 \\
+CCS, all (4,061) & full & 63.2 & 72 / 113 \\
+CCS, 9 Honda platforms (230) & full & 226 / 230 (98.3) & 5 / 5 \\
+MoreTorque, 8 SMALL cars & full & 8 / 8 & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
