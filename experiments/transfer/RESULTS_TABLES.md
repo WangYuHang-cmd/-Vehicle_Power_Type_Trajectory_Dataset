@@ -1,6 +1,6 @@
 # Zero-shot transfer: generated tables
 
-Generated 10 Nov 2026 09:58 by experiments/transfer/collect_scores.py from the score__*.json / probs__*__ens__*.npz files of score.py and internal_reference.json. Accuracy and macro-F1 in percent (one decimal); 95 % intervals from the vehicle-cluster bootstrap (1,000 resamples; absent when a set has fewer than about 20 bootstrap-able clusters or one vehicle). Chance = 1 / K and the majority share.
+Generated 10 Nov 2026 21:06 by experiments/transfer/collect_scores.py from the score__*.json / probs__*__ens__*.npz files of score.py and internal_reference.json. Accuracy and macro-F1 in percent (one decimal); 95 % intervals from the vehicle-cluster bootstrap (1,000 resamples; absent when a set has fewer than about 20 bootstrap-able clusters or one vehicle). Chance = 1 / K and the majority share.
 
 ## Cross-dataset summary
 
@@ -20,6 +20,8 @@ Generated 10 Nov 2026 09:58 by experiments/transfer/collect_scores.py from the s
 | csc | V3 variant | 51462 / 51462 / 36 / 25 | 75.4 / 69.0 | 75.4 [72.2, 78.5] / 69.0 | 97.2 [91.7, 100.0] / 96.1 | BEV 88.9 / ICE 100.0 | 50.0 / 76.8 | 89.5 / 88.6 / 91.0 / 90.1 (das: 88.3 / 87.9 / 86.5 / 85.6) |
 | moretorque | full 20-ch model | 7190 / 1155 / 12 / 4 | 72.4 / 45.2 | 85.9 [66.1, 94.4] / 48.5 | 91.7 [75.0, 100.0] / 47.8 | BEV 0.0 / ICE 100.0 | 50.0 / 87.8 | 93.7 / 93.3 / 93.9 / 93.4 |
 | ccs | full 20-ch model | 29585 / 14355 / 2512 / 113 | 81.8 / 74.7 | 86.6 [85.7, 87.5] / 79.4 | 87.8 [86.5, 89.0] / 84.7 | BEV 86.6 / ICE 88.2 | 50.0 / 81.7 | 93.7 / 93.3 / 93.9 / 93.4 |
+| ccs_honda | full 20-ch model | 2084 / 883 / 229 / 5 | 89.3 / - | 94.1 [91.9, 96.1] / - | 99.1 [97.8, 100.0] / - | BEV - / ICE 99.1 | 50.0 / 100.0 | 93.7 / 93.3 / 93.9 / 93.4 |
+| comma2k19 | full 20-ch model | 381 / 42 / 2 / 2 | 70.9 / - | 88.1 [85.7, 90.5] / - | 100.0 [100.0, 100.0] / - | BEV - / ICE 100.0 | 50.0 / 100.0 | 93.7 / 93.3 / 93.9 / 93.4 |
 
 ### size (SMALL / MID / LARGE): primary run per dataset
 
@@ -37,6 +39,8 @@ Generated 10 Nov 2026 09:58 by experiments/transfer/collect_scores.py from the s
 | csc | V1 variant | 51462 / 51462 / 36 / 25 | 48.4 / 44.1 | 48.4 [41.5, 56.1] / 44.1 | 63.9 [50.0, 80.6] / 62.3 | SMALL 88.2 / MID 30.8 / LARGE 66.7 | 33.3 / 46.6 | 70.6 / 66.4 / 62.6 / 58.0 (das: 65.1 / 57.4 / 62.6 / 54.9) |
 | moretorque | full 20-ch model | 7190 / 1155 / 12 / 4 | 43.4 / 41.1 | 42.7 [17.0, 79.6] / 37.6 | 66.7 [41.7, 91.7] / 40.0 | SMALL 100.0 / MID 0.0 / LARGE - | 33.3 / 55.6 | 70.8 / 67.3 / 63.5 / 59.7 |
 | ccs | full 20-ch model | 45763 / 21987 / 4061 / 113 | 49.6 / 43.2 | 51.3 [49.3, 53.2] / 44.0 | 54.1 [52.5, 55.7] / 46.4 | SMALL 91.1 / MID 27.6 / LARGE 23.5 | 33.3 / 43.8 | 70.8 / 67.3 / 63.5 / 59.7 |
+| ccs_honda | full 20-ch model | 2132 / 913 / 230 / 5 | 83.8 / - | 88.2 [84.8, 91.5] / - | 98.3 [96.5, 99.6] / - | SMALL 98.3 / MID - / LARGE - | 33.3 / 100.0 | 70.8 / 67.3 / 63.5 / 59.7 |
+| comma2k19 | full 20-ch model | 381 / 42 / 2 / 2 | 51.7 / - | 54.8 [52.4, 57.1] / - | 50.0 [0.0, 100.0] / - | SMALL 50.0 / MID - / LARGE - | 33.3 / 100.0 | 70.8 / 67.3 / 63.5 / 59.7 |
 
 ### bev_ice: every named external car model, primary run of its dataset (mean probability over all windows of the model -> arg-max)
 
@@ -211,6 +215,12 @@ Generated 10 Nov 2026 09:58 by experiments/transfer/collect_scores.py from the s
 | ccs | Volkswagen Taos | ICE | ICE | 4.18 | 2 | 55 | 30.4 | full 20-ch model | 0.17, 0.83 | ICE | OK | 2/2 | 95.8 |
 | ccs | Volkswagen Touran | ICE (border) | ICE | 4.39 | 1 | 44 | 9.2 | full 20-ch model | 0.23, 0.77 | ICE | OK | 1/1 | 92.9 |
 | ccs | Volkswagen Transporter | ICE (border) | ICE | 4.91 | 2 | 74 | 30.4 | full 20-ch model | 0.28, 0.72 | ICE | OK | 2/2 | 80.0 |
+| ccs_honda | Honda CR-V | ICE | ICE | 4.28 | 96 | 486 | 45.0 | full 20-ch model | 0.18, 0.82 | ICE | OK | 95/96 | 95.0 |
+| ccs_honda | Honda Civic | ICE | ICE | 4.20 | 123 | 1173 | 43.7 | full 20-ch model | 0.17, 0.83 | ICE | OK | 121/123 | 93.6 |
+| ccs_honda | Honda Fit | ICE | ICE | 3.74 | 7 | 273 | 35.0 | full 20-ch model | 0.17, 0.83 | ICE | OK | 7/7 | 94.0 |
+| ccs_honda | Honda HR-V | ICE | ICE | 4.01 | 5 | 152 | 33.3 | full 20-ch model | 0.17, 0.83 | ICE | OK | 5/5 | 94.9 |
+| comma2k19 | Honda Civic | ICE | ICE | 4.20 | 1 | 196 | 61.7 | full 20-ch model | 0.29, 0.71 | ICE | OK | 1/1 | 90.5 |
+| comma2k19 | Toyota RAV4 | ICE | ICE | 4.13 | 1 | 185 | 55.7 | full 20-ch model | 0.32, 0.68 | ICE | OK | 1/1 | 85.7 |
 
 ### size: every named external car model, primary run of its dataset (mean probability over all windows of the model -> arg-max)
 
@@ -412,6 +422,13 @@ Generated 10 Nov 2026 09:58 by experiments/transfer/collect_scores.py from the s
 | ccs | Volkswagen Tiguan | SMALL | unknown | 4.33 | 31 | 385 | 38.2 | full 20-ch model | 0.71, 0.24, 0.04 | SMALL | OK | 30/31 | 91.2 |
 | ccs | Volkswagen Touran | SMALL (border) | ICE | 4.39 | 1 | 44 | 9.2 | full 20-ch model | 0.70, 0.25, 0.05 | SMALL | OK | 1/1 | 96.4 |
 | ccs | Volkswagen Transporter | LARGE (border) | ICE | 4.91 | 2 | 74 | 30.4 | full 20-ch model | 0.57, 0.36, 0.07 | SMALL | MISS | 0/2 | 2.0 |
+| ccs_honda | Honda CR-V | SMALL | ICE | 4.28 | 96 | 486 | 45.0 | full 20-ch model | 0.76, 0.20, 0.04 | SMALL | OK | 95/96 | 93.5 |
+| ccs_honda | Honda Civic | SMALL | ICE | 4.20 | 123 | 1173 | 43.7 | full 20-ch model | 0.70, 0.26, 0.04 | SMALL | OK | 121/123 | 88.7 |
+| ccs_honda | Honda Fit | SMALL | ICE | 3.74 | 7 | 273 | 35.0 | full 20-ch model | 0.60, 0.36, 0.04 | SMALL | OK | 6/7 | 73.3 |
+| ccs_honda | Honda Freed | SMALL | unknown | 4.06 | 1 | 48 | 25.6 | full 20-ch model | 0.55, 0.34, 0.10 | SMALL | OK | 1/1 | 80.0 |
+| ccs_honda | Honda HR-V | SMALL | ICE | 4.01 | 5 | 152 | 33.3 | full 20-ch model | 0.73, 0.24, 0.03 | SMALL | OK | 5/5 | 96.2 |
+| comma2k19 | Honda Civic | SMALL | ICE | 4.20 | 1 | 196 | 61.7 | full 20-ch model | 0.48, 0.49, 0.02 | MID | MISS | 0/1 | 52.4 |
+| comma2k19 | Toyota RAV4 | SMALL | ICE | 4.13 | 1 | 185 | 55.7 | full 20-ch model | 0.54, 0.44, 0.02 | SMALL | OK | 1/1 | 57.1 |
 
 ### Pooled vehicle-level decisions over the external sets (primary run of each set; one physical car, archive or device x car model = one decision, judged by its own label)
 
@@ -424,8 +441,9 @@ bev_ice:
 | longitudinal / speed-only sets only (V2 / V3 variants) | 20/24 (83.3) | 268/283 (94.7) | 288/307 (93.8) |
 | commaSteeringControl archives (primary run per task; one archive = one pseudo-vehicle) | 8/9 (88.9) | 27/27 (100.0) | 35/36 (97.2) |
 | MoreTorque cars (full model) | 0/1 (0.0) | 11/11 (100.0) | 11/12 (91.7) |
-| commaCarSegments devices (full model; one device x car model = one decision, judged by the device's own platform label; a device under more than one car model counts once per model) | 544/630 (86.3) | 1688/1917 (88.1) | 2232/2547 (87.6) |
-| all sets | 575/667 (86.2) | 1994/2239 (89.1) | 2569/2906 (88.4) |
+| commaCarSegments devices, ccs + ccs_honda (full model; one device x car model = one decision, judged by the device's own platform label; a device under more than one car model counts once per model) | 544/630 (86.3) | 1916/2148 (89.2) | 2460/2778 (88.6) |
+| comma2k19 cars on 2018 hardware (full model; one device = one decision) | 0/0 (-) | 2/2 (100.0) | 2/2 (100.0) |
+| all sets | 575/667 (86.2) | 2224/2472 (90.0) | 2799/3139 (89.2) |
 
 size:
 
@@ -436,8 +454,9 @@ size:
 | longitudinal / speed-only sets only (V2 / V3 variants) | 24/25 (96.0) | 1/19 (5.3) | 0/11 (0.0) | 25/55 (45.5) |
 | commaSteeringControl archives (primary run per task; one archive = one pseudo-vehicle) | 15/17 (88.2) | 4/13 (30.8) | 4/6 (66.7) | 23/36 (63.9) |
 | MoreTorque cars (full model) | 8/8 (100.0) | 0/4 (0.0) | 0/0 (-) | 8/12 (66.7) |
-| commaCarSegments devices (full model; one device x car model = one decision, judged by the device's own platform label; a device under more than one car model counts once per model) | 1635/1798 (90.9) | 360/1301 (27.7) | 250/1053 (23.7) | 2245/4152 (54.1) |
-| all sets | 1683/1850 (91.0) | 366/1338 (27.4) | 254/1072 (23.7) | 2303/4260 (54.1) |
+| commaCarSegments devices, ccs + ccs_honda (full model; one device x car model = one decision, judged by the device's own platform label; a device under more than one car model counts once per model) | 1863/2030 (91.8) | 360/1301 (27.7) | 250/1053 (23.7) | 2473/4384 (56.4) |
+| comma2k19 cars on 2018 hardware (full model; one device = one decision) | 1/2 (50.0) | 0/0 (-) | 0/0 (-) | 1/2 (50.0) |
+| all sets | 1912/2084 (91.7) | 366/1338 (27.4) | 254/1072 (23.7) | 2532/4494 (56.3) |
 
 ### Automation-engaged vs human-driven windows (primary powertrain run; window accuracy and P(BEV) per sub-population)
 
@@ -460,6 +479,10 @@ size:
 | moretorque | human-driven | 3229 | 623 | 2606 | 78.7 | 8.8 | 95.4 | 0.22 | 0.11 |
 | ccs | DAS engaged | 11229 | 2359 | 8870 | 64.8 | 65.8 | 64.5 | 0.64 | 0.39 |
 | ccs | human-driven | 18356 | 3061 | 15295 | 92.2 | 88.7 | 93.0 | 0.85 | 0.12 |
+| ccs_honda | DAS engaged | 890 | 0 | 890 | 80.7 | - | 80.7 | - | 0.29 |
+| ccs_honda | human-driven | 1194 | 0 | 1194 | 95.6 | - | 95.6 | - | 0.08 |
+| comma2k19 | DAS engaged | 226 | 0 | 226 | 50.9 | - | 50.9 | - | 0.47 |
+| comma2k19 | human-driven | 155 | 0 | 155 | 100.0 | - | 100.0 | - | 0.06 |
 
 Same car, both automation states (cars with >= 5 windows in each state): mean P(BEV)
 
@@ -1391,6 +1414,381 @@ Scored but outside the BEV / ICE metrics: share of the platform's windows and de
 | VOLKSWAGEN_GOLF_MK7 | Volkswagen Golf | MIXED | seen | 40 | 391 | 12.3 | 0/40 | 0.20 |
 | VOLKSWAGEN_PASSAT_MK8 | Volkswagen Passat | MIXED | held-out | 8 | 256 | 16.4 | 2/8 | 0.21 |
 | VOLKSWAGEN_TIGUAN_MK2 | Volkswagen Tiguan | MIXED | seen | 31 | 385 | 11.4 | 1/31 | 0.17 |
+
+### commaCarSegments (`ccs_honda`): decisions per platform, full 20-channel models (V1 / V3 / V2 variants for comparison)
+
+One row per openpilot platform; the devices are disjoint from the lab library (vehicle = device pseudonym, drive = device x route, one window per segment). Sorted by stratum (seen = training / validation model of the lab's `split_platform` split, held-out = one of the 41 test models, absent = not in the lab inventory), then footprint. `label` = source of footprint and model (lab table / public specs); `lead` = share of the windows per lead source (radar tracks / stock-ACC object / none = vision-only platform); `DAS %` = mean share of automation-engaged samples (driving automation system: stock cruise or controls allowed). Model-level decision = mean probability over the platform's labelled windows -> arg-max (`OK` / `MISS`); `veh right` = devices whose mean probability picks the label; HEV / PHEV / FCEV / MIXED platforms are unlabelled for the powertrain task and show the BEV probability and the predicted class only.
+
+| platform | model | footprint | size | powertrain | stratum | label | lead % | veh | drives | win | DAS % | size full: P(S, M, L) % -> decision | size veh right | size drive acc % | size V1 | size V3 | BEV vs ICE full: P(BEV) % -> decision | pt veh right | pt V3 | pt V2 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| HONDA_FIT | Honda Fit | 3.74 | SMALL | ICE | seen | lab | radar 99 / none 1 | 7 | 116 | 273 | 35.0 | 60, 36, 4 -> SMALL OK | 6/7 | 73.3 | MID MISS | SMALL OK | 17 -> ICE OK | 7/7 | ICE OK | ICE OK |
+| HONDA_CIVIC | Honda Civic | 4.20 | SMALL | ICE | seen | lab | radar 98 / none 2 | 33 | 186 | 385 | 45.7 | 66, 30, 4 -> SMALL OK | 32/33 | 83.3 | MID MISS | SMALL OK | 18 -> ICE OK | 33/33 | ICE OK | ICE OK |
+| HONDA_CIVIC_BOSCH | Honda Civic | 4.20 | SMALL | ICE | seen | lab | none 100 | 55 | 154 | 395 | 39.7 | 75, 21, 4 -> SMALL OK | 55/55 | 96.1 | SMALL OK | SMALL OK | 11 -> ICE OK | 55/55 | ICE OK | ICE OK |
+| HONDA_CIVIC_2022 | Honda Civic | 4.21 | SMALL | ICE | seen | lab | none 100 | 36 | 148 | 393 | 45.6 | 67, 28, 4 -> SMALL OK | 35/36 | 87.8 | SMALL OK | SMALL OK | 21 -> ICE OK | 34/36 | ICE OK | ICE OK |
+| HONDA_CRV | Honda CR-V | 4.23 | SMALL | ICE | seen | lab | radar 89 / none 11 | 4 | 46 | 106 | 43.6 | 79, 19, 3 -> SMALL OK | 4/4 | 93.5 | SMALL OK | SMALL OK | 25 -> ICE OK | 4/4 | ICE OK | ICE OK |
+| HONDA_CRV_5G | Honda CR-V | 4.28 | SMALL | ICE | seen | lab | none 100 | 92 | 154 | 380 | 45.4 | 75, 20, 4 -> SMALL OK | 91/92 | 93.5 | MID MISS | SMALL OK | 15 -> ICE OK | 91/92 | ICE OK | ICE OK |
+| HONDA_HRV | Honda HR-V | 4.01 | SMALL | ICE | held-out | lab | radar 99 / none 1 | 2 | 62 | 97 | 20.4 | 74, 23, 3 -> SMALL OK | 2/2 | 96.8 | MID MISS | SMALL OK | 16 -> ICE OK | 2/2 | ICE OK | ICE OK |
+| HONDA_HRV_3G | Honda HR-V | 4.17 | SMALL | ICE | held-out | lab | none 100 | 3 | 17 | 55 | 56.2 | 73, 25, 3 -> SMALL OK | 3/3 | 94.1 | MID MISS | SMALL OK | 17 -> ICE OK | 3/3 | ICE OK | ICE OK |
+| HONDA_FREED | Honda Freed | 4.06 | SMALL | unlabelled: unknown | absent | public | radar 100 | 1 | 30 | 48 | 25.6 | 55, 34, 10 -> SMALL OK | 1/1 | 80.0 | SMALL OK | SMALL OK | 20 -> ICE (unlabelled) | - | ICE (unlabelled) | ICE (unlabelled) |
+
+### commaCarSegments (`ccs_honda`): pooled per stratum, every run (window / drive / vehicle = device / model = car model)
+
+Accuracy and macro-F1 in percent; the vehicle and model levels carry 95 % intervals from a vehicle-cluster bootstrap of 300 resamples over the stratum's devices (score.py `level_eval` on the stratum subset; the pooled score files use 1,000). `units right per class` = diagonal of the confusion matrix / support; chance = 1 / K and the majority share of the level. Runs: full = the 20-channel models; V1 / V2 / V3 = the reduced-input variants; full+mask-Vk = the full models with that preset masked; full+mask-yaw / full+mask-lead = the sensitivity runs (steering-derived yaw group masked; lead group masked).
+
+size (SMALL / MID / LARGE):
+
+| run | stratum | level | units | accuracy % [95% CI] | macro-F1 % [95% CI] | recall per class % | units right per class | chance uniform / majority % |
+|---|---|---|---|---|---|---|---|---|
+| full | all | window | 2132 | 83.8 | - | SMALL 83.8 / MID - / LARGE - | SMALL 1786/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 88.2 | - | SMALL 88.2 / MID - / LARGE - | SMALL 805/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 98.3 [96.5, 99.6] | - | SMALL 98.3 / MID - / LARGE - | SMALL 226/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 83.5 | - | SMALL 83.5 / MID - / LARGE - | SMALL 1613/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 87.7 | - | SMALL 87.7 / MID - / LARGE - | SMALL 705/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 98.2 [96.4, 99.8] | - | SMALL 98.2 / MID - / LARGE - | SMALL 220/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 3/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 90.1 | - | SMALL 90.1 / MID - / LARGE - | SMALL 137/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 96.2 | - | SMALL 96.2 / MID - / LARGE - | SMALL 76/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 75.0 | - | SMALL 75.0 / MID - / LARGE - | SMALL 36/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 80.0 | - | SMALL 80.0 / MID - / LARGE - | SMALL 24/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+| V1 | all | window | 2132 | 49.6 | - | SMALL 49.6 / MID - / LARGE - | SMALL 1057/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 49.5 | - | SMALL 49.5 / MID - / LARGE - | SMALL 452/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 47.8 [41.5, 54.8] | - | SMALL 47.8 / MID - / LARGE - | SMALL 110/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 60.0 [20.0, 60.0] | - | SMALL 60.0 / MID - / LARGE - | SMALL 3/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 49.7 | - | SMALL 49.7 / MID - / LARGE - | SMALL 961/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 49.0 | - | SMALL 49.0 / MID - / LARGE - | SMALL 394/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 48.2 [41.3, 54.9] | - | SMALL 48.2 / MID - / LARGE - | SMALL 108/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 66.7 [0.0, 66.7] | - | SMALL 66.7 / MID - / LARGE - | SMALL 2/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 42.1 | - | SMALL 42.1 / MID - / LARGE - | SMALL 64/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 44.3 | - | SMALL 44.3 / MID - / LARGE - | SMALL 35/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 20.0 [0.0, 60.0] | - | SMALL 20.0 / MID - / LARGE - | SMALL 1/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 66.7 | - | SMALL 66.7 / MID - / LARGE - | SMALL 32/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 76.7 | - | SMALL 76.7 / MID - / LARGE - | SMALL 23/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+| V2 | all | window | 2132 | 51.4 | - | SMALL 51.4 / MID - / LARGE - | SMALL 1096/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 53.6 | - | SMALL 53.6 / MID - / LARGE - | SMALL 489/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 73.0 [68.3, 79.1] | - | SMALL 73.0 / MID - / LARGE - | SMALL 168/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 60.0 [40.0, 100.0] | - | SMALL 60.0 / MID - / LARGE - | SMALL 3/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 52.3 | - | SMALL 52.3 / MID - / LARGE - | SMALL 1011/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 55.6 | - | SMALL 55.6 / MID - / LARGE - | SMALL 447/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 74.1 [68.5, 79.0] | - | SMALL 74.1 / MID - / LARGE - | SMALL 166/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 66.7 [66.7, 100.0] | - | SMALL 66.7 / MID - / LARGE - | SMALL 2/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 45.4 | - | SMALL 45.4 / MID - / LARGE - | SMALL 69/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 36.7 | - | SMALL 36.7 / MID - / LARGE - | SMALL 29/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 40.0 [0.0, 80.0] | - | SMALL 40.0 / MID - / LARGE - | SMALL 2/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 100.0 [0.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 33.3 | - | SMALL 33.3 / MID - / LARGE - | SMALL 16/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 43.3 | - | SMALL 43.3 / MID - / LARGE - | SMALL 13/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+| V3 | all | window | 2132 | 64.2 | - | SMALL 64.2 / MID - / LARGE - | SMALL 1368/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 72.2 | - | SMALL 72.2 / MID - / LARGE - | SMALL 659/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 86.5 [82.2, 90.9] | - | SMALL 86.5 / MID - / LARGE - | SMALL 199/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 63.6 | - | SMALL 63.6 / MID - / LARGE - | SMALL 1228/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 71.8 | - | SMALL 71.8 / MID - / LARGE - | SMALL 577/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 86.2 [81.9, 90.2] | - | SMALL 86.2 / MID - / LARGE - | SMALL 193/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 3/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 68.4 | - | SMALL 68.4 / MID - / LARGE - | SMALL 104/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 69.6 | - | SMALL 69.6 / MID - / LARGE - | SMALL 55/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 75.0 | - | SMALL 75.0 / MID - / LARGE - | SMALL 36/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 90.0 | - | SMALL 90.0 / MID - / LARGE - | SMALL 27/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+| full+mask-V1 | all | window | 2132 | 92.5 | - | SMALL 92.5 / MID - / LARGE - | SMALL 1972/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 95.5 | - | SMALL 95.5 / MID - / LARGE - | SMALL 872/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 98.7 [97.2, 99.8] | - | SMALL 98.7 / MID - / LARGE - | SMALL 227/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 92.4 | - | SMALL 92.4 / MID - / LARGE - | SMALL 1785/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 95.3 | - | SMALL 95.3 / MID - / LARGE - | SMALL 766/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 98.7 [97.3, 100.0] | - | SMALL 98.7 / MID - / LARGE - | SMALL 221/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 3/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 96.7 | - | SMALL 96.7 / MID - / LARGE - | SMALL 147/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 98.7 | - | SMALL 98.7 / MID - / LARGE - | SMALL 78/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 83.3 | - | SMALL 83.3 / MID - / LARGE - | SMALL 40/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 93.3 | - | SMALL 93.3 / MID - / LARGE - | SMALL 28/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+| full+mask-V2 | all | window | 2132 | 81.7 | - | SMALL 81.7 / MID - / LARGE - | SMALL 1742/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 86.2 | - | SMALL 86.2 / MID - / LARGE - | SMALL 787/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 96.5 [93.9, 98.9] | - | SMALL 96.5 / MID - / LARGE - | SMALL 222/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 82.7 | - | SMALL 82.7 / MID - / LARGE - | SMALL 1597/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 87.8 | - | SMALL 87.8 / MID - / LARGE - | SMALL 706/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 96.4 [93.8, 98.2] | - | SMALL 96.4 / MID - / LARGE - | SMALL 216/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 3/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 78.3 | - | SMALL 78.3 / MID - / LARGE - | SMALL 119/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 77.2 | - | SMALL 77.2 / MID - / LARGE - | SMALL 61/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 54.2 | - | SMALL 54.2 / MID - / LARGE - | SMALL 26/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 66.7 | - | SMALL 66.7 / MID - / LARGE - | SMALL 20/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+| full+mask-V3 | all | window | 2132 | 89.5 | - | SMALL 89.5 / MID - / LARGE - | SMALL 1909/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 93.2 | - | SMALL 93.2 / MID - / LARGE - | SMALL 851/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 97.0 [94.3, 98.7] | - | SMALL 97.0 / MID - / LARGE - | SMALL 223/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 89.1 | - | SMALL 89.1 / MID - / LARGE - | SMALL 1722/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 93.0 | - | SMALL 93.0 / MID - / LARGE - | SMALL 748/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 96.9 [94.2, 99.1] | - | SMALL 96.9 / MID - / LARGE - | SMALL 217/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 3/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 91.4 | - | SMALL 91.4 / MID - / LARGE - | SMALL 139/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 92.4 | - | SMALL 92.4 / MID - / LARGE - | SMALL 73/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 100.0 | - | SMALL 100.0 / MID - / LARGE - | SMALL 48/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 100.0 | - | SMALL 100.0 / MID - / LARGE - | SMALL 30/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+| full+mask-yaw | all | window | 2132 | 20.2 | - | SMALL 20.2 / MID - / LARGE - | SMALL 431/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 21.7 | - | SMALL 21.7 / MID - / LARGE - | SMALL 198/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 14.3 [9.8, 19.4] | - | SMALL 14.3 / MID - / LARGE - | SMALL 33/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 20.8 | - | SMALL 20.8 / MID - / LARGE - | SMALL 402/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 22.4 | - | SMALL 22.4 / MID - / LARGE - | SMALL 180/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 14.7 [10.5, 19.2] | - | SMALL 14.7 / MID - / LARGE - | SMALL 33/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 15.1 | - | SMALL 15.1 / MID - / LARGE - | SMALL 23/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 16.5 | - | SMALL 16.5 / MID - / LARGE - | SMALL 13/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 12.5 | - | SMALL 12.5 / MID - / LARGE - | SMALL 6/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 16.7 | - | SMALL 16.7 / MID - / LARGE - | SMALL 5/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 0.0 [0.0, 0.0] | - | SMALL 0.0 / MID - / LARGE - | SMALL 0/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+| full+mask-lead | all | window | 2132 | 86.2 | - | SMALL 86.2 / MID - / LARGE - | SMALL 1838/2132 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | drive | 913 | 91.1 | - | SMALL 91.1 / MID - / LARGE - | SMALL 832/913 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | vehicle | 230 | 98.7 [97.0, 100.0] | - | SMALL 98.7 / MID - / LARGE - | SMALL 227/230 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | all | model | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | window | 1932 | 85.6 | - | SMALL 85.6 / MID - / LARGE - | SMALL 1654/1932 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | drive | 804 | 90.3 | - | SMALL 90.3 / MID - / LARGE - | SMALL 726/804 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | vehicle | 224 | 98.7 [96.9, 100.0] | - | SMALL 98.7 / MID - / LARGE - | SMALL 221/224 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 3/3 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | window | 152 | 93.4 | - | SMALL 93.4 / MID - / LARGE - | SMALL 142/152 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | drive | 79 | 98.7 | - | SMALL 98.7 / MID - / LARGE - | SMALL 78/79 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 5/5 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | window | 48 | 87.5 | - | SMALL 87.5 / MID - / LARGE - | SMALL 42/48 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | drive | 30 | 93.3 | - | SMALL 93.3 / MID - / LARGE - | SMALL 28/30 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | vehicle | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+|  | absent | model | 1 | 100.0 [100.0, 100.0] | - | SMALL 100.0 / MID - / LARGE - | SMALL 1/1 / MID 0/0 / LARGE 0/0 | 33.3 / 100.0 |
+
+bev_ice (BEV / ICE):
+
+| run | stratum | level | units | accuracy % [95% CI] | macro-F1 % [95% CI] | recall per class % | units right per class | chance uniform / majority % |
+|---|---|---|---|---|---|---|---|---|
+| full | all | window | 2084 | 89.3 | - | BEV - / ICE 89.3 | BEV 0/0 / ICE 1860/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 94.1 | - | BEV - / ICE 94.1 | BEV 0/0 / ICE 831/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 99.1 [97.8, 100.0] | - | BEV - / ICE 99.1 | BEV 0/0 / ICE 227/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 89.1 | - | BEV - / ICE 89.1 | BEV 0/0 / ICE 1721/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 94.0 | - | BEV - / ICE 94.0 | BEV 0/0 / ICE 756/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 99.1 [97.8, 100.0] | - | BEV - / ICE 99.1 | BEV 0/0 / ICE 222/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 91.4 | - | BEV - / ICE 91.4 | BEV 0/0 / ICE 139/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 94.9 | - | BEV - / ICE 94.9 | BEV 0/0 / ICE 75/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 5/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+| V1 | all | window | 2084 | 72.7 | - | BEV - / ICE 72.7 | BEV 0/0 / ICE 1515/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 79.7 | - | BEV - / ICE 79.7 | BEV 0/0 / ICE 704/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 86.0 [81.2, 89.7] | - | BEV - / ICE 86.0 | BEV 0/0 / ICE 197/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [75.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 72.2 | - | BEV - / ICE 72.2 | BEV 0/0 / ICE 1394/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 79.2 | - | BEV - / ICE 79.2 | BEV 0/0 / ICE 637/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 86.6 [82.4, 90.6] | - | BEV - / ICE 86.6 | BEV 0/0 / ICE 194/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 79.6 | - | BEV - / ICE 79.6 | BEV 0/0 / ICE 121/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 84.8 | - | BEV - / ICE 84.8 | BEV 0/0 / ICE 67/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 60.0 [20.0, 100.0] | - | BEV - / ICE 60.0 | BEV 0/0 / ICE 3/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+| V2 | all | window | 2084 | 83.6 | - | BEV - / ICE 83.6 | BEV 0/0 / ICE 1743/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 88.7 | - | BEV - / ICE 88.7 | BEV 0/0 / ICE 783/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 97.8 [95.6, 99.6] | - | BEV - / ICE 97.8 | BEV 0/0 / ICE 224/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 83.1 | - | BEV - / ICE 83.1 | BEV 0/0 / ICE 1606/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 88.2 | - | BEV - / ICE 88.2 | BEV 0/0 / ICE 709/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 97.8 [96.0, 99.6] | - | BEV - / ICE 97.8 | BEV 0/0 / ICE 219/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 90.1 | - | BEV - / ICE 90.1 | BEV 0/0 / ICE 137/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 93.7 | - | BEV - / ICE 93.7 | BEV 0/0 / ICE 74/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 5/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+| V3 | all | window | 2084 | 88.8 | - | BEV - / ICE 88.8 | BEV 0/0 / ICE 1850/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 94.5 | - | BEV - / ICE 94.5 | BEV 0/0 / ICE 834/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 98.3 [96.1, 99.6] | - | BEV - / ICE 98.3 | BEV 0/0 / ICE 225/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 88.3 | - | BEV - / ICE 88.3 | BEV 0/0 / ICE 1706/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 93.9 | - | BEV - / ICE 93.9 | BEV 0/0 / ICE 755/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 98.2 [96.4, 99.6] | - | BEV - / ICE 98.2 | BEV 0/0 / ICE 220/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 94.7 | - | BEV - / ICE 94.7 | BEV 0/0 / ICE 144/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 100.0 | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 79/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 5/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+| full+mask-V1 | all | window | 2084 | 89.9 | - | BEV - / ICE 89.9 | BEV 0/0 / ICE 1874/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 93.0 | - | BEV - / ICE 93.0 | BEV 0/0 / ICE 821/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 98.3 [96.1, 99.6] | - | BEV - / ICE 98.3 | BEV 0/0 / ICE 225/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 89.4 | - | BEV - / ICE 89.4 | BEV 0/0 / ICE 1728/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 92.4 | - | BEV - / ICE 92.4 | BEV 0/0 / ICE 743/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 98.2 [96.4, 99.6] | - | BEV - / ICE 98.2 | BEV 0/0 / ICE 220/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 96.1 | - | BEV - / ICE 96.1 | BEV 0/0 / ICE 146/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 98.7 | - | BEV - / ICE 98.7 | BEV 0/0 / ICE 78/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 5/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+| full+mask-V2 | all | window | 2084 | 86.3 | - | BEV - / ICE 86.3 | BEV 0/0 / ICE 1798/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 90.8 | - | BEV - / ICE 90.8 | BEV 0/0 / ICE 802/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 99.6 [98.7, 100.0] | - | BEV - / ICE 99.6 | BEV 0/0 / ICE 228/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 86.3 | - | BEV - / ICE 86.3 | BEV 0/0 / ICE 1668/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 91.2 | - | BEV - / ICE 91.2 | BEV 0/0 / ICE 733/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 99.6 [98.2, 100.0] | - | BEV - / ICE 99.6 | BEV 0/0 / ICE 223/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 85.5 | - | BEV - / ICE 85.5 | BEV 0/0 / ICE 130/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 87.3 | - | BEV - / ICE 87.3 | BEV 0/0 / ICE 69/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 5/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+| full+mask-V3 | all | window | 2084 | 94.0 | - | BEV - / ICE 94.0 | BEV 0/0 / ICE 1959/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 95.8 | - | BEV - / ICE 95.8 | BEV 0/0 / ICE 846/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 229/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 93.6 | - | BEV - / ICE 93.6 | BEV 0/0 / ICE 1809/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 95.4 | - | BEV - / ICE 95.4 | BEV 0/0 / ICE 767/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 224/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 98.7 | - | BEV - / ICE 98.7 | BEV 0/0 / ICE 150/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 100.0 | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 79/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 5/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+| full+mask-yaw | all | window | 2084 | 87.5 | - | BEV - / ICE 87.5 | BEV 0/0 / ICE 1823/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 91.5 | - | BEV - / ICE 91.5 | BEV 0/0 / ICE 808/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 98.7 [97.4, 99.6] | - | BEV - / ICE 98.7 | BEV 0/0 / ICE 226/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 87.4 | - | BEV - / ICE 87.4 | BEV 0/0 / ICE 1688/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 91.8 | - | BEV - / ICE 91.8 | BEV 0/0 / ICE 738/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 98.7 [96.9, 100.0] | - | BEV - / ICE 98.7 | BEV 0/0 / ICE 221/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 88.8 | - | BEV - / ICE 88.8 | BEV 0/0 / ICE 135/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 88.6 | - | BEV - / ICE 88.6 | BEV 0/0 / ICE 70/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 5/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+| full+mask-lead | all | window | 2084 | 91.7 | - | BEV - / ICE 91.7 | BEV 0/0 / ICE 1911/2084 | 50.0 / 100.0 |
+|  | all | drive | 883 | 95.8 | - | BEV - / ICE 95.8 | BEV 0/0 / ICE 846/883 | 50.0 / 100.0 |
+|  | all | vehicle | 229 | 99.1 [97.8, 100.0] | - | BEV - / ICE 99.1 | BEV 0/0 / ICE 227/229 | 50.0 / 100.0 |
+|  | all | model | 4 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 4/4 | 50.0 / 100.0 |
+|  | seen | window | 1932 | 91.5 | - | BEV - / ICE 91.5 | BEV 0/0 / ICE 1768/1932 | 50.0 / 100.0 |
+|  | seen | drive | 804 | 95.6 | - | BEV - / ICE 95.6 | BEV 0/0 / ICE 769/804 | 50.0 / 100.0 |
+|  | seen | vehicle | 224 | 99.1 [97.8, 100.0] | - | BEV - / ICE 99.1 | BEV 0/0 / ICE 222/224 | 50.0 / 100.0 |
+|  | seen | model | 3 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 3/3 | 50.0 / 100.0 |
+|  | held-out | window | 152 | 94.1 | - | BEV - / ICE 94.1 | BEV 0/0 / ICE 143/152 | 50.0 / 100.0 |
+|  | held-out | drive | 79 | 97.5 | - | BEV - / ICE 97.5 | BEV 0/0 / ICE 77/79 | 50.0 / 100.0 |
+|  | held-out | vehicle | 5 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 5/5 | 50.0 / 100.0 |
+|  | held-out | model | 1 | 100.0 [100.0, 100.0] | - | BEV - / ICE 100.0 | BEV 0/0 / ICE 1/1 | 50.0 / 100.0 |
+
+### commaCarSegments (`ccs_honda`): held-out models against the internal per-model result (full models)
+
+Every held-out `split_platform` test model present in the set: the external vehicle-level accuracy (devices right / devices) and the model-level decision with P(true), next to the internal result on the lab's own test windows of that model (internal_per_model.md, column `full`: drive accuracy % / decision (P true)). A model may span several platforms (e.g. gasoline and hybrid ports); `-` = no label for that task or no internal row.
+
+| held-out model | platforms | veh | win | size label | size: veh right (acc %) | size: model decision (P true) | size: internal drive acc / decision (P true) | pt label | pt: veh right (acc %) | pt: model decision (P true) | pt: internal drive acc / decision (P true) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Honda HR-V | 2 | 5 | 152 | SMALL | 5/5 (100.0) | SMALL (0.73) OK | 46.0 / SMALL (0.50) | ICE | 5/5 (100.0) | ICE (0.84) OK | 95.0 / ICE (0.84) |
+
+### commaCarSegments (`ccs_honda`): seen and absent models (full models; seen platform, new device)
+
+Per car model of the seen stratum (training / validation models of the lab split, here on devices the lab never saw) and of the absent stratum (models outside the lab inventory): model-level hits, the median per-model vehicle accuracy, then the ten seen models with the lowest P(true) and every absent model.
+
+size (SMALL / MID / LARGE), seen models: 3 / 3 right at model level; median per-model vehicle accuracy 98.4 %; devices right 222 / 226 (98.2 %).
+
+| model | label | platforms | veh | win | veh right (acc %) | P(true) | model decision |
+|---|---|---|---|---|---|---|---|
+| Honda Fit | SMALL | 1 | 7 | 273 | 6/7 (85.7) | 0.60 | SMALL OK |
+| Honda Civic | SMALL | 3 | 123 | 1173 | 121/123 (98.4) | 0.70 | SMALL OK |
+| Honda CR-V | SMALL | 2 | 96 | 486 | 95/96 (99.0) | 0.76 | SMALL OK |
+
+size (SMALL / MID / LARGE), absent models: 1 / 1 right at model level; median per-model vehicle accuracy 100.0 %; devices right 1 / 1 (100.0 %).
+
+| model | label | platforms | veh | win | veh right (acc %) | P(true) | model decision |
+|---|---|---|---|---|---|---|---|
+| Honda Freed | SMALL | 1 | 1 | 48 | 1/1 (100.0) | 0.55 | SMALL OK |
+
+bev_ice (BEV / ICE), seen models: 3 / 3 right at model level; median per-model vehicle accuracy 99.0 %; devices right 223 / 226 (98.7 %).
+
+| model | label | platforms | veh | win | veh right (acc %) | P(true) | model decision |
+|---|---|---|---|---|---|---|---|
+| Honda CR-V | ICE | 2 | 96 | 486 | 95/96 (99.0) | 0.82 | ICE OK |
+| Honda Fit | ICE | 1 | 7 | 273 | 7/7 (100.0) | 0.83 | ICE OK |
+| Honda Civic | ICE | 3 | 123 | 1173 | 121/123 (98.4) | 0.83 | ICE OK |
+
+### commaCarSegments (`ccs_honda`): lead source and automation state per stratum (full models)
+
+`lead` = the platform's lead source (radar tracks / stock-ACC object / none = vision-only); `state`: human = das_frac < 0.5, engaged = das_frac >= 0.5 (the driving automation system or stock cruise active for most of the minute). Vehicle accuracy inside a cell uses the vehicle's windows of that cell only.
+
+| factor | value | stratum | size: win / veh | size win acc % | size veh acc % (right/n) | pt: win / veh | pt win acc % | pt veh acc % (right/n) |
+|---|---|---|---|---|---|---|---|---|
+| lead | radar | all | 887 / 47 | 80.4 | 95.7 (45/47) | 839 / 46 | 87.4 | 100.0 (46/46) |
+| lead | radar | seen | 743 / 44 | 79.4 | 95.5 (42/44) | 743 / 44 | 87.1 | 100.0 (44/44) |
+| lead | radar | held-out | 96 / 2 | 90.6 | 100.0 (2/2) | 96 / 2 | 89.6 | 100.0 (2/2) |
+| lead | radar | absent | 48 / 1 | 75.0 | 100.0 (1/1) | 0 / 0 | - | - |
+| lead | none | all | 1245 / 193 | 86.2 | 97.9 (189/193) | 1245 / 193 | 90.5 | 97.9 (189/193) |
+| lead | none | seen | 1189 / 189 | 86.0 | 98.4 (186/189) | 1189 / 189 | 90.3 | 97.9 (185/189) |
+| lead | none | held-out | 56 / 4 | 89.3 | 75.0 (3/4) | 56 / 4 | 94.6 | 100.0 (4/4) |
+| state | human | all | 1230 / 204 | 91.1 | 98.5 (201/204) | 1194 / 203 | 95.6 | 99.5 (202/203) |
+| state | human | seen | 1094 / 198 | 91.0 | 98.5 (195/198) | 1094 / 198 | 95.6 | 99.5 (197/198) |
+| state | human | held-out | 100 / 5 | 96.0 | 100.0 (5/5) | 100 / 5 | 96.0 | 100.0 (5/5) |
+| state | human | absent | 36 / 1 | 80.6 | 100.0 (1/1) | 0 / 0 | - | - |
+| state | engaged | all | 902 / 171 | 73.7 | 84.8 (145/171) | 890 / 170 | 80.7 | 94.1 (160/170) |
+| state | engaged | seen | 838 / 165 | 73.6 | 84.8 (140/165) | 838 / 165 | 80.5 | 94.5 (156/165) |
+| state | engaged | held-out | 52 / 5 | 78.8 | 80.0 (4/5) | 52 / 5 | 82.7 | 80.0 (4/5) |
+| state | engaged | absent | 12 / 1 | 58.3 | 100.0 (1/1) | 0 / 0 | - | - |
+
+### commaCarSegments (`ccs_honda`): evidence per vehicle (full models; vehicle-level accuracy by labelled windows per device)
+
+How many minutes of a new device are needed: devices bucketed by their number of labelled windows (1, 2-4, 5-9, 10+); cells = devices right / devices (accuracy %).
+
+| task | stratum | devices | 1 window | 2-4 windows | 5-9 windows | 10+ windows |
+|---|---|---|---|---|---|---|
+| size | all | 230 | 15/17 (88.2) | 78/79 (98.7) | 60/61 (98.4) | 73/73 (100.0) |
+| size | seen | 224 | 15/17 (88.2) | 77/78 (98.7) | 59/60 (98.3) | 69/69 (100.0) |
+| size | held-out | 5 | - | 1/1 (100.0) | 1/1 (100.0) | 3/3 (100.0) |
+| size | absent | 1 | - | - | - | 1/1 (100.0) |
+| bev_ice | all | 229 | 16/17 (94.1) | 79/79 (100.0) | 60/61 (98.4) | 72/72 (100.0) |
+| bev_ice | seen | 224 | 16/17 (94.1) | 78/78 (100.0) | 59/60 (98.3) | 69/69 (100.0) |
+| bev_ice | held-out | 5 | - | 1/1 (100.0) | 1/1 (100.0) | 3/3 (100.0) |
+
+### commaCarSegments (`ccs_honda`): predicted-share confusion per stratum (size; full model and full model with the yaw group masked)
+
+Predicted class shares of the windows per true class and stratum (the confusion matrix as shares) and the mean probabilities; the yaw-masked run shows how much of the decision rests on the steering-derived yaw / curvature / lateral-acceleration group.
+
+| run | stratum | true class | veh | win | predicted share SMALL, MID, LARGE % | mean P(SMALL, MID, LARGE) |
+|---|---|---|---|---|---|---|
+| full | all | SMALL | 230 | 2132 | 83.8, 14.8, 1.5 | 0.70, 0.26, 0.04 |
+| full | seen | SMALL | 224 | 1932 | 83.5, 15.2, 1.3 | 0.70, 0.26, 0.04 |
+| full | held-out | SMALL | 5 | 152 | 90.1, 7.9, 2.0 | 0.73, 0.24, 0.03 |
+| full | absent | SMALL | 1 | 48 | 75.0, 18.8, 6.2 | 0.55, 0.34, 0.10 |
+| full+mask-yaw | all | SMALL | 230 | 2132 | 20.2, 9.1, 70.7 | 0.23, 0.19, 0.58 |
+| full+mask-yaw | seen | SMALL | 224 | 1932 | 20.8, 9.3, 69.9 | 0.23, 0.19, 0.58 |
+| full+mask-yaw | held-out | SMALL | 5 | 152 | 15.1, 7.9, 77.0 | 0.20, 0.20, 0.60 |
+| full+mask-yaw | absent | SMALL | 1 | 48 | 12.5, 4.2, 83.3 | 0.16, 0.13, 0.71 |
+
+### commaCarSegments (`ccs_honda`): unlabelled powertrains (HEV / PHEV / FCEV / MIXED platforms), predicted BEV share per platform (full model)
+
+Scored but outside the BEV / ICE metrics: share of the platform's windows and devices called BEV and the mean P(BEV) (MIXED = the platform merges gasoline and electrified variants upstream, as in training).
+
+| platform | model | powertrain | stratum | veh | win | windows called BEV % | devices called BEV | mean P(BEV) |
+|---|---|---|---|---|---|---|---|---|
+| HONDA_FREED | Honda Freed | unknown | absent | 1 | 48 | 16.7 | 0/1 | 0.20 |
 
 ## Per dataset
 
@@ -2589,4 +2987,219 @@ Primary run without the borderline models (Cadillac XT4, Ford Escape, Ford Maver
 | drive | 19245 | 52.3 [50.2, 54.4] | 45.4 [43.6, 47.1] | SMALL 84.1 / MID 30.6 / LARGE 22.3 | 8472/6515/4258 |
 | vehicle | 3678 | 57.3 [55.7, 59.1] | 49.5 [47.7, 51.5] | SMALL 91.4 / MID 30.7 / LARGE 26.0 | 1685/1085/908 |
 | model | 99 | 56.6 [53.2, 60.0] | 47.3 [42.4, 52.1] | SMALL 97.7 / MID 24.1 / LARGE 23.1 | 44/29/26 |
+
+## ccs_honda: commaCarSegments, the nine Honda platforms the first decode lost, re-decoded with the gearbox option of ccs_decode.py (opendbc 0.3.1 with CarParams.transmissionType taken from the logged gearbox message; same channels as `ccs`)
+
+### ccs_honda: bev_ice (BEV / ICE)
+
+Windows 2132 (2084 with a bev_ice label), vehicles 230, drives 913, car models 5; label counts {'BEV': 0, 'ICE': 2084}. Internal reference = seed ensemble of the same variant on our held-out car models (accuracy / macro-F1; `all` = the matching sub-population, see internal_reference.md).
+
+| model | level | units | accuracy % [95% CI] | macro-F1 % [95% CI] | chance uniform / majority % | recall per class % | internal reference acc / F1 (all) |
+|---|---|---|---|---|---|---|---|
+| full 20-ch model (radar / stock-ACC / no lead by platform; steering-derived yaw) | window | 2084 | 89.3 [86.9, 91.4] | - | 50.0 / 100.0 | BEV - / ICE 89.3 | 82.5 / 80.7 |
+|  | drive | 883 | 94.1 [91.9, 96.1] | - | 50.0 / 100.0 | BEV - / ICE 94.1 | 93.7 / 93.3 |
+|  | vehicle | 229 | 99.1 [97.8, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 99.1 | 93.9 / 93.4 |
+|  | model | 4 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| V1 variant (lateral + speed, 10 ch) | window | 2084 | 72.7 [69.2, 76.1] | - | 50.0 / 100.0 | BEV - / ICE 72.7 | 70.0 / 67.9 |
+|  | drive | 883 | 79.7 [76.3, 82.9] | - | 50.0 / 100.0 | BEV - / ICE 79.7 | 74.6 / 73.7 |
+|  | vehicle | 229 | 86.0 [81.6, 90.0] | - | 50.0 / 100.0 | BEV - / ICE 86.0 | 75.8 / 74.6 |
+|  | model | 4 | 100.0 [75.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| V2 variant (longitudinal-only, 11 ch) | window | 2084 | 83.6 [81.0, 86.2] | - | 50.0 / 100.0 | BEV - / ICE 83.6 | 76.7 / 74.1 |
+|  | drive | 883 | 88.7 [86.1, 91.4] | - | 50.0 / 100.0 | BEV - / ICE 88.7 | 90.0 / 89.0 |
+|  | vehicle | 229 | 97.8 [96.1, 99.6] | - | 50.0 / 100.0 | BEV - / ICE 97.8 | 91.4 / 90.4 |
+|  | model | 4 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| V3 variant (speed-only, 3 ch) | window | 2084 | 88.8 [86.5, 90.9] | - | 50.0 / 100.0 | BEV - / ICE 88.8 | 77.0 / 74.6 |
+|  | drive | 883 | 94.5 [92.4, 96.2] | - | 50.0 / 100.0 | BEV - / ICE 94.5 | 89.5 / 88.6 |
+|  | vehicle | 229 | 98.3 [96.5, 99.6] | - | 50.0 / 100.0 | BEV - / ICE 98.3 | 91.0 / 90.1 |
+|  | model | 4 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, V1 mask (secondary) | window | 2084 | 89.9 [87.3, 92.1] | - | 50.0 / 100.0 | BEV - / ICE 89.9 | 68.9 / 62.4 |
+|  | drive | 883 | 93.0 [89.8, 95.5] | - | 50.0 / 100.0 | BEV - / ICE 93.0 | 71.2 / 66.7 |
+|  | vehicle | 229 | 98.3 [96.1, 99.6] | - | 50.0 / 100.0 | BEV - / ICE 98.3 | 69.3 / 61.2 |
+|  | model | 4 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, V2 mask (secondary) | window | 2084 | 86.3 [84.1, 88.5] | - | 50.0 / 100.0 | BEV - / ICE 86.3 | 71.0 / 60.9 |
+|  | drive | 883 | 90.8 [88.8, 93.2] | - | 50.0 / 100.0 | BEV - / ICE 90.8 | 67.5 / 54.4 |
+|  | vehicle | 229 | 99.6 [98.7, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 99.6 | 69.3 / 56.8 |
+|  | model | 4 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, V3 mask (secondary) | window | 2084 | 94.0 [92.6, 95.3] | - | 50.0 / 100.0 | BEV - / ICE 94.0 | 69.7 / 59.4 |
+|  | drive | 883 | 95.8 [94.5, 97.3] | - | 50.0 / 100.0 | BEV - / ICE 95.8 | 63.3 / 51.0 |
+|  | vehicle | 229 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 65.2 / 49.8 |
+|  | model | 4 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, yaw group masked (sensitivity: steering-derived yaw) | window | 2084 | 87.5 [85.1, 89.9] | - | 50.0 / 100.0 | BEV - / ICE 87.5 | - |
+|  | drive | 883 | 91.5 [89.0, 94.0] | - | 50.0 / 100.0 | BEV - / ICE 91.5 | - |
+|  | vehicle | 229 | 98.7 [97.4, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 98.7 | - |
+|  | model | 4 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, lead group masked (sensitivity: vision-only platforms) | window | 2084 | 91.7 [89.8, 93.5] | - | 50.0 / 100.0 | BEV - / ICE 91.7 | - |
+|  | drive | 883 | 95.8 [93.8, 97.4] | - | 50.0 / 100.0 | BEV - / ICE 95.8 | - |
+|  | vehicle | 229 | 99.1 [97.8, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 99.1 | - |
+|  | model | 4 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+
+Per car model, primary run (full 20-ch model (radar / stock-ACC / no lead by platform; steering-derived yaw)):
+
+| model | label | footprint | border | powertrain | veh | drives | win | DAS % | mean P(true) | win acc % | drive acc % | veh correct | model-level decision (P) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Honda CR-V | ICE | 4.277 |  | ICE | 96 | 200 | 486 | 45.0 | 0.82 | 89.5 | 95.0 | 95/96 | ICE (0.18, 0.82) OK |
+| Honda Civic | ICE | 4.197 |  | ICE | 123 | 488 | 1173 | 43.7 | 0.83 | 89.4 | 93.6 | 121/123 | ICE (0.17, 0.83) OK |
+| Honda Fit | ICE | 3.737 |  | ICE | 7 | 116 | 273 | 35.0 | 0.83 | 86.8 | 94.0 | 7/7 | ICE (0.17, 0.83) OK |
+| Honda HR-V | ICE | 4.010 |  | ICE | 5 | 79 | 152 | 33.3 | 0.84 | 91.4 | 94.9 | 5/5 | ICE (0.17, 0.83) OK |
+
+Windows outside the bev_ice classes (scored, not in the metrics), primary run:
+
+| model | label | veh | win | predicted share % | mean P |
+|---|---|---|---|---|---|
+| Honda Freed | unknown | 1 | 48 | BEV 16.7, ICE 83.3 | 0.20, 0.80 |
+
+### ccs_honda: size (SMALL / MID / LARGE)
+
+Windows 2132 (2132 with a size label), vehicles 230, drives 913, car models 5; label counts {'SMALL': 2132, 'MID': 0, 'LARGE': 0}. Internal reference = seed ensemble of the same variant on our held-out car models (accuracy / macro-F1; `all` = the matching sub-population, see internal_reference.md).
+
+| model | level | units | accuracy % [95% CI] | macro-F1 % [95% CI] | chance uniform / majority % | recall per class % | internal reference acc / F1 (all) |
+|---|---|---|---|---|---|---|---|
+| full 20-ch model (radar / stock-ACC / no lead by platform; steering-derived yaw) | window | 2132 | 83.8 [80.8, 86.6] | - | 33.3 / 100.0 | SMALL 83.8 / MID - / LARGE - | 60.0 / 54.3 |
+|  | drive | 913 | 88.2 [84.8, 91.5] | - | 33.3 / 100.0 | SMALL 88.2 / MID - / LARGE - | 70.8 / 67.3 |
+|  | vehicle | 230 | 98.3 [96.5, 99.6] | - | 33.3 / 100.0 | SMALL 98.3 / MID - / LARGE - | 63.5 / 59.7 |
+|  | model | 5 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| V1 variant (lateral + speed, 10 ch) | window | 2132 | 49.6 [45.6, 53.6] | - | 33.3 / 100.0 | SMALL 49.6 / MID - / LARGE - | 62.0 / 55.0 |
+|  | drive | 913 | 49.5 [43.9, 55.0] | - | 33.3 / 100.0 | SMALL 49.5 / MID - / LARGE - | 70.6 / 66.4 |
+|  | vehicle | 230 | 47.8 [41.3, 54.4] | - | 33.3 / 100.0 | SMALL 47.8 / MID - / LARGE - | 62.6 / 58.0 |
+|  | model | 5 | 60.0 [20.0, 60.0] | - | 33.3 / 100.0 | SMALL 60.0 / MID - / LARGE - |  |
+| V2 variant (longitudinal-only, 11 ch) | window | 2132 | 51.4 [47.2, 56.4] | - | 33.3 / 100.0 | SMALL 51.4 / MID - / LARGE - | 41.7 / 34.9 |
+|  | drive | 913 | 53.6 [48.6, 60.1] | - | 33.3 / 100.0 | SMALL 53.6 / MID - / LARGE - | 45.2 / 33.5 |
+|  | vehicle | 230 | 73.0 [67.4, 78.7] | - | 33.3 / 100.0 | SMALL 73.0 / MID - / LARGE - | 43.2 / 32.8 |
+|  | model | 5 | 60.0 [40.0, 100.0] | - | 33.3 / 100.0 | SMALL 60.0 / MID - / LARGE - |  |
+| V3 variant (speed-only, 3 ch) | window | 2132 | 64.2 [60.9, 67.6] | - | 33.3 / 100.0 | SMALL 64.2 / MID - / LARGE - | 47.1 / 41.3 |
+|  | drive | 913 | 72.2 [68.7, 75.9] | - | 33.3 / 100.0 | SMALL 72.2 / MID - / LARGE - | 53.4 / 45.1 |
+|  | vehicle | 230 | 86.5 [82.2, 90.9] | - | 33.3 / 100.0 | SMALL 86.5 / MID - / LARGE - | 54.4 / 45.6 |
+|  | model | 5 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| full 20-ch model, V1 mask (secondary) | window | 2132 | 92.5 [90.4, 94.4] | - | 33.3 / 100.0 | SMALL 92.5 / MID - / LARGE - | 63.2 / 51.2 |
+|  | drive | 913 | 95.5 [93.2, 97.5] | - | 33.3 / 100.0 | SMALL 95.5 / MID - / LARGE - | 70.5 / 63.2 |
+|  | vehicle | 230 | 98.7 [97.0, 100.0] | - | 33.3 / 100.0 | SMALL 98.7 / MID - / LARGE - | 60.8 / 50.8 |
+|  | model | 5 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| full 20-ch model, V2 mask (secondary) | window | 2132 | 81.7 [78.3, 85.4] | - | 33.3 / 100.0 | SMALL 81.7 / MID - / LARGE - | 53.6 / 33.2 |
+|  | drive | 913 | 86.2 [83.0, 89.4] | - | 33.3 / 100.0 | SMALL 86.2 / MID - / LARGE - | 52.7 / 24.8 |
+|  | vehicle | 230 | 96.5 [93.9, 98.7] | - | 33.3 / 100.0 | SMALL 96.5 / MID - / LARGE - | 48.0 / 23.2 |
+|  | model | 5 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| full 20-ch model, V3 mask (secondary) | window | 2132 | 89.5 [87.1, 91.8] | - | 33.3 / 100.0 | SMALL 89.5 / MID - / LARGE - | 55.1 / 30.1 |
+|  | drive | 913 | 93.2 [91.0, 95.1] | - | 33.3 / 100.0 | SMALL 93.2 / MID - / LARGE - | 52.8 / 26.1 |
+|  | vehicle | 230 | 97.0 [94.3, 99.1] | - | 33.3 / 100.0 | SMALL 97.0 / MID - / LARGE - | 49.2 / 25.3 |
+|  | model | 5 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| full 20-ch model, yaw group masked (sensitivity: steering-derived yaw) | window | 2132 | 20.2 [17.0, 23.7] | - | 33.3 / 100.0 | SMALL 20.2 / MID - / LARGE - | - |
+|  | drive | 913 | 21.7 [18.4, 25.3] | - | 33.3 / 100.0 | SMALL 21.7 / MID - / LARGE - | - |
+|  | vehicle | 230 | 14.3 [10.0, 19.1] | - | 33.3 / 100.0 | SMALL 14.3 / MID - / LARGE - | - |
+|  | model | 5 | 0.0 [0.0, 0.0] | - | 33.3 / 100.0 | SMALL 0.0 / MID - / LARGE - |  |
+| full 20-ch model, lead group masked (sensitivity: vision-only platforms) | window | 2132 | 86.2 [83.4, 88.9] | - | 33.3 / 100.0 | SMALL 86.2 / MID - / LARGE - | - |
+|  | drive | 913 | 91.1 [88.0, 93.9] | - | 33.3 / 100.0 | SMALL 91.1 / MID - / LARGE - | - |
+|  | vehicle | 230 | 98.7 [97.0, 100.0] | - | 33.3 / 100.0 | SMALL 98.7 / MID - / LARGE - | - |
+|  | model | 5 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+
+Per car model, primary run (full 20-ch model (radar / stock-ACC / no lead by platform; steering-derived yaw)):
+
+| model | label | footprint | border | powertrain | veh | drives | win | DAS % | mean P(true) | win acc % | drive acc % | veh correct | model-level decision (P) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Honda CR-V | SMALL | 4.277 |  | ICE | 96 | 200 | 486 | 45.0 | 0.76 | 91.6 | 93.5 | 95/96 | SMALL (0.76, 0.20, 0.04) OK |
+| Honda Civic | SMALL | 4.197 |  | ICE | 123 | 488 | 1173 | 43.7 | 0.70 | 82.4 | 88.7 | 121/123 | SMALL (0.70, 0.26, 0.04) OK |
+| Honda Fit | SMALL | 3.737 |  | ICE | 7 | 116 | 273 | 35.0 | 0.60 | 73.6 | 73.3 | 6/7 | SMALL (0.60, 0.36, 0.04) OK |
+| Honda Freed | SMALL | 4.062 |  | unknown | 1 | 30 | 48 | 25.6 | 0.55 | 75.0 | 80.0 | 1/1 | SMALL (0.55, 0.34, 0.10) OK |
+| Honda HR-V | SMALL | 4.010 |  | ICE | 5 | 79 | 152 | 33.3 | 0.73 | 90.1 | 96.2 | 5/5 | SMALL (0.73, 0.24, 0.03) OK |
+
+## comma2k19: comma2k19, two cars on 2018 hardware (RAV4 2017, Civic 2016), decoded from the raw 2018 CAN
+
+### comma2k19: bev_ice (BEV / ICE)
+
+Windows 381 (381 with a bev_ice label), vehicles 2, drives 42, car models 2; label counts {'BEV': 0, 'ICE': 381}. Internal reference = seed ensemble of the same variant on our held-out car models (accuracy / macro-F1; `all` = the matching sub-population, see internal_reference.md).
+
+| model | level | units | accuracy % [95% CI] | macro-F1 % [95% CI] | chance uniform / majority % | recall per class % | internal reference acc / F1 (all) |
+|---|---|---|---|---|---|---|---|
+| full 20-ch model (radar / stock-ACC / no lead by platform; steering-derived yaw) | window | 381 | 70.9 [69.2, 72.4] | - | 50.0 / 100.0 | BEV - / ICE 70.9 | 82.5 / 80.7 |
+|  | drive | 42 | 88.1 [85.7, 90.5] | - | 50.0 / 100.0 | BEV - / ICE 88.1 | 93.7 / 93.3 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 93.9 / 93.4 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| V1 variant (lateral + speed, 10 ch) | window | 381 | 60.4 [57.3, 63.3] | - | 50.0 / 100.0 | BEV - / ICE 60.4 | 70.0 / 67.9 |
+|  | drive | 42 | 81.0 [71.4, 90.5] | - | 50.0 / 100.0 | BEV - / ICE 81.0 | 74.6 / 73.7 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 75.8 / 74.6 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| V2 variant (longitudinal-only, 11 ch) | window | 381 | 69.6 [64.3, 74.5] | - | 50.0 / 100.0 | BEV - / ICE 69.6 | 76.7 / 74.1 |
+|  | drive | 42 | 83.3 [81.0, 85.7] | - | 50.0 / 100.0 | BEV - / ICE 83.3 | 90.0 / 89.0 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 91.4 / 90.4 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| V3 variant (speed-only, 3 ch) | window | 381 | 64.3 [63.8, 64.9] | - | 50.0 / 100.0 | BEV - / ICE 64.3 | 77.0 / 74.6 |
+|  | drive | 42 | 83.3 [76.2, 90.5] | - | 50.0 / 100.0 | BEV - / ICE 83.3 | 89.5 / 88.6 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 91.0 / 90.1 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, V1 mask (secondary) | window | 381 | 96.6 [94.9, 98.4] | - | 50.0 / 100.0 | BEV - / ICE 96.6 | 68.9 / 62.4 |
+|  | drive | 42 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 71.2 / 66.7 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 69.3 / 61.2 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, V2 mask (secondary) | window | 381 | 85.6 [83.8, 87.2] | - | 50.0 / 100.0 | BEV - / ICE 85.6 | 71.0 / 60.9 |
+|  | drive | 42 | 95.2 [95.2, 95.2] | - | 50.0 / 100.0 | BEV - / ICE 95.2 | 67.5 / 54.4 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 69.3 / 56.8 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, V3 mask (secondary) | window | 381 | 94.5 [91.3, 97.8] | - | 50.0 / 100.0 | BEV - / ICE 94.5 | 69.7 / 59.4 |
+|  | drive | 42 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 63.3 / 51.0 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | 65.2 / 49.8 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, yaw group masked (sensitivity: steering-derived yaw) | window | 381 | 78.0 [77.8, 78.1] | - | 50.0 / 100.0 | BEV - / ICE 78.0 | - |
+|  | drive | 42 | 95.2 [95.2, 95.2] | - | 50.0 / 100.0 | BEV - / ICE 95.2 | - |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | - |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+| full 20-ch model, lead group masked (sensitivity: vision-only platforms) | window | 381 | 92.7 [91.3, 94.1] | - | 50.0 / 100.0 | BEV - / ICE 92.7 | - |
+|  | drive | 42 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | - |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 | - |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 50.0 / 100.0 | BEV - / ICE 100.0 |  |
+
+Per car model, primary run (full 20-ch model (radar / stock-ACC / no lead by platform; steering-derived yaw)):
+
+| model | label | footprint | border | powertrain | veh | drives | win | DAS % | mean P(true) | win acc % | drive acc % | veh correct | model-level decision (P) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Honda Civic | ICE | 4.197 |  | ICE | 1 | 21 | 196 | 61.7 | 0.71 | 72.4 | 90.5 | 1/1 | ICE (0.29, 0.71) OK |
+| Toyota RAV4 | ICE | 4.134 |  | ICE | 1 | 21 | 185 | 55.7 | 0.68 | 69.2 | 85.7 | 1/1 | ICE (0.32, 0.68) OK |
+
+### comma2k19: size (SMALL / MID / LARGE)
+
+Windows 381 (381 with a size label), vehicles 2, drives 42, car models 2; label counts {'SMALL': 381, 'MID': 0, 'LARGE': 0}. Internal reference = seed ensemble of the same variant on our held-out car models (accuracy / macro-F1; `all` = the matching sub-population, see internal_reference.md).
+
+| model | level | units | accuracy % [95% CI] | macro-F1 % [95% CI] | chance uniform / majority % | recall per class % | internal reference acc / F1 (all) |
+|---|---|---|---|---|---|---|---|
+| full 20-ch model (radar / stock-ACC / no lead by platform; steering-derived yaw) | window | 381 | 51.7 [48.0, 55.7] | - | 33.3 / 100.0 | SMALL 51.7 / MID - / LARGE - | 60.0 / 54.3 |
+|  | drive | 42 | 54.8 [52.4, 57.1] | - | 33.3 / 100.0 | SMALL 54.8 / MID - / LARGE - | 70.8 / 67.3 |
+|  | vehicle | 2 | 50.0 [0.0, 100.0] | - | 33.3 / 100.0 | SMALL 50.0 / MID - / LARGE - | 63.5 / 59.7 |
+|  | model | 2 | 50.0 [0.0, 100.0] | - | 33.3 / 100.0 | SMALL 50.0 / MID - / LARGE - |  |
+| V1 variant (lateral + speed, 10 ch) | window | 381 | 44.4 [41.3, 47.6] | - | 33.3 / 100.0 | SMALL 44.4 / MID - / LARGE - | 62.0 / 55.0 |
+|  | drive | 42 | 28.6 [23.8, 33.3] | - | 33.3 / 100.0 | SMALL 28.6 / MID - / LARGE - | 70.6 / 66.4 |
+|  | vehicle | 2 | 0.0 [0.0, 0.0] | - | 33.3 / 100.0 | SMALL 0.0 / MID - / LARGE - | 62.6 / 58.0 |
+|  | model | 2 | 0.0 [0.0, 0.0] | - | 33.3 / 100.0 | SMALL 0.0 / MID - / LARGE - |  |
+| V2 variant (longitudinal-only, 11 ch) | window | 381 | 47.5 [40.8, 54.6] | - | 33.3 / 100.0 | SMALL 47.5 / MID - / LARGE - | 41.7 / 34.9 |
+|  | drive | 42 | 57.1 [47.6, 66.7] | - | 33.3 / 100.0 | SMALL 57.1 / MID - / LARGE - | 45.2 / 33.5 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - | 43.2 / 32.8 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| V3 variant (speed-only, 3 ch) | window | 381 | 82.2 [81.1, 83.2] | - | 33.3 / 100.0 | SMALL 82.2 / MID - / LARGE - | 47.1 / 41.3 |
+|  | drive | 42 | 97.6 [95.2, 100.0] | - | 33.3 / 100.0 | SMALL 97.6 / MID - / LARGE - | 53.4 / 45.1 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - | 54.4 / 45.6 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| full 20-ch model, V1 mask (secondary) | window | 381 | 97.6 [96.4, 98.9] | - | 33.3 / 100.0 | SMALL 97.6 / MID - / LARGE - | 63.2 / 51.2 |
+|  | drive | 42 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - | 70.5 / 63.2 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - | 60.8 / 50.8 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| full 20-ch model, V2 mask (secondary) | window | 381 | 87.7 [87.2, 88.1] | - | 33.3 / 100.0 | SMALL 87.7 / MID - / LARGE - | 53.6 / 33.2 |
+|  | drive | 42 | 97.6 [95.2, 100.0] | - | 33.3 / 100.0 | SMALL 97.6 / MID - / LARGE - | 52.7 / 24.8 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - | 48.0 / 23.2 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| full 20-ch model, V3 mask (secondary) | window | 381 | 96.6 [93.9, 99.5] | - | 33.3 / 100.0 | SMALL 96.6 / MID - / LARGE - | 55.1 / 30.1 |
+|  | drive | 42 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - | 52.8 / 26.1 |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - | 49.2 / 25.3 |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+| full 20-ch model, yaw group masked (sensitivity: steering-derived yaw) | window | 381 | 3.4 [1.5, 5.4] | - | 33.3 / 100.0 | SMALL 3.4 / MID - / LARGE - | - |
+|  | drive | 42 | 0.0 [0.0, 0.0] | - | 33.3 / 100.0 | SMALL 0.0 / MID - / LARGE - | - |
+|  | vehicle | 2 | 0.0 [0.0, 0.0] | - | 33.3 / 100.0 | SMALL 0.0 / MID - / LARGE - | - |
+|  | model | 2 | 0.0 [0.0, 0.0] | - | 33.3 / 100.0 | SMALL 0.0 / MID - / LARGE - |  |
+| full 20-ch model, lead group masked (sensitivity: vision-only platforms) | window | 381 | 54.9 [53.0, 56.6] | - | 33.3 / 100.0 | SMALL 54.9 / MID - / LARGE - | - |
+|  | drive | 42 | 59.5 [57.1, 61.9] | - | 33.3 / 100.0 | SMALL 59.5 / MID - / LARGE - | - |
+|  | vehicle | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - | - |
+|  | model | 2 | 100.0 [100.0, 100.0] | - | 33.3 / 100.0 | SMALL 100.0 / MID - / LARGE - |  |
+
+Per car model, primary run (full 20-ch model (radar / stock-ACC / no lead by platform; steering-derived yaw)):
+
+| model | label | footprint | border | powertrain | veh | drives | win | DAS % | mean P(true) | win acc % | drive acc % | veh correct | model-level decision (P) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Honda Civic | SMALL | 4.197 |  | ICE | 1 | 21 | 196 | 61.7 | 0.48 | 48.0 | 52.4 | 0/1 | MID (0.48, 0.49, 0.02) MISS |
+| Toyota RAV4 | SMALL | 4.134 |  | ICE | 1 | 21 | 185 | 55.7 | 0.54 | 55.7 | 57.1 | 1/1 | SMALL (0.54, 0.44, 0.02) OK |
 

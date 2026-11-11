@@ -20,12 +20,15 @@ turned into window sets by their adapters (`DS_CSC.md`, `DS_MORETORQUE.md`); the
 Section 2.12 and the phase-3 parts of sections 0, 1, 3, 4 and 5 were added on 10 Nov by the phase-3 writer step, after the
 owner's device-disjoint commaCarSegments selection (`CCS_SELECTION.md`) had been downloaded, decoded by `ccs_decode.py`
 (`CCS_PIPELINE.md`) and scored with the nine runs of the `ccs` case of `run_scoring.sh`; the phase-1 and phase-2 text is unchanged
-except where a pooled total now includes the new set.
+except where a pooled total now includes the new set. Sections 2.13-2.14 and the matching parts of sections 0, 1, 3, 4 and 5
+were added on 10 Nov (evening) by the phase-3b writer step, after the nine Honda platforms the phase-3 decode had lost were
+re-decoded with a gearbox option of `ccs_decode.py` (`ccs_honda`) and the two comma2k19 chunks were decoded by the same decoder
+(`comma2k19`); the earlier text is unchanged except where a pooled total now includes the two sets and where 2.12 points to 2.13.
 
 ## 0. Headline
 
 Phase 3 (one set with all 20 channels, the car's own CAN acceleration and device ids, on 4,061 devices the lab never saw;
-2.12, 3.6):
+2.12, 3.6; the two sets decoded afterwards, 2.13-2.14, follow in the next block):
 
 * **Powertrain reproduces the lab's held-out test at model level on a fleet of 4,061 unknown devices, and the held-out
   stratum reproduces it at device level.** commaCarSegments, device-disjoint selection: 45,763 one-minute windows
@@ -58,10 +61,45 @@ Phase 3 (one set with all 20 channels, the car's own CAN acceleration and device
   macro-F1 50.0, 14 of 30 LARGE models from the `aEgo` texture) and beats the full model's macro-F1; the lateral channels
   carry the full model's decision (masking the yaw group calls 69.6 % of the devices LARGE, 88.3 % of the LARGE ones) but, steering-derived on a
   new fleet, they do not deliver the nine points they add internally.
-* **Pooled over all sets** (3.1, 3.2; one physical car, archive or device x model = one decision): BEV 575 / 667 (86.2 %),
-  ICE 1,994 / 2,239 (89.1 %), all 2,569 / 2,906 (88.4 %); size SMALL 1,683 / 1,850 (91.0 %), MID 366 / 1,338 (27.4 %),
-  LARGE 254 / 1,072 (23.7 %), all 2,303 / 4,260 (54.1 %); the commaCarSegments devices contribute 2,547 and 4,152 of these
-  decisions.
+* **Pooled over all sets** (3.1, 3.2; one physical car, archive or device x model = one decision; the totals include the
+  two sets of the next block): BEV 575 / 667 (86.2 %), ICE 2,224 / 2,472 (90.0 %), all 2,799 / 3,139 (89.2 %); size SMALL
+  1,912 / 2,084 (91.7 %), MID 366 / 1,338 (27.4 %), LARGE 254 / 1,072 (23.7 %), all 2,532 / 4,494 (56.3 %); the
+  commaCarSegments devices (`ccs` + `ccs_honda`) contribute 2,778 and 4,384 of these decisions (`ccs` alone 2,547 and 4,152:
+  powertrain 2,232 / 2,547, size 2,245 / 4,152).
+
+Phase 3, two sets decoded after the write-up above (2.13, 2.14; 3.6 points 7-9):
+
+* **The nine Honda platforms the phase-3 decode had lost are recovered and read as SMALL and ICE (`ccs_honda`, 2.13).**
+  The loss was the parser, not the data: opendbc 0.3.1 waited for a gearbox message these traditional-CVT Hondas never
+  send; a decoder option that takes the gearbox type from the CAN addresses (byte-identical otherwise, cross-checked
+  against the lab's 2024-08 openpilot stack) recovers 2,189 of the 2,198 segments -> 2,132 windows (35.5 h) from 230
+  devices on 9 platforms (Civic 2016 / Bosch / 2022, CR-V 2016 / 5G, Fit, HR-V 2016 / 3G, Freed). Full model: SMALL for
+  every platform, 226 of 230 devices (98.3 % [96.5, 99.6]) and 5 of 5 models; ICE for every labelled platform, 227 of 229
+  devices (99.1 % [97.8, 100.0]) and 4 of 4 models; the held-out HR-V 5 of 5 on both tasks (P(SMALL) 0.73, P(ICE) 0.84,
+  internally 46.0 % drive accuracy / SMALL 0.50 and 95.0 % / ICE 0.84). Both HONDA_CIVIC_2022 misses are among the 9
+  devices whose gearbox message says `automatic`, most likely the Civic Hybrid filed under the same name (without them 219
+  of 220 devices); engaged minutes score lower (window accuracy 73.7 against 91.1 % size, 80.7 against 95.6 % powertrain);
+  the yaw mask collapses the size call to 14.3 % of the devices, the lead mask changes nothing; V3 86.5 / 98.3 %, V2 73.0 /
+  97.8 %, V1 47.8 / 86.0 % of the devices (size / powertrain).
+* **Two cars on 2018 hardware are ICE, and their engaged minutes under 2018 openpilot's own longitudinal control sit at a
+  coin flip (`comma2k19`, 2.14).** One 2017 RAV4 and one 2016 Civic, 381 windows (6.4 h) decoded from the raw 2018 rlogs
+  with `CarParams` built from the live fingerprint. Powertrain: ICE for both (P 0.68 / 0.71; 88.1 % of the 42 drives), the
+  155 human-driven windows 100.0 % right (P(BEV) 0.06), the 226 engaged ones 50.9 % (0.47), and the speed-only variant is
+  not better there (64.3 % of the windows). Size: the Civic is a coin flip with the full model (P(SMALL) 0.485 against
+  P(MID) 0.491 -> MID), the RAV4 SMALL (0.54); the human-driven windows of both cars are SMALL (P 0.68-0.72), the engaged
+  ones MID (0.58-0.61); the speed-only variant has both SMALL (97.6 % of the drives). Probes, not fleet statements.
+* **The steering-derived yaw of the three CAN sets is inflated at speed.** The 2018 logs carry a measured yaw rate: the
+  decoder's bicycle-model yaw matches it at 1-5 m/s (ratio 0.98 / 0.87, RAV4 / Civic) and overestimates it as 1 + k v^2
+  with k of about 0.001 s^2/m^2 (1.13 / 1.03 at 10-15 m/s, 1.54 / 1.53 at 20-25, 1.85 / 1.78 at 25-30, 2.06 / 2.01 at
+  30-40; correlation 0.999), i.e. understeer the kinematic model ignores. Yaw, curvature and lateral acceleration are
+  therefore 1.5-2x too large on the highway windows of `ccs`, `ccs_honda` and `comma2k19` relative to the lab's IMU / pose
+  yaw, which bounds the lateral signal's transfer from below (3.6 point 6) and is a candidate explanation of the yaw-mask
+  sensitivity and of the full model's size loss on `ccs`; the remedy (an understeer-corrected or measured-yaw re-decode of
+  the three sets) is the suggested next experiment of section 4.
+* **What the two sets move.** Only the ICE and SMALL totals: the phase-3 scope goes from 2,232 / 2,547 to 2,460 / 2,778
+  (88.6 %) for powertrain and from 2,245 / 4,152 to 2,473 / 4,384 (56.4 %) for size; comma2k19 adds 2 of 2 ICE and 1 of 2
+  SMALL to "all sets" only. Two artefacts shared by the three sets are stated once in 2.13: sample 0 of every window is
+  the fresh parser's all-zero `CarState`, and the lead gate admits occasional oncoming traffic.
 
 Phase 2 (two sets with steering channels and the car's own CAN acceleration; 2.10, 2.11, 3.5):
 
@@ -156,6 +194,8 @@ Phase 1 (nine sets: eight without steering channels and the single-car A2D2 prob
 | `csc` (phase 2) | commaSteeringControl: 36 platform archives of 60-s segments with the openpilot lateral controller active (comma, 2023), 1,500 segments per archive -> 51,462 windows (857.7 h), 25 car models, 9 BEV + 27 ICE archives; no device ids (one archive = one pseudo-vehicle, one window per segment); CAN `aEgo`, steering angle, localizer lateral acceleration; 92 % of the samples engaged, mean speed 24.6 m/s | 11: v, a (CAN), steering angle / rate (difference), yaw / curvature / lateral acceleration (localizer), steer_pressed, standstill, das = lateral controller active, lead_valid = 0 (= the V1 list) | V1 variant (size); V3 variant (powertrain, see 1.3) | full + V1 mask; V3 (size); V1 (powertrain) | das |
 | `moretorque` (phase 2) | MoreTorque/rlogs: 7,636 one-minute openpilot rlogs of four community-fork platforms -> 7,190 windows (119.8 h), 1,155 drives (runs of consecutive segments), 12 cars: Hyundai Sonata 2020 (1 car, training platform), Mazda 3 2019 (7, absent), Mazda CX-50 (3, absent), Omoda E5 (1 BEV, absent); the lab drive builder reproduced from the rlogs | 20 (vision lead, localizer yaw, driver torque, pedal flags; 17 on the Omoda: torque and pedals absent) | full 20-ch model | V1 / V2 / V3 variants, full + V1 / V2 / V3 masks, lead / yaw / torque+pedal masks, `--das any` re-cut | all |
 | `ccs` (phase 3) | commaCarSegments, device-disjoint selection (`CCS_SELECTION.md`): 49,563 one-minute `rlog.zst` segments of 4,334 devices that are absent from the lab's raw library -> 47,006 decoded (`ccs_decode.py`, opendbc 0.3.1) -> 45,763 windows (762.7 h), 21,987 drives (device x route), 4,061 devices, 113 car models, 161 platforms; one window per segment; strata by car model: seen (70 models, 3,199 devices), held-out (29 of the lab's 41 test models, 864 devices), absent (14 models, 36 devices); 39.3 % of the windows automation-engaged, mean speed 18.0 m/s | 20 where the platform provides them (torque absent on 15.4 % of the windows; lead from radar tracks on 34.0 %, the stock-ACC object on 10.4 %, absent on vision-only platforms 55.7 %; yaw / curvature / lateral acceleration steering-derived everywhere) | full 20-ch models (both tasks) | V1 / V2 / V3 variants, full + V1 / V2 / V3 masks, yaw and lead masks (sensitivity) | all; the engaged / human split inside the set |
+| `ccs_honda` (phase 3, addendum) | commaCarSegments, the nine Honda platforms the phase-3 decode lost (`CCS_PIPELINE.md` "Honda re-decode"): the 2,198 budget-list segments of HONDA_CIVIC / CIVIC_BOSCH / CIVIC_2022 / CRV / CRV_5G / FIT / HRV / HRV_3G / FREED re-decoded with `ccs_decode.py --honda-gearbox-from-can` -> 2,189 decoded -> 2,132 windows (35.5 h), 913 drives, 230 devices, 5 car models; strata seen (Civic, Fit, CR-V: 224 devices), held-out (HR-V, 5), absent (Freed, 1); every platform SMALL, every labelled one ICE (the Freed unlabelled); 9 CIVIC_2022 devices with an `automatic` gearbox message (possible hybrids) kept under the ICE label; 42.3 % of the windows engaged, mean speed 18.2 m/s | 20 where the platform provides them (Nidec radar lead on five platforms, 41.6 % of the windows; none on the four radarless Bosch ports; torque absent on 19.0 %, on every HONDA_CRV window; yaw steering-derived) | full 20-ch models (both tasks) | V1 / V2 / V3 variants, full + V1 / V2 / V3 masks, yaw and lead masks | all; the engaged / human split inside the set |
+| `comma2k19` (phase 3, addendum; own scope) | comma2k19 (comma.ai 2018, MIT): Chunk 1 = one 2017 Toyota RAV4 TSS-P (TOYOTA_RAV4, seen SMALL ICE), Chunk 3 = one 2016 Honda Civic Touring (HONDA_CIVIC, seen SMALL ICE); 390 raw 2018 rlog segments in 42 route folders -> 387 decoded by `ccs_decode.py` with `--layout comma2k19 --fingerprint-map --das-from controlsState --ignore-absent-messages` -> 381 windows (6.4 h; 185 / 196), 42 drives, 2 devices; `CarParams` built from the live fingerprint (no logged one in any segment); 59.3 % of the windows engaged, with 2018 openpilot doing the longitudinal control itself; mean speed 22.8 / 20.9 m/s | 20 on every window (TSS-P / Nidec radar lead, `lead_valid` 0.78 / 0.87; torque scale never absent; yaw steering-derived; a measured `yawRate` exists in the logs and was used for the check of 2.14) | full 20-ch models (both tasks) | V1 / V2 / V3 variants, full + V1 / V2 / V3 masks, yaw and lead masks | all; the engaged / human split inside the set |
 
 ULTra-AV and the raw OpenACC set are not independent: ULTra-AV's named-vehicle episodes are a harmonised subset of the
 same JRC campaigns (plus CATS / Ohio), so they are two views of largely the same recordings. Every European model in
@@ -173,7 +213,10 @@ Phase-3 strata (by car model, same index): in commaCarSegments every device is a
 construction, so `seen` (70 models / 100 platforms / 25,667 windows) is "training platform, new device", `held-out` (29 of
 the 41 `split_platform` test models / 47 platforms / 18,710 windows) the external replica of the lab's held-out test, and
 `absent` (14 models / 14 platforms / 1,386 windows, footprints from public specs) the out-of-inventory probe; the Honda
-Civic, Fit, HR-V and Freed of the selection are missing because their segments did not decode (2.12).
+Civic, Fit, HR-V and Freed of the selection are missing because their segments did not decode (2.12). They were recovered
+on 10 Nov as the second phase-3 set `ccs_honda` (2.13: Civic, Fit and the gasoline CR-V ports as `seen`, 224 devices; the
+HR-V `held-out`, 5; the Freed `absent`, 1), scored with the same nine runs and pooled with `ccs` in 3.1 / 3.2; `comma2k19`
+(2.14, two seen SMALL ICE cars on 2018 hardware) is a scope of its own.
 
 ### 1.2 In-distribution references (our held-out car models, seed ensembles; `internal_reference.md`)
 
@@ -232,6 +275,15 @@ four ICE models), the miss of the full model is the Tesla Model S.
   model's majority label, which differs from the device's own platform label for 13 device x model pairs (Acura RDX and
   Lexus IS, whose platforms fall in two size classes; Kona, EV and gasoline ports), while the pooled-decision tables of
   3.1 / 3.2 and of `RESULTS_TABLES.md` use the device's own label (3.1).
+* Phase 3, addenda: `ccs_honda` is read exactly like `ccs` (full models primary, `vehicle` = device pseudonym, one window
+  per segment, 300-resample strata intervals); its devices carry the same `ccs_v_` pseudonyms as `ccs`, 9 of them appear in
+  both sets under different platforms and count once per set x car model in the pooled-decision tables; its 9
+  `automatic`-gearbox HONDA_CIVIC_2022 devices (most likely the Civic Hybrid filed under the same opendbc name) keep the
+  platform's ICE label, and the powertrain numbers are given with and without them. Both tasks have a single class there
+  and in `comma2k19`, so the accuracies are the SMALL / ICE recall of each run, no macro-F1 exists, the majority baseline
+  is 100 %, and the masked full models (which call almost everything SMALL / ICE, 3.4) score as high as the full model
+  without that meaning anything. `comma2k19` (two cars, one driver each, 2018 software) is a scope of its own in the
+  pooled tables, outside the phase-3 device scope and inside "all sets"; its decisions are single-car probes.
 
 ## 2. Results per dataset
 
@@ -919,8 +971,9 @@ segments, of which 2,460 with `canValid` below 0.5 (2,457 exactly 0.00), 73 with
 rule) and 24 whose logged fingerprint has no CarInterface in opendbc 0.3.1 (20 Tucson 4th-gen segments, while the
 platform's other 345 decoded; HONDA_CRV_HYBRID_6G 3; HYUNDAI_SONATA_HEV_2024 1). The `canValid` skips are not spread
 evenly: every segment of nine Honda platforms (Civic 2016 / Bosch / 2022, CR-V 5G and 2016, Fit, HR-V 2016 and 3G, Freed:
-2,198 segments) failed to validate against the opendbc 0.3.1 DBC files, so the Honda Civic and Fit (seen), the HR-V (a
-held-out test model) and the Freed (absent) are missing and the CR-V is present only through its hybrid platform;
+2,198 segments) failed to validate under opendbc 0.3.1 (the parser waited for a gearbox message these cars never send;
+cause and recovery in 2.13), so the Honda Civic and Fit (seen), the HR-V (a held-out test model) and the Freed (absent) are
+missing from this set and the CR-V is present only through its hybrid platform;
 the remaining losses are partial (RAM 2500 / 3500 HD 64 of 143, Pacifica 2018 42 of 389, Octavia 31 of 322, 1-14
 elsewhere). 172 selected platforms -> 161 in the set.
 
@@ -1354,10 +1407,306 @@ is capped at 400 segments per platform while the held-out one keeps up to 1,000)
 label of the Highlander, RAV4 TSS2 and Lexus RX platforms covers hybrid-majority mixes in some years, which may be part
 of their low ICE device accuracy (65.8 / 73.0 / 87.0 %); route overlap with the lab's library is excluded by the device
 filter but the openpilot software versions differ from the lab's logs (2025 ports, community branches); the Honda Civic,
-Fit, HR-V and Freed are missing because their segments did not validate against opendbc 0.3.1 (2,198 segments), and 73
+Fit, HR-V and Freed are missing because their segments did not validate under opendbc 0.3.1 (2,198 segments; recovered in
+2.13), and 73
 segments with stale grid samples and 24 without a CarInterface were skipped (section 2.12 first paragraph, `CCS_PIPELINE.md`);
 intervals are vehicle-cluster bootstraps of 300 resamples per stratum; MIT-licensed data, pseudonymous device ids and
 public platform names only.
+
+### 2.13 commaCarSegments, the nine recovered Honda platforms (`ccs_honda`)
+
+What it is: the 2,198 budget-list segments of the nine Honda platforms whose every segment the phase-3 decode skipped with
+`canValid` 0.00 (2.12): HONDA_CIVIC, HONDA_CIVIC_BOSCH, HONDA_CIVIC_2022, HONDA_CRV_5G, HONDA_FIT, HONDA_CRV, HONDA_HRV,
+HONDA_HRV_3G and HONDA_FREED. Cause: opendbc 0.3.1's Honda `CarState` reads the gearbox message named by
+`CarParams.transmissionType`; the logging openpilot versions left that field at `unknown` for Honda, so the parser registered
+`GEARBOX_AUTO` 0x1A3 while these traditional-CVT cars broadcast `GEARBOX_CVT` 0x191 only, and the pure-Python parser holds
+`canValid` at 0 for the whole segment while a registered message has never arrived. Fix: `ccs_decode.py
+--honda-gearbox-from-can` (Honda only, off by default) applies 0.3.1's own `_get_params` rule to the pt-bus addresses of
+the log before the interfaces are built (0x191 present and not an Acura RDX -> `cvt`, else `automatic`, neither ->
+`manual`) and records the result per segment; the default path is byte-identical to the phase-3 run (same sha1 of the
+window tensor and meta on 20 check segments). The 2024-08 lab openpilot car stack was used only as a cross-check
+(`ccs_honda_check.py`, `CCS_PIPELINE.md` "Honda re-decode"): on 20 option-off / option-on pairs every channel is identical,
+and on 21 probe segments against the legacy stack the steering, pedal, torque and derived-yaw signals are bit-identical
+after the 0.5-s start-up transient and `vEgo` agrees to a 99th percentile below 1e-4 m/s, except for a `wheelSpeedFactor`
+convention (the legacy stack's `vEgo` is 2.5 % higher on the CR-V 5G, CR-V 2016 and HR-V; `ccs` already carries the 0.3.1
+convention, so the re-decode keeps it). The option was preferred because it keeps one parser for every set and recovers the
+103 segments the legacy stack cannot decode (below). Accounting: 2,198 segments found in 931 routes of 230 devices -> 2,189
+decoded (9 skipped: 5 with `canValid` 0.00, one Fit and four CR-V 5G segments of 3 devices on which the wheel-speed and
+VSA messages never appear on the pt bus although the gearbox message does, a wiring matter of those devices rather than
+the gearbox rule; 4 with 17-31 stale grid samples) -> 57 dropped by the moving rule (moving fraction 0-0.175) -> **2,132
+windows (35.5 h) from 230 devices, 913 drives (device x route), 5 car models, 9 platforms**; 467 s with 6 workers. Gearbox
+rule: `cvt` on 2,086 segments, `automatic` on 103 (every one of them HONDA_CIVIC_2022, 9 devices: they broadcast 0x1A3 and
+0x184 and no 0x191, most likely the Civic Hybrid that opendbc files under the same platform name; they keep the lab's ICE
+label of the platform and are reported with and without below, not relabelled; one of the nine also carries three `cvt`
+windows each under HONDA_CIVIC and HONDA_CRV_5G). Labels and strata: lab table for eight platforms, public specs for the Freed;
+every platform SMALL (3.74-4.28 m^2, no borderline), every labelled platform ICE (2,084 windows), the Freed unlabelled (48);
+seen 1,932 windows / 224 devices / 3 models (Civic 123 devices over three platforms, CR-V 96 over two, Fit 7; two devices are counted under both the Civic and the
+CR-V), held-out
+152 / 5 / 1 (the HR-V, two platforms), absent 48 / 1 / 1 (the Freed). Lead: Nidec radar through the in-path gate on the
+Civic 2016, Fit, HR-V 2016, Freed and CR-V 2016 (909 windows, 42.6 %, of which 887, 41.6 %, hold an in-path object in the
+minute; `lead_valid` 0.39-0.77 per platform over its decoded segments), none on the four radarless Bosch ports (Civic Bosch /
+2022, CR-V 5G, HR-V 3G: 1,223 windows, 57.4 %); the route-batch torque scale is absent on 406
+windows (19.0 %), among them every HONDA_CRV window because that port never sets `steer_pressed`; yaw, curvature and
+lateral acceleration steering-derived on every window, as in `ccs`. Automation and domain: `das_frac` mean 0.42 (20-56 %
+per platform), 902 windows engaged for most of the minute against 1,230 human-driven; mean speed 18.2 m/s, gas pressed on
+37 %, brake on 15 %, driver steering on 18 % of the samples of the window set. Evidence: median 6 windows per device (17 devices with one
+window, 79 with 2-4, 61 with 5-9, 73 with 10 or more); 46.1 % of the drives are one window. 9 of the 230 devices also
+appear in `ccs` under other platforms (same pseudonym: a dongle moved between cars), 2 appear under more than one platform inside
+this set (one of them, a possible hybrid, under three); the per-platform tables count a device once per platform, the level tables once.
+
+Same runs as `ccs` (the full 20-channel models primary, V1 / V2 / V3, the three preset masks, the yaw and lead masks);
+vehicle = device; the strata intervals are vehicle-cluster bootstraps of 300 resamples (the score files' 1,000-resample
+intervals on the pooled set agree within one point). One class per task, so there is no macro-F1 and the majority share is
+100 %: the numbers are the SMALL and ICE recall of each run on a new Honda fleet, not a discrimination result, and the
+masked full models, which call almost everything SMALL and ICE (3.4), score as high as the full model here for that reason.
+
+(a) Decisions per platform (full models; mean probability over the platform's labelled windows -> decision; the V1 / V3 size
+and V3 / V2 powertrain decisions in the last columns). Answers: whether SMALL and ICE hold on each of the nine recovered
+platforms, and what the reduced-input variants make of them.
+
+| platform (model, footprint) | stratum | lead | veh | drives | win | DAS % | size, full: P(S, M, L) % -> decision, devices right, drive acc % | size V1 / V3 | powertrain, full: P(BEV) % -> decision, devices right | pt V3 / V2 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| HONDA_FIT (Honda Fit, 3.74) | seen | radar 99 % | 7 | 116 | 273 | 35.0 | 60, 36, 4 -> SMALL OK, 6/7, 73.3 | MID miss / SMALL | 17 -> ICE OK, 7/7 | ICE / ICE |
+| HONDA_CIVIC (Honda Civic, 4.20) | seen | radar 98 % | 33 | 186 | 385 | 45.7 | 66, 30, 4 -> SMALL OK, 32/33, 83.3 | MID miss / SMALL | 18 -> ICE OK, 33/33 | ICE / ICE |
+| HONDA_CIVIC_BOSCH (Honda Civic, 4.20) | seen | none | 55 | 154 | 395 | 39.7 | 75, 21, 4 -> SMALL OK, 55/55, 96.1 | SMALL / SMALL | 11 -> ICE OK, 55/55 | ICE / ICE |
+| HONDA_CIVIC_2022 (Honda Civic, 4.21; 9 of the 36 devices `automatic`) | seen | none | 36 | 148 | 393 | 45.6 | 67, 28, 4 -> SMALL OK, 35/36, 87.8 | SMALL / SMALL | 21 -> ICE OK, 34/36 | ICE / ICE |
+| HONDA_CRV (Honda CR-V, 4.23; torque absent) | seen | radar 89 % | 4 | 46 | 106 | 43.6 | 79, 19, 3 -> SMALL OK, 4/4, 93.5 | SMALL / SMALL | 25 -> ICE OK, 4/4 | ICE / ICE |
+| HONDA_CRV_5G (Honda CR-V, 4.28) | seen | none | 92 | 154 | 380 | 45.4 | 75, 20, 4 -> SMALL OK, 91/92, 93.5 | MID miss / SMALL | 15 -> ICE OK, 91/92 | ICE / ICE |
+| HONDA_HRV (Honda HR-V, 4.01) | held-out | radar 99 % | 2 | 62 | 97 | 20.4 | 74, 23, 3 -> SMALL OK, 2/2, 96.8 | MID miss / SMALL | 16 -> ICE OK, 2/2 | ICE / ICE |
+| HONDA_HRV_3G (Honda HR-V, 4.17) | held-out | none | 3 | 17 | 55 | 56.2 | 73, 25, 3 -> SMALL OK, 3/3, 94.1 | MID miss / SMALL | 17 -> ICE OK, 3/3 | ICE / ICE |
+| HONDA_FREED (Honda Freed, 4.06, public spec; powertrain unlabelled) | absent | radar 100 % | 1 | 30 | 48 | 25.6 | 55, 34, 10 -> SMALL OK, 1/1, 80.0 | SMALL / SMALL | 20 -> ICE (unlabelled) | ICE / ICE |
+
+(b) Every run at device and model level per stratum (device accuracy % [95 % CI] with devices right / devices; models right;
+window accuracy in the last column; internal = the lab's held-out vehicles). Answers: how far each input list carries
+SMALL and ICE on this fleet, and which channel groups the full model's decision rests on.
+
+Size (all SMALL):
+
+| run | all: devices [CI]; models of 5 | seen: devices; models of 3 | held-out (HR-V): devices; model | absent (Freed) | window acc % | internal vehicle acc / F1 |
+|---|---|---|---|---|---|---|
+| full (20 ch) | 98.3 [96.5, 99.6] (226/230); 5 | 98.2 [96.4, 99.8] (220/224); 3 | 100.0 (5/5); 1 | 1/1; 1 | 83.8 | 63.5 / 59.7 |
+| V1 lateral + speed | 47.8 [41.5, 54.8] (110/230); 3 | 48.2 (108/224); 2 | 20.0 (1/5); 0 | 1/1; 1 | 49.6 | 62.6 / 58.0 |
+| V2 longitudinal-only | 73.0 [68.3, 79.1] (168/230); 3 | 74.1 (166/224); 2 | 40.0 (2/5); 1 | 0/1; 0 | 51.4 | 43.2 / 32.8 |
+| V3 speed-only | 86.5 [82.2, 90.9] (199/230); 5 | 86.2 (193/224); 3 | 100.0 (5/5); 1 | 1/1; 1 | 64.2 | 54.4 / 45.6 |
+| full + mask-V1 (secondary) | 98.7 [97.2, 99.8] (227/230); 5 | 98.7 (221/224); 3 | 100.0 (5/5); 1 | 1/1; 1 | 92.5 | 60.8 / 50.8 |
+| full + mask-V2 (secondary) | 96.5 [93.9, 98.9] (222/230); 5 | 96.4 (216/224); 3 | 100.0 (5/5); 1 | 1/1; 1 | 81.7 | 48.0 / 23.2 |
+| full + mask-V3 (secondary) | 97.0 [94.3, 98.7] (223/230); 5 | 96.9 (217/224); 3 | 100.0 (5/5); 1 | 1/1; 1 | 89.5 | 49.2 / 25.3 |
+| full + mask-yaw (sensitivity) | 14.3 [9.8, 19.4] (33/230); 0 | 14.7 (33/224); 0 | 0.0 (0/5); 0 | 0/1; 0 | 20.2 | - |
+| full + mask-lead (sensitivity) | 98.7 [97.0, 100.0] (227/230); 5 | 98.7 (221/224); 3 | 100.0 (5/5); 1 | 1/1; 1 | 86.2 | - |
+
+Powertrain (all ICE; the Freed is unlabelled, so the absent stratum is empty):
+
+| run | all: devices [CI]; models of 4 | seen: devices; models of 3 | held-out (HR-V): devices; model | window acc % | internal vehicle acc / F1 |
+|---|---|---|---|---|---|
+| full (20 ch) | 99.1 [97.8, 100.0] (227/229); 4 | 99.1 [97.8, 100.0] (222/224); 3 | 100.0 (5/5); 1 | 89.3 | 93.9 / 93.4 |
+| V1 lateral + speed | 86.0 [81.2, 89.7] (197/229); 4 | 86.6 (194/224); 3 | 60.0 (3/5); 1 | 72.7 | 75.8 / 74.6 |
+| V2 longitudinal-only | 97.8 [95.6, 99.6] (224/229); 4 | 97.8 (219/224); 3 | 100.0 (5/5); 1 | 83.6 | 91.4 / 90.4 |
+| V3 speed-only | 98.3 [96.1, 99.6] (225/229); 4 | 98.2 (220/224); 3 | 100.0 (5/5); 1 | 88.8 | 91.0 / 90.1 |
+| full + mask-V1 (secondary) | 98.3 [96.1, 99.6] (225/229); 4 | 98.2 (220/224); 3 | 100.0 (5/5); 1 | 89.9 | 69.3 / 61.2 |
+| full + mask-V2 (secondary) | 99.6 [98.7, 100.0] (228/229); 4 | 99.6 (223/224); 3 | 100.0 (5/5); 1 | 86.3 | 69.3 / 56.8 |
+| full + mask-V3 (secondary) | 100.0 (229/229); 4 | 100.0 (224/224); 3 | 100.0 (5/5); 1 | 94.0 | 65.2 / 49.8 |
+| full + mask-yaw (sensitivity) | 98.7 [97.4, 99.6] (226/229); 4 | 98.7 (221/224); 3 | 100.0 (5/5); 1 | 87.5 | - |
+| full + mask-lead (sensitivity) | 99.1 [97.8, 100.0] (227/229); 4 | 99.1 (222/224); 3 | 100.0 (5/5); 1 | 91.7 | - |
+
+(c) The held-out HR-V against its internal result (full models; `internal_per_model.md`). Answers: whether the one
+held-out test model of this set agrees with the lab's own held-out test.
+
+| held-out model (platforms) | label | size, ccs_honda: devices right, decision (P) | size, internal: drive acc / decision (P) | pt, ccs_honda | pt, internal |
+|---|---|---|---|---|---|
+| Honda HR-V (HONDA_HRV, HONDA_HRV_3G) | SMALL / ICE | 5/5 (100.0), SMALL (0.73) OK; drive acc 96.2 % | 46.0 / SMALL (0.50) | 5/5 (100.0), ICE (0.84) OK; drive acc 94.9 % | 95.0 / ICE (0.84) |
+
+(d) Lead source and automation state (full models; `human` = `das_frac` < 0.5, `engaged` >= 0.5; device accuracy inside a
+cell from the device's windows of that cell). Answers: whether the radar gate or the engaged minutes move the decisions.
+
+| factor | value | windows / devices | size: window acc % | size: device acc % (right / n) | pt: windows / devices | pt: window acc % | pt: device acc % (right / n) |
+|---|---|---|---|---|---|---|---|
+| lead | radar | 887 / 47 | 80.4 | 95.7 (45/47) | 839 / 46 | 87.4 | 100.0 (46/46) |
+| lead | none | 1,245 / 193 | 86.2 | 97.9 (189/193) | 1,245 / 193 | 90.5 | 97.9 (189/193) |
+| state | human | 1,230 / 204 | 91.1 | 98.5 (201/204) | 1,194 / 203 | 95.6 | 99.5 (202/203) |
+| state | engaged | 902 / 171 | 73.7 | 84.8 (145/171) | 890 / 170 | 80.7 | 94.1 (160/170) |
+
+Mean P(BEV) on the ICE windows 0.08 human / 0.29 engaged; mean P(SMALL) 0.73 / 0.65. The strata rows are in
+`RESULTS_TABLES.md` (held-out HR-V: 100.0 % of its human windows' devices on both tasks, 4 of 5 from the engaged ones).
+
+(e) Evidence per device (full models; devices right / devices by labelled windows per device). Answers: how many minutes of
+a new Honda device the decision needs.
+
+| task | devices | 1 window | 2-4 windows | 5-9 windows | 10+ windows |
+|---|---|---|---|---|---|
+| size | 230 | 15/17 (88.2) | 78/79 (98.7) | 60/61 (98.4) | 73/73 (100.0) |
+| powertrain | 229 | 16/17 (94.1) | 79/79 (100.0) | 60/61 (98.4) | 72/72 (100.0) |
+
+Reading:
+
+* **SMALL and ICE at scale on a fleet the phase-3 decode had lost.** Full model: SMALL for all nine platforms, 226 of 230
+  devices (98.3 % [96.5, 99.6]) and 5 of 5 models; ICE for all eight labelled platforms, 227 of 229 devices (99.1 %
+  [97.8, 100.0]) and 4 of 4 models; the unlabelled Freed is ICE with P(BEV) 0.20. The held-out HR-V is 5 of 5 on both tasks
+  with P(SMALL) 0.73 and P(ICE) 0.84, where the internal test had the same model at 46.0 % drive accuracy / SMALL 0.50 and
+  95.0 % / ICE 0.84. The Honda Civic, Fit and HR-V that 2.12 listed as missing are therefore right at model level, and the
+  CR-V, present in 2.12 through its hybrid port only, gets its gasoline ports (95 of 96 devices). Against `ccs` (SMALL
+  device recall 91.1 %, ICE 88.2 %) these are the easy end of the fleet: small CVT cars, 58 % of the minutes human-driven,
+  a radar or no lead; the window level (83.8 / 89.3 %) is where the per-minute uncertainty shows, and ten minutes of a
+  device settle both tasks (table e: 73 of 73 and 72 of 72 devices with 10 or more windows).
+* **The CIVIC_2022 misses are the possible hybrids.** HONDA_CIVIC_2022 is ICE for 34 of 36 devices, and both misses are
+  among the 9 `automatic`-gearbox devices (P(BEV) 0.62 over 12 windows and 0.56 over 6); those nine have a mean P(BEV) of
+  0.38 against 0.14 for the 27 `cvt` devices of the same platform and 72.5 % window accuracy against 90.2 % for the rest of
+  the set, 7 of 9 right at platform level and 8 of 9 at device level (one of the two carries six `cvt` windows under two
+  other platforms and is ICE by a hair, P(BEV) 0.485, once they are pooled). Without the nine devices the set is 219 of 220
+  (99.5 %), HONDA_CIVIC_2022 27 of 27 and its model-level P(ICE) 0.84 instead of 0.79; the one remaining device-level miss
+  is a CR-V 5G device with a single fully engaged window (P(BEV) 0.67). Consistent with, not proof of, the hybrid reading
+  of 2.12 (h); the label stays as the lab has it.
+* **The yaw mask collapses the size call, the lead mask changes nothing.** With the steering-derived yaw group masked the
+  size decision falls to 33 of 230 devices (14.3 %, 0 of 5 models; 70.7 % of the windows called LARGE, mean P(LARGE) 0.58)
+  while powertrain is unmoved (98.7 %); with the lead masked both tasks stay where they are (98.7 / 99.1 % of devices), as
+  expected on a set that is 58 % radarless. As in 2.12 the size decision runs through the lateral group, and on an
+  all-SMALL set the mask reads as the collapse to LARGE that training never produced (3.4), not as a measurement of the
+  derived-yaw error (caveats).
+* **Engaged minutes score lower, here on small ICE cars with a radar gate or no lead.** Window accuracy 73.7 % against
+  91.1 % (size) and 80.7 % against 95.6 % (powertrain) on the 902 engaged and 1,230 human-driven windows; mean P(BEV) on
+  the ICE windows 0.29 against 0.08; the same devices judged from their engaged minutes alone are 84.8 % (size) and 94.1 %
+  (powertrain) right against 98.5 / 99.5 % from their human minutes. The drift of 2.12 at a smaller scale; it flips no
+  model and, with ten minutes per device, hardly any device.
+* **The reduced-input variants fall off for size and barely for powertrain.** Devices: V1 47.8 / 86.0 %, V2 73.0 / 97.8 %,
+  V3 86.5 / 98.3 % (size / powertrain). The lateral + speed V1 calls five of the nine platforms MID (Fit, Civic 2016, CR-V
+  5G, both HR-V ports; 1 of 5 held-out devices) where the full model has them SMALL with P 0.60-0.75: the lateral channels
+  alone read these small cars as MID at the window level (49.6 %), the full model with the longitudinal groups does not.
+  The speed-only V3 has all nine platforms SMALL and 199 of 230 devices, and 225 of 229 ICE.
+* **Phase-3 pooled totals.** With `ccs_honda` the phase-3 scope (device x car-model pairs, 3.1 / 3.2) moves from
+  2,232 / 2,547 to 2,460 / 2,778 for powertrain (87.6 -> 88.6 %; ICE 1,688 / 1,917 -> 1,916 / 2,148, 88.1 -> 89.2 %) and from
+  2,245 / 4,152 to 2,473 / 4,384 for size (54.1 -> 56.4 %; SMALL 1,635 / 1,798 -> 1,863 / 2,030, 90.9 -> 91.8 %); MID and
+  LARGE are untouched. The addition is 228 of 231 and 228 of 232 pairs, all SMALL ICE, so it raises the totals without
+  changing what 2.12 says about MID and LARGE.
+
+Caveats: one brand, one size class and one powertrain class, so no macro-F1 and no discrimination result (the majority
+baseline is 100 %); the masked full models score 97-100 % because they call everything SMALL / ICE (3.4), not because the
+masked channels are dispensable. Two artefacts shared with `ccs` and `comma2k19`, stated once here: sample 0 of every
+window is the all-zero `CarState` of the fresh 0.3.1 parser (`v`, `a`, steering, torque and yaw are 0 at k = 0 in every window and `standstill` reads 1 there, a 1-of-600 artefact the lab's
+own logs do not have), and the lead gate admits occasional oncoming traffic (relative
+speed below -30 m/s on 1.2 % of the valid lead samples, lead speed below -2 m/s on 2.2 %, minimum -63 m/s; 537 windows carry
+at least one such sample). The derived yaw carries the understeer bias of 2.14: on the 2018 logs the bicycle-model yaw
+overestimates the measured one by 1.5-2x at highway speed, so the lateral channels of this set are too large on fast windows
+relative to the lab's IMU / pose yaw, which is the candidate explanation of the yaw-mask sensitivity above (untested here).
+Five segments stay lost (`canValid` 0.00: wheel-speed and VSA messages absent from the pt bus on 3 devices); HONDA_CRV
+carries no torque channel (4 devices, 106 windows, 19 channels); the cross-check's `wheelSpeedFactor` convention means the
+CR-V 5G, CR-V 2016 and HR-V windows (583) carry a `vEgo` 2.5 % below what the 2024-08 lab stack would log, which the
+training logs of those platforms may share or not; the 9 possible-hybrid devices keep the platform's ICE label; the HR-V
+rests on 5 devices and the Freed on 1; 9 devices are shared with `ccs` (same pseudonym, different platform); intervals are
+vehicle-cluster bootstraps of 300 resamples per stratum; MIT-licensed data, pseudonymous device ids and public platform
+names only.
+
+### 2.14 comma2k19, two cars on 2018 hardware (`comma2k19`)
+
+What it is: comma.ai's 2018 release (MIT licence), the two chunks the owner downloaded: Chunk 1 is one device on a 2017
+Toyota RAV4 with Toyota Safety Sense P (platform TOYOTA_RAV4, a seen SMALL ICE model, 188 segments in 21 route folders of
+2-15 segments), Chunk 3 one device on a 2016 Honda Civic Touring (HONDA_CIVIC, seen SMALL ICE, 202 segments in 21 folders
+of 1-21). The raw one-minute 2018 rlogs (CAN buses 0 and 1 plus the panda's transmit echoes, `carState` / `controlsState`
+at 100 Hz, radar at 20 Hz, no camera bus) were decoded by the same decoder as `ccs` with four options that are off by
+default and leave the `ccs` / `ccs_honda` path byte-identical (`CCS_PIPELINE.md` "comma2k19"): `--layout comma2k19`
+(the chunk folder layout, `.bz2` logs); `--fingerprint-map` (none of the 390 segments carries a `carParams` event, because
+2018 openpilot logged it in a route's first segment only and the chunks hold middle segments, so the `CarParams` of every
+segment is built the way openpilot builds it at start-up, with opendbc 0.3.1's `CarInterface.get_params` from the mapped
+platform and the segment's own live fingerprint: uniform provenance, and the Civic's gearbox comes out as `cvt` by 0.3.1's
+own rule on all 200 segments); `--das-from controlsState` (`das_enabled` = `controlsState.enabled` or `cruiseState.enabled`,
+the lab definition, with `controlsState` logged at 100 Hz; the 2018 panda state is 1 Hz and not read); and
+`--ignore-absent-messages` (2018 logs have no camera bus and the openpilot-sent `PRE_COLLISION` and HUD frames sit in the
+transmit echoes, never among the received frames, so 0.3.1's registered-but-never-seen HUD messages would hold `canValid`
+at 0; the waiver covers only messages absent from the segment's live fingerprint, which feed no training channel, and the
+checksum, counter and timeout checks of every message the log carries stay in force). Accounting: 390 segments found in 42
+route folders (route sizes 1-21 segments; 8 of the 42 folders have gaps in the segment numbering, which the drive builder
+flags and which cost no window) -> 387 decoded (3 skipped with 77 / 110 / 381 stale grid samples: two Civic segments of
+52.0 / 48.7 s of CAN and one RAV4 segment of 21.5 s) -> 6 dropped by the moving rule (4 Civic, 2 RAV4) -> **381 windows
+(6.4 h; 185 RAV4 / 196 Civic) from 2 devices and 42 drives**; 153 s with 6 workers. `can_valid` mean 0.987 / 0.997 (RAV4 /
+Civic); radar lead on both cars (TSS-P and Nidec radar on bus 1; `lead_valid` 0.78 / 0.87); `das_frac` 0.56 / 0.62 with
+`cruise_frac` and `controls_enabled_frac` equal to two decimals on both cars (0.55 / 0.55, 0.61 / 0.61; 2018 openpilot engaged
+with the stock cruise button), 105 / 121
+windows engaged against 80 / 75 human-driven; mean speed 22.8 / 20.9 m/s; all 20 channels on every window, the torque scale
+never absent. Checks against the logged 2018 `carState` of the same segments (five per car, nearest-time match, sample 0
+excluded): `vEgo` within 0.22 m/s at the maximum and 0.11 m/s at the 99th percentile with a median decoder / logged ratio
+of 1.0000 on every segment (both equal the mean wheel speed; on ten further segments checked by the review with `comma2k19_yaw_check.py` the maxima
+reach 0.5 m/s on single samples, the 99th percentiles stay at or below 0.08 m/s, the median ratio is 0.9994-1.0002, and the
+steering angle agrees to 0.6 deg at the 99th percentile with correlation 0.998-1.000 and offset 0.0); the 2018 `aEgo` is noisier (standard deviation 1.1-1.6x the
+decoder's) and lags the decoder's by 0.2-0.3 s, so the two correlate 0.64-0.94 only (the speed-filter gains changed between
+2018 openpilot and opendbc 0.3.1; the decoder's `aEgo` is the modern filter the training logs carry); steering angle
+correlation 0.9996-1.0000 with a median offset of 0.00 deg; the Civic's steering torque has the **opposite sign** in the
+2018 log (opendbc later inverted the Honda torque-sensor sign so that positive turns left as on the other brands; the
+decoder applies today's DBC to the 2018 bytes and so carries the training convention, and `steer_pressed`, from the
+absolute value, agrees); gas / brake / `steer_pressed` / standstill differ on at most 2.2 % of the samples (median 0.2 %, at
+the pedal transitions); `das_enabled` against the log's own flags differs on at most 0.7 %. The set is scored as a scope of
+its own ("old software"), outside the phase-3 pooled scope and inside "all sets".
+
+Results (full model primary; window / drive / device levels with the two cars' probabilities; a two-car bootstrap is
+uninformative, so the drive-level interval is the only one quoted):
+
+| task | run | window acc % | drive acc % [95 % CI] | devices | Toyota RAV4 2017: decision (P), drive acc % | Honda Civic 2016: decision (P), drive acc % |
+|---|---|---|---|---|---|---|
+| powertrain | full (20 ch) | 70.9 | 88.1 [85.7, 90.5] | 2/2 ICE | ICE (0.68), 85.7 | ICE (0.71), 90.5 |
+| powertrain | V3 speed-only | 64.3 | 83.3 [76.2, 90.5] | 2/2 | ICE (0.62), 90.5 | ICE (0.64), 76.2 |
+| powertrain | V1 / V2 | 60.4 / 69.6 | 81.0 / 83.3 | 2/2 / 2/2 | ICE / ICE | ICE / ICE |
+| powertrain | full + mask-V1 / V2 / V3 (secondary) | 96.6 / 85.6 / 94.5 | 100.0 / 95.2 / 100.0 | 2/2 each | ICE | ICE |
+| powertrain | full + mask-yaw / mask-lead | 78.0 / 92.7 | 95.2 / 100.0 | 2/2 each | ICE | ICE |
+| powertrain | full, human-driven windows (155) | 100.0 (mean P(BEV) 0.06) | - | - | P(BEV) 0.06 (80 windows) | 0.05 (75) |
+| powertrain | full, engaged windows (226) | 50.9 (mean P(BEV) 0.47) | - | - | P(BEV) 0.51 (105) | 0.44 (121) |
+| size | full (20 ch) | 51.7 | 54.8 [52.4, 57.1] | 1/2 | SMALL (0.54, 0.44, 0.02), 57.1 | MID (0.485, 0.491, 0.02) miss, 52.4 |
+| size | V3 speed-only | 82.2 | 97.6 [95.2, 100.0] | 2/2 | SMALL (0.53, 0.23, 0.24) | SMALL (0.54, 0.24, 0.23) |
+| size | V1 / V2 | 44.4 / 47.5 | 28.6 / 57.1 | 0/2 / 2/2 | MID / SMALL | MID / SMALL |
+| size | full + mask-V1 / V2 / V3 (secondary) | 97.6 / 87.7 / 96.6 | 100.0 / 97.6 / 100.0 | 2/2 each | SMALL | SMALL |
+| size | full + mask-yaw / mask-lead | 3.4 / 54.9 | 0.0 / 59.5 | 0/2 (LARGE) / 2/2 | LARGE / SMALL | LARGE / SMALL |
+| size | full, human-driven windows (155) | 89.0 | - | - | P(SMALL) 0.72, P(MID) 0.26 | 0.68, 0.29 |
+| size | full, engaged windows (226) | 26.1 | - | - | P(SMALL) 0.40, P(MID) 0.58 | 0.37, 0.61 |
+
+Derived yaw against the measured one (the 2018 logs carry `carState.yawRate`, which `ccs` has on Ford only): ratio of the
+decoder's bicycle-model yaw rate to the logged yaw rate by speed bin, both cars; correlation 0.999, same sign everywhere.
+
+| speed bin (m/s) | 1-5 | 10-15 | 20-25 | 25-30 | 30-40 |
+|---|---|---|---|---|---|
+| Toyota RAV4 2017 | 0.98 | 1.13 | 1.54 | 1.85 | 2.06 |
+| Honda Civic 2016 | 0.87 | 1.03 | 1.53 | 1.78 | 2.01 |
+
+The review re-derived this table over all 381 windows with `comma2k19_yaw_check.py` (lab `LogReader`; the decoder's grid matched
+to the logged `carState` by nearest time, sample 0 excluded): the per-bin medians of the sample ratios are within 0.03 of the
+values above, the least-squares slopes 1.00 / 1.13 / 1.54 / 1.82 / 2.08 (RAV4) and 0.88 / 1.02 / 1.47 / 1.76 / 2.07 (Civic), k
+0.0009-0.0010 s^2/m^2, the within-bin correlation at least 0.94 with the same sign on every sample above 0.02 rad/s; the bicycle
+model recomputed from the logged steering angle and speed gives the same ratios, so the bias is the kinematic model's, not the
+decoder's sampling (`yaw_check.json` on 5 segments per car and `yaw_check_all.json` in the work folder).
+
+Reading:
+
+* **ICE for both cars, with the engaged minutes under a 2018 longitudinal controller at a coin flip.** The full model calls
+  the Civic ICE with P 0.71 (90.5 % of its 21 drives) and the RAV4 with 0.68 (85.7 %), and every variant and mask agrees at
+  car level; but the 155 human-driven windows are 100.0 % right with mean P(BEV) 0.06 while the 226 engaged windows are
+  50.9 % right at 0.47. In these logs openpilot did the longitudinal control itself (the transmit echoes carry
+  `BRAKE_COMMAND` on the Civic and `ACC_CONTROL` on the RAV4 in every probed segment, although today's `CarParams` files the
+  TSS-P RAV4 under stock longitudinal), so the engaged minutes are a 2018 controller the models never saw: the
+  engaged-minute drift of 2.12 and 2.13 at its strongest, on two cars. The speed-only V3 is not better here (64.3 % of the
+  windows, 83.3 % of the drives; P(ICE) 0.62 / 0.64), so on these two cars the drift is not only the lead group.
+* **Size: the Civic is a coin flip with the full model, both cars SMALL with the speed-only variant.** Civic P(SMALL) 0.485
+  against P(MID) 0.491 -> MID; RAV4 SMALL 0.54. The split by state says where the MID call comes from: the human-driven
+  windows of both cars are SMALL with P 0.68-0.72 (89.0 % window accuracy), the engaged ones MID with 0.58-0.61 (26.1 %),
+  i.e. the engaged highway minutes of a small car read as MID to the full model, as the MID sedans of commaSteeringControl
+  read as SMALL (2.10). The speed-only V3 has both cars SMALL (0.53 / 0.54; 97.6 % of the drives) from the acceleration
+  texture; the full model under the V3 mask is SMALL too, as it is for everything (3.4); the yaw mask turns both cars LARGE
+  (3.4 % of the windows SMALL), the pattern of 2.12 and 2.13.
+* **The main lesson of the set is the derived yaw.** The bicycle-model yaw matches the measured `yawRate` at low speed
+  (ratio 0.98 / 0.87 at 1-5 m/s) and overestimates it with speed: 1.13 / 1.03 at 10-15 m/s, 1.54 / 1.53 at 20-25, 1.85 /
+  1.78 at 25-30, 2.06 / 2.01 at 30-40 (RAV4 / Civic; correlation 0.999, same sign). The ratio grows as 1 + k v^2 with k of
+  about 0.001 s^2/m^2, i.e. the understeer gradient that the kinematic bicycle model ignores (the steering angle needed for
+  a given yaw rate rises with v^2 on an understeering car, and the kinematic model attributes all of it to curvature). So
+  yaw, curvature and lateral acceleration are 1.5-2x too large on highway windows of every steering-derived set (`ccs`,
+  `ccs_honda`, `comma2k19`) relative to the lab's IMU / pose yaw. This bounds the lateral signal's transfer from below
+  (3.6 point 6), is a candidate explanation of the yaw-mask sensitivity and of the full model's size loss on `ccs` (2.12),
+  and was not visible there because a measured yaw exists on Ford only. The remedy, not done, is an understeer-corrected
+  derived yaw (divide by 1 + k v^2 with a per-platform or fitted k, or the logged yaw where a brand provides it) and a
+  re-decode of the three sets (section 4).
+
+Caveats: two cars, one driver each, a commute on one Californian highway in 2018, 2018 openpilot software (its own
+longitudinal control in the engaged minutes, old speed-filter gains, a transmit-echo bus layout), so the decisions are probes
+and the automation split is an observation, not a fleet statement; `CarParams` constructed from the live fingerprint (no
+logged one to compare), and the 2018 safety and vehicle parameters may differ from the constructed ones; the HUD and
+`PRE_COLLISION` waiver; the two shared artefacts of 2.13 (sample 0 all-zero in every window; oncoming traffic through the lead
+gate on < 0.1 % of the valid lead samples at relative speed below -30 m/s, 0.3 % at lead speed below -2 m/s, minimum
+-62 m/s); the understeer bias of the derived yaw (above) applies to this set itself; the 2018 `aEgo` and the decoder's
+differ (the models see the decoder's, which is the training convention); the two devices carry `ccs_v_` pseudonyms like
+every other device and are outside the phase-3 pooled scope; MIT-licensed data, public platform names only.
 
 ## 3. Cross-dataset summary
 
@@ -1373,11 +1722,14 @@ Pooled vehicle-level decisions of the primary runs (one physical car = one decis
 | phase 2: commaSteeringControl archives (V3 variant; one archive = one pseudo-vehicle) | 8 / 9 (88.9 %) | 27 / 27 (100.0 %) | 35 / 36 (97.2 %) |
 | phase 2: MoreTorque cars (full model) | 0 / 1 (0.0 %) | 11 / 11 (100.0 %) | 11 / 12 (91.7 %) |
 | phases 1 and 2 | 31 / 37 (83.8 %) | 306 / 322 (95.0 %) | 337 / 359 (93.9 %) |
-| phase 3: commaCarSegments devices (full model; one device x car model = one decision) | 544 / 630 (86.3 %) | 1,688 / 1,917 (88.1 %) | 2,232 / 2,547 (87.6 %) |
-| all sets | 575 / 667 (86.2 %) | 1,994 / 2,239 (89.1 %) | 2,569 / 2,906 (88.4 %) |
+| phase 3: commaCarSegments devices, `ccs` (full model; one device x car model = one decision) | 544 / 630 (86.3 %) | 1,688 / 1,917 (88.1 %) | 2,232 / 2,547 (87.6 %) |
+| phase 3: the recovered Honda platforms, `ccs_honda` (full model; same units) | - | 228 / 231 (98.7 %) | 228 / 231 (98.7 %) |
+| phase 3 pooled (`ccs` + `ccs_honda`) | 544 / 630 (86.3 %) | 1,916 / 2,148 (89.2 %) | 2,460 / 2,778 (88.6 %) |
+| comma2k19, two cars on 2018 hardware (full model; one device = one decision; a scope of its own) | - | 2 / 2 (100.0 %) | 2 / 2 (100.0 %) |
+| all sets | 575 / 667 (86.2 %) | 2,224 / 2,472 (90.0 %) | 2,799 / 3,139 (89.2 %) |
 
-(Phase-3 units are device x car-model pairs judged against the device's own platform label, 2,547 for powertrain and 4,152
-for size, a device under two car models counting once per model; the pooled-decision table of `RESULTS_TABLES.md`
+(Phase-3 units are device x car-model pairs judged against the device's own platform label, 2,778 for powertrain and 4,384
+for size over `ccs` + `ccs_honda` (2,547 / 4,152 and 231 / 232), a device under two car models counting once per model and per set; the pooled-decision table of `RESULTS_TABLES.md`
 (`collect_scores.py`, `pooled_decisions`) counts the same pairs with the pair's own label and agrees with this table.)
 
 * **BEV side: yes, for every BEV with a car-level sample and a 10 Hz speed.** Tesla Model 3 (seven cars over five sets,
@@ -1424,6 +1776,13 @@ for size, a device under two car models counting once per model; the pooled-deci
   removed, and a genuine engaged-minute drift of the full model on a new fleet, which phase 3 measures and which the
   speed-only inputs largely avoid. Hybrids are read in between (HEV 32.0 %, PHEV 44.6 % of windows BEV, against ICE 17.5 %
   and BEV 78.7 %).
+* **The two sets decoded afterwards add ICE evidence only, and one of them shows the engaged-minute drift at its
+  strongest.** The nine recovered Honda platforms (2.13) are ICE for 227 of 229 devices (99.1 %) and 4 of 4 models, the
+  held-out HR-V 5 of 5, with the two HONDA_CIVIC_2022 misses among the 9 possible-hybrid devices (219 of 220 without them);
+  the speed-only V3 is at 98.3 % of the devices, V2 97.8 %, V1 86.0 %. The two comma2k19 cars (2.14) are ICE at car level
+  (P(ICE) 0.68 / 0.71) but their engaged minutes, driven by 2018 openpilot's own longitudinal controller, sit at P(BEV)
+  0.47 (50.9 % window accuracy against 100.0 % on the human-driven minutes), and the speed-only variant does not avoid it
+  there (64.3 % of the windows): on an unseen longitudinal controller the drift is not only the lead group.
 
 ### 3.2 Where does size fail, and why?
 
@@ -1432,8 +1791,12 @@ Pooled vehicle-level size decisions of the phase-1 sets (primary runs): SMALL 25
 two MID hits are Tesla Model 3s (training platform: Yuan et al. with V3, the commaCarSegments window with the full
 model). Without the seven borderline cars the picture is unchanged (OpenACC vehicle macro-F1 19.4 instead of 18.4;
 ULTra-AV 17.9 instead of 17.8). Phase 2 adds, with steering channels present, commaSteeringControl SMALL 15 / 17
-archives, MID 4 / 13, LARGE 4 / 6 (V1 variant) and MoreTorque SMALL 8 / 8 cars, MID 0 / 4 (full model); over all sets
-SMALL 48 / 52, MID 6 / 37, LARGE 4 / 19. Points 1-5 below are the phase-1 explanation, point 6 what phase 2 changes.
+archives, MID 4 / 13, LARGE 4 / 6 (V1 variant) and MoreTorque SMALL 8 / 8 cars, MID 0 / 4 (full model); over phases 1 and 2
+SMALL 48 / 52, MID 6 / 37, LARGE 4 / 19. Phase 3 (device x car-model pairs, 3.1): `ccs` + `ccs_honda` SMALL 1,863 / 2,030
+(91.8 %), MID 360 / 1,301 (27.7 %), LARGE 250 / 1,053 (23.7 %), all 2,473 / 4,384 (56.4 %), of which `ccs_honda` is 228 / 232
+SMALL; comma2k19 1 / 2 SMALL; over every set SMALL 1,912 / 2,084 (91.7 %), MID 366 / 1,338 (27.4 %), LARGE 254 / 1,072
+(23.7 %), all 2,532 / 4,494 (56.3 %). Points 1-5 below are the phase-1 explanation, point 6 what phase 2 changes, point 7
+what phase 3 adds and point 8 what its two addenda add.
 
 1. **The inputs that carry size are missing.** On our own data the size signal lives in the lateral channels (V1 = full
    model: 66.4 vs 67.3 drive macro-F1), and the longitudinal inputs keep little of it (V3 45.1, V2 33.5 = chance). Every
@@ -1475,6 +1838,16 @@ SMALL 48 / 52, MID 6 / 37, LARGE 4 / 19. Points 1-5 below are the phase-1 explan
    devices, 88.3 % of the LARGE ones, turn LARGE without them); since the yaw here is steering-derived and the lateral signature of a car depends
    on device and driver, the set cannot say which of the two breaks the transfer, only that the internal nine-point gain
    of the lateral channels over speed-only inputs does not reach new devices, in no stratum.
+8. **The two addenda (2.13, 2.14) confirm the SMALL side and name a candidate cause for the lateral loss.** The recovered
+   Honda fleet is SMALL for 226 of 230 devices with the full model and on every platform, while the lateral + speed V1
+   calls five of its nine platforms MID and the yaw mask turns 70.7 % of its windows LARGE: the full model's SMALL call
+   on small cars runs through the lateral group and holds. On the two 2018 cars the full model's size call splits by
+   automation state (human-driven windows SMALL at P 0.68-0.72, engaged ones MID at 0.58-0.61; the Civic ends a coin
+   flip), the speed-only variant has both SMALL. And the 2018 logs, which carry a measured yaw rate, show the
+   steering-derived yaw of all three CAN sets overestimating it as 1 + k v^2 (1.5x at 20-25 m/s, 2x at 30-40 m/s): the
+   lateral channels the full model relies on are inflated on exactly the highway minutes where MID and LARGE are missed,
+   a candidate (untested) cause of point 7 and the reason the suggested next step of section 4 is a yaw-corrected
+   re-decode rather than a new model.
 
 
 ### 3.3 Diagnostics behind the explanations
@@ -1599,31 +1972,68 @@ unchanged).
    17.5 % and BEV 78.7 %; plug-ins and the Hyundai hybrids on the BEV side, the Honda hybrids and the Camry 2018 on the
    ICE side.
 6. **What the set cannot settle.** The yaw group is steering-derived everywhere (a measured yaw exists only on Ford), the
-   lead is a radar gate or the stock-ACC object, the Honda Civic / Fit / HR-V / Freed did not decode, the torque scale
+   lead is a radar gate or the stock-ACC object, the Honda Civic / Fit / HR-V / Freed did not decode (recovered in 2.13), the torque scale
    is per route batch and 55.0 % of the drives are one minute; the size result therefore bounds the transfer of the
    lateral signal from below and does not say whether a measured yaw would restore it.
+7. **The Honda gap is closed (2.13).** The nine platforms were lost to a parser rule (the gearbox message named by an
+   unset `transmissionType`), not to the data; with the gearbox type taken from the CAN addresses, 2,132 windows of 230
+   devices decode and the full model reads them as SMALL (226 of 230 devices, 5 of 5 models) and ICE (227 of 229, 4 of 4),
+   the held-out HR-V 5 of 5 on both tasks; the two CIVIC_2022 misses are among the 9 possible-hybrid devices. The
+   seen stratum of the phase-3 scope now holds the Civic and Fit and the gasoline CR-V ports, and the pooled phase-3
+   decisions are 2,460 / 2,778 (powertrain) and 2,473 / 4,384 (size). On this one-class fleet the yaw mask collapses the
+   size call (14.3 % of the devices) and the lead mask changes nothing; the engaged minutes score lower (73.7 against
+   91.1 % size, 80.7 against 95.6 % powertrain window accuracy) without flipping a model.
+8. **A 2018 probe (2.14): the decoder works on six-year-older logs, both cars are ICE, and the engaged minutes under an
+   unseen longitudinal controller are a coin flip for every model.** Human-driven windows 100.0 % ICE (P(BEV) 0.06),
+   engaged ones 50.9 % (0.47) with 2018 openpilot sending the brake / ACC commands itself; the speed-only V3 does not
+   escape it (64.3 % of the windows). Size: Civic MID by 0.491 to 0.485 from its engaged minutes, RAV4 SMALL 0.54; V3 both
+   SMALL. Two cars, one driver each: recorded as probes.
+9. **The steering-derived yaw is biased by understeer, and this concerns every CAN set (2.14).** Against the measured
+   `yawRate` of the 2018 logs the bicycle-model yaw is right at 1-5 m/s (ratio 0.98 / 0.87) and 1.5x too large at 20-25 m/s,
+   2x at 30-40 m/s (1 + k v^2, k about 0.001 s^2/m^2; correlation 0.999, same sign). The lateral channels of `ccs`,
+   `ccs_honda` and `comma2k19` are therefore inflated on the highway minutes, which sharpens point 6: the size result of
+   phase 3 bounds the lateral transfer from below with a known, speed-dependent input bias, and an understeer-corrected
+   or measured-yaw re-decode (section 4) is the experiment that separates the input from the model.
 
 ## 4. What the owner's downloads would add, and what remains
 
 Status on disk (`<external>/DOWNLOAD_STATUS.md`, 10 Nov): commaSteeringControl (36 archives, 21 GB) and MoreTorque (four
 platform folders, 75 GB) consumed and scored in phase 2 (2.10, 2.11); commaCarSegments budget list (49,563 segments, 74 GB)
-downloaded, decoded and scored in phase 3 (2.12); comma2k19: the single-connection download of the two chunks stalled
-at 0.7 GB of partial blobs and the fetch step was switched to a resumable multi-connection downloader (aria2c, 16
-connections), the re-launch is the owner's step and nothing complete is on disk; CI test routes and CANdid not downloaded.
+downloaded, decoded and scored in phase 3 (2.12); comma2k19: the two chunks (Chunk 1 RAV4, Chunk 3 Civic) were completed by the owner with the resumable multi-connection
+downloader and decoded and scored the same evening (2.14); the nine Honda platforms of the commaCarSegments budget list were
+re-decoded and scored as `ccs_honda` the same day (2.13); CI test routes and CANdid not downloaded.
 
 * **commaCarSegments (done, 2.12):** the full list (`select.txt`, 60,619 segments) is a superset of the budget list that
   was decoded; the 11,056 remaining segments are held-out platforms capped at 1,000 (Corolla, Corolla TSS2, Lexus RX /
   RX TSS2, Sienna, Atlas), which would add devices to models whose decisions are already systematic (Lexus RX 7 of 124
-  devices, Sienna 15 of 94, Atlas 0 of 32) and is not expected to change a number. Two things would: (i) a decode of the
-  nine Honda platforms whose segments did not validate against opendbc 0.3.1 (Civic 2016 / Bosch / 2022, CR-V 5G / 2016,
-  Fit, HR-V 2016 / 3G, Freed: 2,198 segments: two SMALL ICE models of the seen stratum (Civic, Fit) and the gasoline ports of
-  a third (CR-V), one held-out and one absent model) with the lab's own openpilot checkout or an older DBC set; (ii) a measured-yaw decode where a brand fills
-  `CarState.yawRate` (Ford only here) or a re-decode with `--yaw none`, to separate the derived-yaw question of 3.6
-  point 6 from the lateral-signature one.
-* **comma2k19 (pending):** two SMALL ICE cars (2016 Civic, 2017 RAV4) on I-280 with 2018 rlogs: an ICE and SMALL negative
-  control with the full channel set on 2018 hardware, and a check of the rlog adapter on an older log format; after
-  phase 3 its value is the Civic, one of the two seen SMALL ICE models that commaCarSegments lost. Low priority otherwise, since
-  both of its classes are the ones that already transfer.
+  devices, Sienna 15 of 94, Atlas 0 of 32) and is not expected to change a number. Of the two things that would, the first
+  is done: (i) the nine Honda platforms (2,198 segments) were recovered on 10 Nov by the gearbox option of `ccs_decode.py`
+  (2.13; the cause was a parser rule, not the DBC set, so no second car stack was needed). Still out of the set: the 5
+  Honda segments of 3 devices whose wheel-speed and VSA messages never reach the pt bus, the 24 segments without a
+  CarInterface in opendbc 0.3.1 (20 Tucson 4th-gen, 3 CR-V Hybrid 6G, 1 Sonata Hybrid 2024) and, as a label question, the
+  9 HONDA_CIVIC_2022 devices whose gearbox message says `automatic` (most likely the Civic Hybrid; kept under the
+  platform's ICE label, reported with and without in 2.13, and a candidate for an `unknown` powertrain or a per-device
+  split by the owner). (ii) The measured-yaw question is now sharper than "Ford only": see the suggested next experiment
+  below.
+* **comma2k19 (done, 2.14):** the two cars decode on 2018 logs with four decoder options (layout, fingerprint-built
+  `CarParams`, `controlsState` automation flag, waiver for the HUD messages a 2018 log cannot carry) and are ICE at car
+  level, the Civic a size coin flip; the set's lasting value is the measured `yawRate` it carries, which exposed the
+  understeer bias of the derived yaw.
+* **Suggested next experiment: an understeer-corrected or measured-yaw re-decode of the three steering-derived sets.**
+  The derived yaw overestimates the measured one as 1 + k v^2 (2.14), so the lateral channels of `ccs`, `ccs_honda` and
+  `comma2k19` are 1.5-2x too large on highway windows. Step 1: fit k per platform (or one k for all) on comma2k19 against
+  its measured `yawRate` and on the Ford windows of `ccs` (the one brand whose `CarState.yawRate` is filled), and add a
+  `--yaw derived-understeer` option (yaw = v x steer / (steerRatio x wheelbase x (1 + k v^2)); curvature and lateral
+  acceleration follow) or `--yaw measured` where a brand provides it. Step 2: re-decode the three sets (cost: `ccs` about
+  3.2 h with 6 workers, `ccs_honda` 8 min, `comma2k19` 3 min; only the three lateral channels change), re-run the nine
+  scoring commands per set (minutes on the GPU) and `collect_scores.py`, and write a comparison section against
+  2.12-2.14 (device and model accuracy per stratum, the yaw-mask sensitivity, the MID / LARGE recalls, with the uncorrected
+  decode as the baseline). What it can settle: whether the full model's size loss on `ccs` (54.1 % of devices against
+  63.5 internal; MID 8 of 33 and LARGE 6 of 30 models) and the yaw-mask collapse are the inflated lateral input or a
+  genuine lateral-signature shift between devices; it does not touch the powertrain result, which the yaw mask leaves in
+  place. Decoder fix for every future decode: drop or back-fill sample 0 of each segment, the all-zero `CarState` of the
+  fresh 0.3.1 parser (`v` = 0 at k = 0 in every window of the three sets), so that the first grid sample is a decoded one;
+  the lead gate could also reject lead speeds below zero (oncoming traffic, 2.13 caveats).
 * Not downloaded, lower value: CI test routes (internal evaluation only, unmasked VINs), CANdid (10 SMALL ICE cars, raw
   CAN incl. steering and yaw: it would offer a measured yaw on SMALL cars, where the size model does not fail), Ford
   Multi-AV (HEV, kinematics only).
@@ -1712,3 +2122,42 @@ connections), the re-launch is the owner's step and nothing complete is on disk;
   `release/`, `private/` or the raw library was touched; the device and route ids of commaCarSegments exist only under
   `<external>/ccs/segments` and in the selection lists, never in the repository or the work folder (pseudonymous
   `ccs_v_` / `ccs_d_` ids and public platform names only).
+* Phase 3, addenda (10 Nov, evening): `ccs_decode.py` gained four options that are off by default and leave the `ccs` path
+  byte-identical (checked by sha1 of the window tensor and meta on the check segments): `--honda-gearbox-from-can`
+  (Honda only; the `gearbox=` note and the `gearbox` column of `segments_qc.csv`), `--layout comma2k19`,
+  `--fingerprint-map <folder>=<PLATFORM>,...` (`cp_source` / `cp_logged_diff` columns, `cp=` note), `--das-from
+  controlsState` (`das_source` / `controls_enabled_frac` columns) and `--ignore-absent-messages` (`absent_msgs` column);
+  `ccs_honda_list.py` (the nine platforms' segments within the budget list, and the 20-segment check list; the lists stay
+  on the data disk) and `ccs_honda_check.py` (option off / on on the 20 check segments, and the option against the 2024-08
+  lab car stack on the 21 probe segments of the diagnosis; tables in `CCS_PIPELINE.md` "Honda re-decode"). Decodes:
+  `ccs_decode.py --list <external>/ccs/select_honda.txt --dataset ccs_honda --workers 6 --honda-gearbox-from-can` (467 s;
+  log `<external>/logs/ccs_decode_honda.log`) and `ccs_decode.py --segments-root <external>/comma2k19/segments --layout
+  comma2k19 --fingerprint-map Chunk_1=TOYOTA_RAV4,Chunk_3=HONDA_CIVIC --das-from controlsState --ignore-absent-messages
+  --dataset comma2k19 --workers 6` (153 s; log `<external>/logs/ccs_decode_comma2k19.log`); work folders
+  `<external>/ccs_honda/work` and `<external>/comma2k19/work` (`windows.npz`, `meta.parquet`, `windows_summary.json`,
+  `segments_qc.csv`, `decode_summary.json`). Scoring: `run_scoring.sh ccs_honda` and `run_scoring.sh comma2k19`, the nine
+  runs of the `ccs` case each (full, V1 / V2 / V3, mask-V1 / V2 / V3, mask-yaw, mask-lead; logs
+  `<external>/logs/scoring_ccs_honda_wrapper.log`, `scoring_comma2k19_wrapper.log`); `collect_scores.py` (log
+  `<external>/logs/collect_ccs_honda.log`) registers `ccs_honda` as a second phase-3 set (its own `ccs_tables` section
+  and the `PHASE3` pooled scope summed over both sets) and `comma2k19` as a scope of its own (`OLD_SOFTWARE`, per-dataset
+  block and automation rows only); `ccs_selftest.py` passes. The per-device figures of 2.13 (the possible-hybrid split,
+  the two device-level misses, the lead and automation shares) and of 2.14 (the per-car automation split for size, the
+  V3 per-car probabilities, the route-folder sizes and gaps) were computed from the `probs__*__ens__*.npz` files, the metas,
+  `segments_qc.csv` and the segment folders with the same rules as `collect_scores.py`; the derived-yaw ratio table and the
+  checks against the logged 2018 `carState` of 2.14 come from the comma2k19 verification of `CCS_PIPELINE.md` (lab
+  `LogReader`), the sample-0 and oncoming-lead artefacts from the window tensors. Review coverage: `review_recompute.py --phase 3`
+  sections 34-41 (phase-3b review, 10 Nov, evening; same log) recompute every table of 2.13 (a)-(e) and the results table of
+  2.14 cell by cell, the figures of their Reading bullets and caveats, the decode accounting of both sets against
+  `decode_summary.json` / `segments_qc.csv` (and the budget list), the pooled totals of sections 0 / 3.1 / 3.2, the labels and
+  strata of both sets, the window tensors (the sample-0 and oncoming-lead artefacts) and the identifier hygiene of both work
+  folders; `comma2k19_yaw_check.py` (lab venv, `$PY`) re-derives the derived-yaw ratios of 2.14 from the logged
+  `carState.yawRate` (`yaw_check.json` on 5 segments per car, `yaw_check_all.json` on all 381 windows, in the comma2k19 work
+  folder; logs `<external>/logs/comma2k19_yaw_check*.log`). The review corrected in this file: the window-set speed and pedal
+  shares of `ccs_honda` (18.2 m/s, 37 / 15 / 18 %; the earlier 17.7 / 36 / 16 were means over all decoded segments) and of
+  comma2k19 (22.8 / 20.9 m/s; brake 0.12 / 0.12 in `CCS_PIPELINE.md`), the lead attribution of 2.13 (909 radar-platform windows,
+  887 with an object; 1,223 on the radarless ports), the multi-platform device count (one of the nine possible hybrids carries
+  windows under three platforms; the other multi-platform device is a `cvt` device), the double-counted seen devices (123 + 96 +
+  7 = 226 for 224 devices), the P(BEV) reading of the pooled possible-hybrid device (0.485 is P(BEV)) and the `cruise_frac` /
+  `controls_enabled_frac` wording of 2.14. Nothing under `build/`, `release/`, `private/` or the raw library was touched; the
+  comma2k19 device and route folder names exist only under `<external>/comma2k19/segments`, never in the repository or the
+  work folder.

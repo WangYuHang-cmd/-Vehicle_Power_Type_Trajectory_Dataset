@@ -2,7 +2,8 @@
 # Zero-shot scoring campaign over every external window set (experiments/transfer/RESULTS.md).
 # Runs score.py once per (dataset, checkpoint set, mask) with the matched reduced-input variant first and the full
 # 20-channel models under the same channel mask as the secondary number. Sequential, nice -n 10, GPU when free.
-#   source env.sh && bash experiments/transfer/run_scoring.sh [datasets...]      (default: the phase-1 sets below; csc, moretorque and ccs by name)
+#   source env.sh && bash experiments/transfer/run_scoring.sh [datasets...]      (default: the phase-1 sets below; csc, moretorque, ccs, ccs_honda, comma2k19
+#                                                                                  and the understeer-corrected re-decodes ccs_us, ccs_honda_us, comma2k19_us by name)
 set -u
 cd "$(dirname "$0")/../.." || exit 1
 source env.sh
@@ -44,7 +45,12 @@ for ds in "${sets[@]}"; do
       run --dataset $ds --mask-channels V1
       run --dataset $ds --mask-channels V2
       run --dataset $ds --mask-channels V3 ;;
-    ccs)                                         # commaCarSegments, device-disjoint selection: all 20 channels (radar / stock-ACC / no lead by platform, steering-derived yaw)
+    ccs|ccs_honda|comma2k19|ccs_us|ccs_honda_us|comma2k19_us)
+                                                 # commaCarSegments, device-disjoint selection: all 20 channels (radar / stock-ACC / no lead by platform, steering-derived yaw);
+                                                 #   ccs_honda = the nine Honda platforms re-decoded with the gearbox option of ccs_decode.py (same nine runs);
+                                                 #   comma2k19 = two cars on 2018 hardware decoded from the raw 2018 CAN by the same decoder (same nine runs);
+                                                 #   *_us = the same three sets re-decoded with `--yaw derived-understeer --understeer-k K` (same nine runs; collect_scores.py
+                                                 #   compares each with its original in the "Understeer-corrected yaw re-decodes" section)
       run --dataset $ds                          #   full models (primary)
       run --dataset $ds --ckpts "$V1"            #   reduced-input variants for comparison
       run --dataset $ds --ckpts "$V2"

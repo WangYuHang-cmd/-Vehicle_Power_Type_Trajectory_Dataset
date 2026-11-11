@@ -20,6 +20,20 @@ internal per-model result, seen / absent models, lead source and automation stat
 confusion, unlabelled powertrains). Every ccs table returns nothing while <external>/ccs/work has no meta.parquet or no
 full-model probabilities, so the collector runs unchanged before the decode is finished. `ccs_selftest.py` builds a
 small synthetic set (`_selftest_ccs`) and checks the tables; main(out_dir=...) writes elsewhere for such tests.
+`ccs_honda` (the nine Honda platforms the first decode lost, re-decoded with the gearbox option of ccs_decode.py, see
+CCS_PIPELINE.md "Honda re-decode") is a second phase-3 set of the same kind: it gets its own `ccs_tables` section, and
+the phase-3 scope of the pooled decisions, the automation split and the summary table include it (PHASE3).
+`comma2k19` (two cars on 2018 hardware, a 2017 RAV4 and a 2016 Civic, decoded from the raw 2018 CAN by ccs_decode.py with
+the CarParams built from the live fingerprint, see CCS_PIPELINE.md "comma2k19") is reported as its own small set
+(OLD_SOFTWARE): the generic per-dataset tables and per-model rows, the "all sets" pooled scope, a scope row of its own and
+the automation split include it; it is not pooled into the phase-3 commaCarSegments device scope and renders no ccs_tables.
+Understeer-corrected re-decodes (`ccs_us`, `ccs_honda_us`, `comma2k19_us`: the same segments decoded with `ccs_decode.py --yaw
+derived-understeer --understeer-k K`, so that only the three yaw-group channels differ from the original set; YAW_US maps each to
+its original): kind "ccs_us" (the nine runs of ccs_full), EXCLUDED from every pre-existing table (the per-dataset sections, the
+cross-dataset summary, the named-vehicle rows, every pooled-decision scope, the automation split, ccs_tables), so that the earlier
+output is unchanged; `yaw_correction_tables` renders them against their originals in the section "Understeer-corrected yaw
+re-decodes" at the end (alignment check, per-stratum metrics with deltas, platform decision flips, the yaw-masked rows of both
+decodes, one summary line per set) and stores the numbers in out["yaw_correction"].
 """
 from __future__ import annotations
 
@@ -96,10 +110,33 @@ DATASETS = {
                        primary={"bev_ice": ("full", "full"), "size": ("full", "full")}),
     "ccs": dict(title="commaCarSegments, device-disjoint selection (all 20 channels; radar / stock-ACC / no lead by platform; steering-derived yaw)",
                 kind="ccs_full", ref="all", primary={"bev_ice": ("full", "full"), "size": ("full", "full")}),
+    "ccs_honda": dict(title="commaCarSegments, the nine Honda platforms the first decode lost, re-decoded with the gearbox option of ccs_decode.py "
+                            "(opendbc 0.3.1 with CarParams.transmissionType taken from the logged gearbox message; same channels as `ccs`)",
+                      kind="ccs_full", ref="all", primary={"bev_ice": ("full", "full"), "size": ("full", "full")}),
+    "comma2k19": dict(title="comma2k19, two cars on 2018 hardware (RAV4 2017, Civic 2016), decoded from the raw 2018 CAN",
+                      kind="ccs_full", ref="all", primary={"bev_ice": ("full", "full"), "size": ("full", "full")}),
+    "ccs_us": dict(title="commaCarSegments, device-disjoint selection, understeer-corrected yaw re-decode (`ccs_decode.py --yaw derived-understeer`: "
+                         "the same windows as `ccs`, the yaw group divided by 1 + K v^2)",
+                   kind="ccs_us", ref="all", primary={"bev_ice": ("full", "full"), "size": ("full", "full")}),
+    "ccs_honda_us": dict(title="commaCarSegments, the nine Honda platforms (`ccs_honda`), understeer-corrected yaw re-decode",
+                         kind="ccs_us", ref="all", primary={"bev_ice": ("full", "full"), "size": ("full", "full")}),
+    "comma2k19_us": dict(title="comma2k19, two cars on 2018 hardware, understeer-corrected yaw re-decode",
+                         kind="ccs_us", ref="all", primary={"bev_ice": ("full", "full"), "size": ("full", "full")}),
 }
+RUNS["ccs_us"] = list(RUNS["ccs_full"])        # the understeer-corrected re-decodes take the nine runs of the ccs case
+YAW_US = {"ccs_us": "ccs", "ccs_honda_us": "ccs_honda", "comma2k19_us": "comma2k19"}   # understeer-corrected re-decode -> its original set
+YAW_GROUP = tuple(T.CHANNEL_GROUPS["yaw"])     # the three channels a re-decode may change: yaw_rate_radps, curv_1pm, lat_acc_mps2
+YAW_CORRECTION_TITLE = "## Understeer-corrected yaw re-decodes"
+
+
+def reported_datasets() -> list[str]:
+    """The sets of every pre-existing table: everything in DATASETS except the understeer-corrected re-decodes (YAW_US), which are
+    rendered against their originals by yaw_correction_tables only."""
+    return [d for d in DATASETS if d not in YAW_US]
 PHASE1 = ("ultraav", "openacc", "microsim_ev", "uga_ev", "tesla_yuan", "openacc_500x", "ved", "a2d2", "ccs_sample")   # the sets of RESULTS.md 2.1-2.9
 PHASE2 = ("csc", "moretorque")                                                                                      # RESULTS.md 2.10-2.11
-PHASE3 = ("ccs",)                                                                                                   # the device-disjoint commaCarSegments set
+PHASE3 = ("ccs", "ccs_honda")                                                                                       # the device-disjoint commaCarSegments sets (main run + Honda re-decode)
+OLD_SOFTWARE = ("comma2k19",)                                                                                       # seen platforms, new devices, 2018 openpilot CAN: its own small set, not pooled with PHASE3
 PAIR_SETS = PHASE3           # sets whose devices appear under several platforms / car models: pooled decisions per device x car-model pair (`_pair_hits`)
 LEVELS = ("window", "drive", "vehicle", "model")
 CCS_BOOTSTRAP = 300          # vehicle-cluster bootstrap resamples of the per-stratum vehicle / model intervals of ccs_tables (score.py: 1,000 on the pooled set)
@@ -247,7 +284,8 @@ def summary_table(REF: dict, out: dict) -> list[str]:
     for task in ("bev_ice", "size"):
         classes = CLASSES[task]
         rows = []
-        for ds, cfg in DATASETS.items():
+        for ds in reported_datasets():
+            cfg = DATASETS[ds]
             key, mask = cfg["primary"][task]
             R = out.get(ds, {}).get(task, {}).get(f"{key}|{mask}")
             if not R:
@@ -280,7 +318,8 @@ def named_vehicle_tables(out: dict) -> list[str]:
     for task in ("bev_ice", "size"):
         classes = CLASSES[task]
         rows = []
-        for ds, cfg in DATASETS.items():
+        for ds in reported_datasets():
+            cfg = DATASETS[ds]
             key, mask = cfg["primary"][task]
             R = out.get(ds, {}).get(task, {}).get(f"{key}|{mask}")
             if not R:
@@ -338,9 +377,10 @@ def pooled_decisions(out: dict) -> list[str]:
                            ("longitudinal / speed-only sets only (V2 / V3 variants)", [d for d in PHASE1 if d in DATASETS and DATASETS[d]["kind"] in ("V2", "V3")]),
                            ("commaSteeringControl archives (primary run per task; one archive = one pseudo-vehicle)", ["csc"]),
                            ("MoreTorque cars (full model)", ["moretorque"]),
-                           ("commaCarSegments devices (full model; one device x car model = one decision, judged by the device's own platform label; "
+                           ("commaCarSegments devices, ccs + ccs_honda (full model; one device x car model = one decision, judged by the device's own platform label; "
                             "a device under more than one car model counts once per model)", list(PHASE3)),
-                           ("all sets", list(DATASETS))):
+                           ("comma2k19 cars on 2018 hardware (full model; one device = one decision)", list(OLD_SOFTWARE)),
+                           ("all sets", reported_datasets())):          # the understeer re-decodes (YAW_US) are compared with their originals separately
             if not any(out.get(ds, {}).get(task) for ds in dss):      # a scope whose sets are not scored yet (e.g. ccs before the decode) is left out
                 continue
             hit = {c: [0, 0] for c in classes}
@@ -366,7 +406,7 @@ def das_split(out: dict) -> list[str]:
     """Powertrain decision vs automation state inside the sets that hold both (window share with das_frac >= 0.5 vs < 0.5)."""
     L = ["### Automation-engaged vs human-driven windows (primary powertrain run; window accuracy and P(BEV) per sub-population)", ""]
     rows = []
-    for ds in ("ultraav", "openacc", "uga_ev", "microsim_ev", "openacc_500x", "tesla_yuan", "ved", "a2d2", "ccs_sample", "csc", "moretorque") + PHASE3:
+    for ds in ("ultraav", "openacc", "uga_ev", "microsim_ev", "openacc_500x", "tesla_yuan", "ved", "a2d2", "ccs_sample", "csc", "moretorque") + PHASE3 + OLD_SOFTWARE:
         cfg = DATASETS[ds]
         key, mask = cfg["primary"]["bev_ice"]
         P = load_probs(ds, "bev_ice", key, mask)
@@ -1029,6 +1069,243 @@ def ccs_tables(out: dict, ds: str = "ccs") -> list[str]:
     return L
 
 
+# ----------------------------------------------------------------------------- understeer-corrected yaw re-decodes (YAW_US)
+YAW_RUNS = ("full", "V1")                       # runs compared per stratum (ii); "full+mask-yaw" is the reference block (iv)
+YAW_LEVELS = ("window", "vehicle", "model")     # levels of the per-stratum comparison (vehicle = device)
+
+
+def _yaw_k_of(meta: pd.DataFrame) -> str:
+    """The `k=` note field of an understeer-corrected set ('-' when absent); one value per set is expected."""
+    ks = _note_field(meta, "k").dropna().unique()
+    return "/".join(sorted(str(k) for k in ks)) if len(ks) else "-"
+
+
+def yaw_alignment(ds_us: str, ds_orig: str) -> dict:
+    """Alignment of an understeer-corrected re-decode with its original: same (vehicle_id, drive_id, w_idx) rows in the same order,
+    same labels, every non-yaw channel identical (max |diff| 0 in float32, same NaN pattern) and the yaw group changed. Returns
+    dict(ok, reason, n_windows, nonyaw_max_abs_diff, yaw_max_abs_diff {channel: value}, meta_equal_except_note, note_equal_after_yaw_strip)."""
+    m_us, m_o = load_meta(ds_us), load_meta(ds_orig)
+    rep: dict = dict(ok=False, reason="", n_windows=int(len(m_us)), n_windows_original=int(len(m_o)), nonyaw_max_abs_diff=None, yaw_max_abs_diff={},
+                     meta_equal_except_note=None, note_equal_after_yaw_strip=None)
+    if len(m_us) != len(m_o):
+        rep["reason"] = f"{len(m_us)} windows against {len(m_o)} in the original"
+        return rep
+    keys = ["vehicle_id", "drive_id", "w_idx"]
+    for c in keys:
+        if not (m_us[c].to_numpy().astype(str) == m_o[c].to_numpy().astype(str)).all():
+            rep["reason"] = f"column {c} differs or is ordered differently"
+            return rep
+    for c in ("platform", "model", "size_class", "powertrain"):
+        if c in m_us and c in m_o and not (m_us[c].fillna("").astype(str).to_numpy() == m_o[c].fillna("").astype(str).to_numpy()).all():
+            rep["reason"] = f"label column {c} differs"
+            return rep
+    same = [c for c in m_us.columns if c in m_o.columns and c not in ("note", "dataset")]       # the dataset column names the set itself
+    rep["meta_equal_except_note"] = bool(all(m_us[c].fillna("").astype(str).equals(m_o[c].fillna("").astype(str)) for c in same))
+    strip = lambda n: re.sub(r"yaw=[^;]*;k=[^;]*", "yaw=*", re.sub(r"yaw=[^;]*", "yaw=*", n))  # noqa: E731
+    rep["note_equal_after_yaw_strip"] = bool((m_us["note"].astype(str).map(strip).to_numpy() == m_o["note"].astype(str).map(strip).to_numpy()).all())
+    X_us, _ = T.load_windows(ds_us)
+    X_o, _ = T.load_windows(ds_orig)
+    if X_us.shape != X_o.shape:
+        rep["reason"] = f"tensor shapes differ: {X_us.shape} against {X_o.shape}"
+        return rep
+    worst = 0.0
+    bad = []
+    for c, k in T.CH.items():
+        a, b = X_us[:, :, k], X_o[:, :, k]
+        na, nb = np.isnan(a), np.isnan(b)
+        nan_same = bool((na == nb).all())
+        fin = ~na & ~nb
+        d = float(np.abs(a[fin] - b[fin]).max()) if fin.any() else 0.0
+        if c in YAW_GROUP:
+            rep["yaw_max_abs_diff"][c] = d if nan_same else float("inf")
+        else:
+            if not nan_same:
+                bad.append(f"{c} (NaN pattern)")
+            elif d > 0:
+                bad.append(f"{c} ({d:.3g})")
+            worst = max(worst, d if nan_same else float("inf"))
+    del X_us, X_o
+    rep["nonyaw_max_abs_diff"] = worst
+    if bad:
+        rep["reason"] = "non-yaw channels differ: " + ", ".join(bad)
+        return rep
+    if not any(v > 0 for v in rep["yaw_max_abs_diff"].values()):
+        rep["reason"] = "the yaw group is identical to the original (no correction applied?)"
+        return rep
+    rep["ok"] = True
+    return rep
+
+
+def _yaw_level_stats(P: np.ndarray, y: np.ndarray, m: pd.DataFrame, idx: np.ndarray, level: str, k: int) -> dict:
+    if level == "window":
+        return _cm_stats(y[idx], P[idx].argmax(1), k)
+    units = m["vehicle_id" if level == "vehicle" else "model"].astype(str).to_numpy()[idx]
+    _, _, yu, du, _ = _unit_decisions(P[idx], y[idx], units)
+    return _cm_stats(yu, du, k)
+
+
+def _delta(a, b) -> str:
+    return "-" if a is None or b is None else f"{100 * (b - a):+.1f}"
+
+
+def yaw_correction_tables(out: dict, pairs: dict[str, str] | None = None) -> list[str]:
+    """The understeer-corrected re-decodes against their originals (pairs = YAW_US by default: {corrected set: original set}).
+    Per pair: (i) the alignment check of yaw_alignment (a misaligned pair gets one clear line and no tables); (ii) per stratum (all /
+    seen / held-out / absent), for the full model and V1, window / device / model accuracy, macro-F1 and per-class recall, original
+    against corrected with deltas, both tasks; (iii) platform decision flips of the full model (size and powertrain: platforms whose
+    model-level decision changed, with P(true) before / after; MID / LARGE platforms recovered or lost; devices right before / after
+    per class); (iv) the yaw-masked rows of both decodes (the masked run cannot see the changed channels, so equal rows are the
+    consistency check); (v) one summary line. Numbers in out["yaw_correction"][set]. Returns [] while no pair is decoded and scored."""
+    pairs = dict(YAW_US if pairs is None else pairs)
+    L: list[str] = []
+    store = out.setdefault("yaw_correction", {})
+    for ds_us, ds_o in pairs.items():
+        if not (EXT / ds_us / "work" / "meta.parquet").exists() or not (EXT / ds_o / "work" / "meta.parquet").exists():
+            continue
+        P_us = {t: _ccs_probs(ds_us, t) for t in ("size", "bev_ice")}
+        P_o = {t: _ccs_probs(ds_o, t) for t in ("size", "bev_ice")}
+        if any("full" not in P_us[t] or "full" not in P_o[t] for t in P_us):
+            continue
+        if not L:
+            L += [YAW_CORRECTION_TITLE, "",
+                  "Each set re-decoded by `ccs_decode.py --yaw derived-understeer --understeer-k K` (the bicycle yaw divided by 1 + K v^2, then curvature and "
+                  "lateral acceleration from it; CCS_PIPELINE.md \"Understeer-corrected yaw\") against its original decode, scored with the same nine runs. The "
+                  "re-decodes are kept out of every table above. Alignment = same rows (device, drive, segment), same labels, every non-yaw channel identical "
+                  "(max |diff| 0 in float32, same NaN pattern), yaw group changed. Device = vehicle_id (device pseudonym); model = car model; strata as in "
+                  "the commaCarSegments tables; no bootstrap intervals here (the pooled score files of each set carry them).", ""]
+        rec: dict = dict(original=ds_o)
+        store[ds_us] = rec
+        al = yaw_alignment(ds_us, ds_o)
+        rec["alignment"] = al
+        m = load_meta(ds_us).reset_index(drop=True)
+        rec["k"] = _yaw_k_of(m)
+        L += [f"### {ds_us} against {ds_o} (K = {rec['k']})", ""]
+        if not al["ok"]:
+            L += [f"ABORTED: `{ds_us}` is not aligned with `{ds_o}` ({al['reason']}); no comparison tables for this set.", ""]
+            rec["summary"] = f"{ds_us}: aborted, not aligned with {ds_o} ({al['reason']})"
+            continue
+        yd = ", ".join(f"{c} {al['yaw_max_abs_diff'][c]:.3g}" for c in YAW_GROUP)
+        L += [f"Alignment: OK over {al['n_windows']:,} windows; non-yaw channels max |diff| {al['nonyaw_max_abs_diff']:.3g}; yaw group max |diff| {yd}; "
+              f"meta columns equal except the note: {'yes' if al['meta_equal_except_note'] else 'no'}; notes equal after the yaw field: "
+              f"{'yes' if al['note_equal_after_yaw_strip'] else 'no'}.", ""]
+        if any(len(p) != len(m) for t in P_us for p in P_us[t].values()) or any(len(p) != len(m) for t in P_o for p in P_o[t].values()):
+            L += [f"ABORTED: a probability file of `{ds_us}` or `{ds_o}` does not match the window count (re-run score.py).", ""]
+            rec["summary"] = f"{ds_us}: aborted, probability files do not match the window count"
+            continue
+        m["stratum"] = _note_field(m, "stratum").fillna("absent")
+        strata = [("all", np.ones(len(m), bool))] + [(s_, (m["stratum"] == s_).to_numpy()) for s_ in CCS_STRATA]
+        y = {"size": T.task_labels(m, "size"), "bev_ice": T.task_labels(m, "bev_ice")}
+        veh = m["vehicle_id"].astype(str).to_numpy()
+        # (ii) per stratum, full and V1
+        rec["strata"] = {}
+        for task in ("size", "bev_ice"):
+            classes = CLASSES[task]; k = len(classes)
+            rows = []
+            rec["strata"][task] = {}
+            for run in YAW_RUNS:
+                if run not in P_us[task] or run not in P_o[task]:
+                    continue
+                first = True
+                for sname, sel in strata:
+                    idx = np.nonzero(sel & (y[task] >= 0))[0]
+                    if len(idx) == 0:
+                        continue
+                    for lv in YAW_LEVELS:
+                        a = _yaw_level_stats(P_o[task][run], y[task], m, idx, lv, k)
+                        b = _yaw_level_stats(P_us[task][run], y[task], m, idx, lv, k)
+                        rows.append([run if first else "", sname, lv, a["n"], f"{_p(a['acc'])} -> {_p(b['acc'])} ({_delta(a['acc'], b['acc'])})",
+                                     f"{_p(a['f1'])} -> {_p(b['f1'])} ({_delta(a['f1'], b['f1'])})",
+                                     " / ".join(f"{c} {_p(x)} -> {_p(z)}" for c, x, z in zip(classes, a["recall"], b["recall"])),
+                                     " / ".join(f"{c} {h0}->{h1}/{sp}" for c, h0, h1, sp in zip(classes, a["hits"], b["hits"], a["support"]))])
+                        first = False
+                        rec["strata"][task].setdefault(run, {}).setdefault(sname, {})[lv] = dict(
+                            n_units=a["n"], accuracy=[a["acc"], b["acc"]], macro_f1=[a["f1"], b["f1"]], per_class_recall=[a["recall"], b["recall"]],
+                            hits=[a["hits"], b["hits"]], support=a["support"],
+                            delta_accuracy=(None if a["acc"] is None or b["acc"] is None else b["acc"] - a["acc"]),
+                            delta_macro_f1=(None if a["f1"] is None or b["f1"] is None else b["f1"] - a["f1"]))
+            L += [f"{task} ({' / '.join(classes)}), original -> corrected per stratum (window / device / model levels):", ""]
+            L.append(T.md_table(["run", "stratum", "level", "units", "accuracy % orig -> corr (delta)", "macro-F1 % orig -> corr (delta)",
+                                 "recall per class % orig -> corr", "units right per class orig->corr/support"], rows))
+            L.append("")
+        # (iii) platform decision flips, full model
+        rec["flips"] = {}
+        for task in ("size", "bev_ice"):
+            classes = CLASSES[task]; k = len(classes)
+            Po, Pu = P_o[task]["full"], P_us[task]["full"]
+            flips = []; n_plat = 0; before_ok = after_ok = 0
+            recov = {c: 0 for c in classes}; lost = {c: 0 for c in classes}
+            for p_, g in m.groupby("platform", sort=True):
+                idx = g.index.to_numpy(); idx = idx[y[task][idx] >= 0]
+                if len(idx) == 0:
+                    continue
+                n_plat += 1
+                yt = int(np.bincount(y[task][idx], minlength=k).argmax()); lab = classes[yt]
+                pa, pb = Po[idx].mean(0), Pu[idx].mean(0)
+                da, db = _dec(classes, pa), _dec(classes, pb)
+                before_ok += int(da == lab); after_ok += int(db == lab)
+                if da != db:
+                    if db == lab:
+                        recov[lab] += 1
+                    elif da == lab:
+                        lost[lab] += 1
+                    vr0, vn0 = _veh_acc(Po[idx], y[task][idx], veh[idx]); vr1, _ = _veh_acc(Pu[idx], y[task][idx], veh[idx])
+                    flips.append(dict(platform=str(p_), model=str(g["model"].iloc[0]), stratum=str(g["stratum"].iloc[0]), label=lab, n_vehicles=int(vn0),
+                                      n_windows=int(len(idx)), decision_before=da, decision_after=db, p_true_before=float(pa[yt]), p_true_after=float(pb[yt]),
+                                      vehicles_right_before=int(vr0), vehicles_right_after=int(vr1), kind=("recovered" if db == lab else ("lost" if da == lab else "wrong->wrong"))))
+            # devices right before / after per class
+            lab_idx = np.nonzero(y[task] >= 0)[0]
+            dev = {}
+            if len(lab_idx):
+                _, _, yu, du0, _ = _unit_decisions(Po[lab_idx], y[task][lab_idx], veh[lab_idx])
+                _, _, _, du1, _ = _unit_decisions(Pu[lab_idx], y[task][lab_idx], veh[lab_idx])
+                dev = {c: [int(((du0 == yu) & (yu == i)).sum()), int(((du1 == yu) & (yu == i)).sum()), int((yu == i).sum())] for i, c in enumerate(classes)}
+            rec["flips"][task] = dict(n_platforms=n_plat, platforms_right=[before_ok, after_ok], recovered=recov, lost=lost, flipped=flips, devices_right_per_class=dev)
+            big = [c for c in classes if c in ("MID", "LARGE")]
+            L += [f"{task}: platform decision flips of the full model (mean probability over the platform's labelled windows -> arg-max): "
+                  f"{len(flips)} of {n_plat} platforms changed; platforms right {before_ok} -> {after_ok}"
+                  + (("; " + "; ".join(f"{c} platforms recovered {recov[c]} / lost {lost[c]}" for c in big)) if big else "")
+                  + "; devices right before -> after per class: " + ", ".join(f"{c} {v[0]} -> {v[1]} of {v[2]}" for c, v in dev.items()) + ".", ""]
+            if flips:
+                L.append(T.md_table(["platform", "model", "stratum", "label", "veh", "win", "decision before -> after", "P(true) before -> after", "devices right before -> after", "kind"],
+                                    [[f["platform"], f["model"], f["stratum"], f["label"], f["n_vehicles"], f["n_windows"], f"{f['decision_before']} -> {f['decision_after']}",
+                                      f"{f['p_true_before']:.2f} -> {f['p_true_after']:.2f}", f"{f['vehicles_right_before']} -> {f['vehicles_right_after']}", f["kind"]] for f in flips]))
+                L.append("")
+        # (iv) the yaw-masked rows of both decodes
+        rows = []; rec["mask_yaw"] = {}
+        for task in ("size", "bev_ice"):
+            classes = CLASSES[task]; k = len(classes)
+            if "full+mask-yaw" not in P_us[task] or "full+mask-yaw" not in P_o[task]:
+                continue
+            idx = np.nonzero(y[task] >= 0)[0]
+            if len(idx) == 0:
+                continue
+            same_probs = bool(np.allclose(P_us[task]["full+mask-yaw"], P_o[task]["full+mask-yaw"], atol=1e-6))
+            rec["mask_yaw"][task] = dict(probs_equal=same_probs)
+            for lv in YAW_LEVELS:
+                a = _yaw_level_stats(P_o[task]["full+mask-yaw"], y[task], m, idx, lv, k); b = _yaw_level_stats(P_us[task]["full+mask-yaw"], y[task], m, idx, lv, k)
+                rows.append([task, lv, a["n"], f"{_p(a['acc'])} / {_p(a['f1'])}", f"{_p(b['acc'])} / {_p(b['f1'])}", "yes" if same_probs else "no"])
+                rec["mask_yaw"][task][lv] = dict(n_units=a["n"], accuracy=[a["acc"], b["acc"]], macro_f1=[a["f1"], b["f1"]])
+        if rows:
+            L += ["Reference: the full model with the yaw group masked, both decodes (the mask hides the only channels that changed, so the two runs should agree):", ""]
+            L.append(T.md_table(["task", "level", "units", "original: acc / F1 %", "corrected: acc / F1 %", "probabilities equal"], rows))
+            L.append("")
+        # (v) summary line
+        parts = []
+        for task in ("size", "bev_ice"):
+            st = rec["strata"].get(task, {}).get("full", {}).get("all", {})
+            if not st:
+                continue
+            v_, mo_ = st["vehicle"], st["model"]
+            parts.append(f"{task}: device accuracy {_p(v_['accuracy'][0])} -> {_p(v_['accuracy'][1])} ({_delta(*v_['accuracy'])}), model level "
+                         f"{sum(mo_['hits'][0])}/{mo_['n_units']} -> {sum(mo_['hits'][1])}/{mo_['n_units']}, platforms right "
+                         f"{rec['flips'][task]['platforms_right'][0]} -> {rec['flips'][task]['platforms_right'][1]}")
+        my = rec.get("mask_yaw", {})
+        rec["summary"] = f"{ds_us} (K = {rec['k']}) against {ds_o}: " + "; ".join(parts) + \
+            (f"; yaw-masked runs agree: {'yes' if all(v['probs_equal'] for v in my.values()) else 'no'}" if my else "")
+        L += [f"Summary: {rec['summary']}", ""]
+    return L
+
+
 def _round_floats(o, nd: int = 6):
     """Round every float in a nested structure (JSON outputs: short digit runs, no identifier-like tokens)."""
     if isinstance(o, float):
@@ -1050,7 +1327,8 @@ def main(out_dir: Path | str | None = None) -> int:
          "score.py and internal_reference.json. Accuracy and macro-F1 in percent (one decimal); 95 % intervals from the vehicle-cluster bootstrap "
          "(1,000 resamples; absent when a set has fewer than about 20 bootstrap-able clusters or one vehicle). Chance = 1 / K and the majority share.", ""]
     per_ds = []
-    for ds, cfg in DATASETS.items():
+    for ds in reported_datasets():
+        cfg = DATASETS[ds]
         if not (EXT / ds / "work" / "meta.parquet").exists():
             continue
         per_ds += [f"## {ds}: {cfg['title']}", ""] + dataset_tables(ds, cfg, REF, out)
@@ -1062,8 +1340,10 @@ def main(out_dir: Path | str | None = None) -> int:
     L += ved_tables(out)
     L += csc_tables(out)
     L += moretorque_tables(out)
-    L += ccs_tables(out)
+    for ds in PHASE3:
+        L += ccs_tables(out, ds)
     L += ["## Per dataset", ""] + per_ds
+    L += yaw_correction_tables(out)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "RESULTS_TABLES.md").write_text("\n".join(L) + "\n")
     (out_dir / "results_summary.json").write_text(json.dumps(_round_floats(out), indent=1, default=lambda o: round(float(o), 6) if isinstance(o, np.floating) else str(o)))

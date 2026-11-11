@@ -10,6 +10,16 @@ ccs_tables and the standard dataset_tables on it and checks them (every table pr
 units right <= support, pooled `all` rows equal the score.py files, JSON-serialisable summary, no long hex token); then
 runs the collector's main() into a temporary folder. Never touches <external>/ccs/work.
 
+Understeer-corrected re-decodes (collect_scores.yaw_correction_tables): a synthetic `_selftest_ccs_us` copy of the synthetic set in
+which only the three yaw-group channels are changed (divided by 1 + k v^2 with k = 0.001, as `ccs_decode.py --yaw derived-understeer`
+would; `yaw=derived-us;k=0.001` in the note) is built and scored with the same nine runs, and the comparison tables are rendered
+against `_selftest_ccs` and checked (alignment OK, k read back, deltas = corrected - original everywhere, strata sum to `all`,
+platform flips consistent with the platforms-right counts, the yaw-masked runs of both decodes identical). Two deliberately
+misaligned copies (`_selftest_ccs_us_bad`: rows permuted; `_selftest_ccs_us_bad2`: one speed sample changed) must be refused with
+the ABORTED line and no tables. Finally the collector's main() is run twice into temporary folders, with and without the synthetic
+pair registered, and everything before the "Understeer-corrected yaw re-decodes" section must be byte-identical (the re-decodes
+stay out of every pre-existing table).
+
   source env.sh && $CPY experiments/transfer/ccs_selftest.py [--skip-build] [--skip-score] [--out <folder under $D/tmp>]
 """
 from __future__ import annotations
@@ -17,6 +27,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
 import subprocess
 import sys
 import time
@@ -34,6 +45,10 @@ from experiments.transfer import collect_scores as CS  # noqa: E402
 from experiments.transfer import common as T  # noqa: E402
 
 DS = "_selftest_ccs"
+DS_US = "_selftest_ccs_us"            # the synthetic understeer-corrected copy (yaw group changed, everything else identical)
+DS_BAD = "_selftest_ccs_us_bad"       # rows permuted: must be refused by the alignment check
+DS_BAD2 = "_selftest_ccs_us_bad2"     # one non-yaw sample changed: must be refused by the alignment check
+US_K = 0.001
 SAMPLE = "ccs_sample"
 V = {"V1": "transfer__bev_ice__resnet__V1__s*,transfer__size__gru__V1__s*", "V2": "transfer__bev_ice__resnet__V2__s*,transfer__size__gru__V2__s*",
      "V3": "transfer__bev_ice__resnet__V3__s*,transfer__size__gru__V3__s*"}
@@ -104,18 +119,157 @@ def build(rng_seed: int = 0) -> dict:
     return T.save_windows(DS, X, meta, strict=True)
 
 
-def score(log: Path, bootstrap: int = 50) -> list[dict]:
+def build_us(k: float = US_K) -> dict:
+    """The synthetic understeer-corrected copy of the synthetic set: yaw_rate / curv / lat_acc divided by 1 + k v^2 (the NaN pattern of
+    the curvature is kept), every other channel and every meta column identical, `yaw=derived` -> `yaw=derived-us;k=<k>` in the note."""
+    X, m = T.load_windows(DS)
+    X = X.copy()
+    v = X[:, :, T.CH["v_mps"]].astype(np.float64)
+    f = (1.0 + k * v * v).astype(np.float32)
+    for c in T.CHANNEL_GROUPS["yaw"]:
+        X[:, :, T.CH[c]] = X[:, :, T.CH[c]] / f
+    m = m.copy()
+    m["dataset"] = DS_US
+    m["note"] = m["note"].astype(str).str.replace("yaw=derived;", f"yaw=derived-us;k={k:g};", regex=False)
+    assert m["note"].str.contains("yaw=derived-us;k=").all()
+    return T.save_windows(DS_US, X, m, strict=True)
+
+
+def build_bad() -> None:
+    """Two misaligned copies of the synthetic corrected set: rows permuted (DS_BAD) and one speed sample changed (DS_BAD2); the
+    probability / score files of DS_US are copied next to them so that only the alignment check can refuse them."""
+    X, m = T.load_windows(DS_US)
+    rng = np.random.default_rng(1)
+    perm = rng.permutation(len(m))
+    mb = m.iloc[perm].reset_index(drop=True).assign(dataset=DS_BAD)
+    T.save_windows(DS_BAD, X[perm], mb, strict=True)
+    X2 = X.copy(); X2[0, 10, T.CH["v_mps"]] += 0.5
+    T.save_windows(DS_BAD2, X2, m.assign(dataset=DS_BAD2), strict=True)
+    src = T.work_dir(DS_US)
+    for ds in (DS_BAD, DS_BAD2):
+        dst = T.work_dir(ds)
+        for f in list(src.glob("probs__*.npz")) + list(src.glob("score__*")):
+            (dst / f.name).write_bytes(f.read_bytes())
+
+
+def score(log: Path, bootstrap: int = 50, ds: str = DS) -> list[dict]:
     """score.py for every run of the ccs_full kind on the synthetic set (sequential; GPU when available)."""
     res = []
     with log.open("a") as fh:
         for extra in SCORE_RUNS:
-            cmd = [sys.executable, str(HERE / "score.py"), "--dataset", DS, "--bootstrap", str(bootstrap)] + extra
+            cmd = [sys.executable, str(HERE / "score.py"), "--dataset", ds, "--bootstrap", str(bootstrap)] + extra
             t0 = time.time()
             fh.write(f"### {' '.join(cmd[2:])}\n"); fh.flush()
             r = subprocess.run(cmd, stdout=fh, stderr=subprocess.STDOUT, cwd=str(REPO), check=False)
             res.append(dict(args=extra, returncode=r.returncode, seconds=round(time.time() - t0, 1)))
-            print(f"[selftest] score.py {' '.join(extra) or '(full models)'}: rc={r.returncode} {res[-1]['seconds']} s", flush=True)
+            print(f"[selftest] {ds}: score.py {' '.join(extra) or '(full models)'}: rc={r.returncode} {res[-1]['seconds']} s", flush=True)
     return res
+
+
+def check_us(out_dir: Path) -> dict:
+    """Render yaw_correction_tables on the synthetic pair and verify it; the two misaligned copies must be refused."""
+    rep: dict = {}
+    out: dict = {}
+    L = CS.yaw_correction_tables(out, pairs={DS_US: DS})
+    assert L and L[0] == CS.YAW_CORRECTION_TITLE, "yaw_correction_tables returned nothing or no title"
+    text = "\n".join(L)
+    assert "ABORTED" not in text, text[:500]
+    rec = out["yaw_correction"][DS_US]
+    al = rec["alignment"]
+    assert al["ok"] and al["nonyaw_max_abs_diff"] == 0 and al["meta_equal_except_note"] and al["note_equal_after_yaw_strip"], al
+    assert all(al["yaw_max_abs_diff"][c] > 0 for c in CS.YAW_GROUP), al["yaw_max_abs_diff"]
+    assert rec["k"] == f"{US_K:g}", rec["k"]
+    assert rec["original"] == DS
+    # (ii) delta arithmetic, strata sum to 'all', hits consistent with the accuracies
+    n_cells = 0
+    for task, runs in rec["strata"].items():
+        assert set(runs) == set(CS.YAW_RUNS), (task, sorted(runs))
+        for run, by_s in runs.items():
+            for lv in CS.YAW_LEVELS:
+                tot = by_s["all"][lv]["n_units"]
+                assert tot == sum(by_s[s_][lv]["n_units"] for s_ in CS.CCS_STRATA if s_ in by_s), (task, run, lv)
+                for sname, res in by_s.items():
+                    r = res[lv]
+                    a, b = r["accuracy"]
+                    assert abs(r["delta_accuracy"] - (b - a)) < 1e-12, (task, run, sname, lv)
+                    if r["macro_f1"][0] is not None and r["macro_f1"][1] is not None:
+                        assert abs(r["delta_macro_f1"] - (r["macro_f1"][1] - r["macro_f1"][0])) < 1e-12
+                    for j in (0, 1):
+                        assert abs(r["accuracy"][j] - sum(r["hits"][j]) / r["n_units"]) < 1e-9, (task, run, sname, lv, j)
+                        assert all(h <= sp for h, sp in zip(r["hits"][j], r["support"]))
+                    n_cells += 1
+    rep["strata_cells_checked"] = n_cells
+    # the original side equals the ccs_tables / score.py numbers of the original set (same decision rule)
+    for task in ("size", "bev_ice"):
+        R = CS.load_score(DS, task, "full", "full")
+        for lv in ("window", "vehicle", "model"):
+            assert abs(R["levels"][lv]["accuracy"] - rec["strata"][task]["full"]["all"][lv]["accuracy"][0]) < 1e-9, (task, lv)
+    # (iii) flips consistent with the platforms-right counts
+    for task, fl in rec["flips"].items():
+        b0, b1 = fl["platforms_right"]
+        assert b1 - b0 == sum(fl["recovered"].values()) - sum(fl["lost"].values()), (task, fl["platforms_right"], fl["recovered"], fl["lost"])
+        assert len(fl["flipped"]) == sum(1 for f in fl["flipped"] if f["decision_before"] != f["decision_after"])
+        assert sum(1 for f in fl["flipped"] if f["kind"] == "recovered") == sum(fl["recovered"].values())
+        assert sum(1 for f in fl["flipped"] if f["kind"] == "lost") == sum(fl["lost"].values())
+        for c, (d0, d1, n) in fl["devices_right_per_class"].items():
+            assert 0 <= d0 <= n and 0 <= d1 <= n
+        # the device counts per class of the full run equal the 'all' / vehicle hits of (ii)
+        hits = rec["strata"][task]["full"]["all"]["vehicle"]["hits"]
+        assert [v[0] for v in fl["devices_right_per_class"].values()] == hits[0] and [v[1] for v in fl["devices_right_per_class"].values()] == hits[1], task
+    rep["flipped_platforms"] = {t: len(fl["flipped"]) for t, fl in rec["flips"].items()}
+    # (iv) the yaw-masked runs cannot see the changed channels
+    assert rec["mask_yaw"] and all(v["probs_equal"] for v in rec["mask_yaw"].values()), rec["mask_yaw"]
+    for task, mk in rec["mask_yaw"].items():
+        for lv in CS.YAW_LEVELS:
+            assert mk[lv]["accuracy"][0] == mk[lv]["accuracy"][1], (task, lv, mk[lv])
+    # (v) summary line present, no hex token, JSON round trip
+    assert rec["summary"].startswith(f"{DS_US} (K = {US_K:g}) against {DS}") and "yaw-masked runs agree: yes" in rec["summary"]
+    assert f"Summary: {rec['summary']}" in text
+    assert not HEX_RE.findall(text), HEX_RE.findall(text)[:5]
+    js = json.dumps(CS._round_floats(out), default=str)
+    assert '"yaw_correction"' in js and "numpy" not in js
+    # misaligned copies are refused with the ABORTED line and no tables
+    for ds_bad, expect in ((DS_BAD, "vehicle_id"), (DS_BAD2, "non-yaw channels differ: v_mps")):
+        out_b: dict = {}
+        Lb = CS.yaw_correction_tables(out_b, pairs={ds_bad: DS})
+        tb = "\n".join(Lb)
+        assert "ABORTED" in tb and expect in tb, tb[-600:]
+        assert "original -> corrected per stratum" not in tb and "decision flips" not in tb and "Summary:" not in tb
+        assert not out_b["yaw_correction"][ds_bad]["alignment"]["ok"] and "strata" not in out_b["yaw_correction"][ds_bad]
+        rep[f"refused_{ds_bad}"] = out_b["yaw_correction"][ds_bad]["alignment"]["reason"]
+    (out_dir / "yaw_correction_selftest.md").write_text(f"# yaw_correction_tables self-test on `{DS_US}` against `{DS}`\n\n"
+                                                        f"Generated {time.strftime('%-d %b %Y %H:%M')} by experiments/transfer/ccs_selftest.py.\n\n" + text + "\n")
+    return rep
+
+
+def check_untouched(out_dir: Path) -> dict:
+    """The collector's main() with the synthetic pair registered (kind ccs_us) and without it: everything before the understeer section
+    must be byte-identical (the re-decodes stay out of every pre-existing table) and the section must hold the synthetic set."""
+    gen = re.compile(r"^Generated .*$", re.M)
+    saved = (dict(CS.DATASETS), dict(CS.YAW_US))
+    try:
+        CS.DATASETS[DS_US] = dict(title="synthetic understeer-corrected copy (self-test)", kind="ccs_us", ref="all",
+                                  primary={"bev_ice": ("full", "full"), "size": ("full", "full")})
+        CS.YAW_US[DS_US] = DS
+        assert CS.main(out_dir=out_dir / "collector_with_us") == 0
+    finally:
+        CS.DATASETS.clear(); CS.DATASETS.update(saved[0]); CS.YAW_US.clear(); CS.YAW_US.update(saved[1])
+    assert CS.main(out_dir=out_dir / "collector") == 0
+    with_us = gen.sub("Generated <t>", (out_dir / "collector_with_us" / "RESULTS_TABLES.md").read_text())
+    without = gen.sub("Generated <t>", (out_dir / "collector" / "RESULTS_TABLES.md").read_text())
+    assert CS.YAW_CORRECTION_TITLE in with_us, "understeer section missing"
+    head, tail = with_us.split(CS.YAW_CORRECTION_TITLE, 1)
+    if CS.YAW_CORRECTION_TITLE in without:                        # real re-decodes present: compare up to the section in both
+        without_head = without.split(CS.YAW_CORRECTION_TITLE, 1)[0]
+    else:
+        without_head = without
+    assert head == without_head, "a pre-existing table changed when the synthetic understeer pair was registered"
+    assert DS_US not in head and f"### {DS_US} against {DS}" in tail
+    js = json.loads((out_dir / "collector_with_us" / "results_summary.json").read_text())
+    assert DS_US in js["yaw_correction"] and DS_US not in {k for k in js if k != "yaw_correction"}
+    js0 = json.loads((out_dir / "collector" / "results_summary.json").read_text())
+    assert {k: v for k, v in js.items() if k != "yaw_correction"} == {k: v for k, v in js0.items() if k != "yaw_correction"}, "results_summary.json differs outside yaw_correction"
+    return dict(head_bytes=len(head), section_bytes=len(tail))
 
 
 def check(out_dir: Path) -> dict:
@@ -208,17 +362,27 @@ def main() -> int:
         assert m["platform"].nunique() == len(PLATFORMS) and m["vehicle_id"].nunique() == sum(p[-1] for p in PLATFORMS)
         assert (m.groupby("drive_id").size() > 1).any() and (m.groupby("vehicle_id").size().max() >= 10)
         print(f"[selftest] built {s['n']} windows, {m['vehicle_id'].nunique()} devices, {m['drive_id'].nunique()} drives, {m['platform'].nunique()} platforms", flush=True)
+        s_us = build_us()
+        rep["build_us"] = dict(n_windows=s_us["n"], warnings=s_us["warnings"], k=US_K)
+        print(f"[selftest] built the understeer-corrected copy {DS_US}: {s_us['n']} windows (k = {US_K:g})", flush=True)
     if not a.skip_score:
         rep["score"] = score(a.out / "score.log", a.bootstrap)
         assert all(r["returncode"] == 0 for r in rep["score"]), "a score.py run failed (see score.log)"
+        rep["score_us"] = score(a.out / "score.log", a.bootstrap, ds=DS_US)
+        assert all(r["returncode"] == 0 for r in rep["score_us"]), f"a score.py run failed on {DS_US} (see score.log)"
+    build_bad()
     rep["check"] = check(a.out)
-    rc = CS.main(out_dir=a.out / "collector")
-    assert rc == 0 and (a.out / "collector" / "RESULTS_TABLES.md").exists() and (a.out / "collector" / "results_summary.json").exists()
+    rep["check_us"] = check_us(a.out)
+    rep["check_untouched"] = check_untouched(a.out)
+    for ds in (DS_BAD, DS_BAD2):                                      # the misaligned copies served their purpose
+        shutil.rmtree(T.work_dir(ds).parent, ignore_errors=True)
+    assert (a.out / "collector" / "RESULTS_TABLES.md").exists() and (a.out / "collector" / "results_summary.json").exists()
     rep["collector_main"] = "ok"
     rep["seconds"] = round(time.time() - t0, 1)
     (a.out / "ccs_selftest_report.json").write_text(json.dumps(rep, indent=1, default=str))
-    print(f"[selftest] PASS: {rep['check']['n_tables']} tables, {rep['check']['strata_cells_checked']} strata cells checked, collector main() ok; "
-          f"tables -> {a.out / 'ccs_tables_selftest.md'} ({rep['seconds']} s)")
+    print(f"[selftest] PASS: {rep['check']['n_tables']} tables, {rep['check']['strata_cells_checked']} strata cells checked; understeer pair: "
+          f"{rep['check_us']['strata_cells_checked']} cells, flips {rep['check_us']['flipped_platforms']}, misaligned copies refused; collector main() ok and "
+          f"unchanged before the understeer section; tables -> {a.out / 'ccs_tables_selftest.md'}, {a.out / 'yaw_correction_selftest.md'} ({rep['seconds']} s)")
     return 0
 
 

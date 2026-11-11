@@ -24,12 +24,55 @@ far stationary clutter rejected) or, on radar-less Hyundai / Kia / Genesis, the 
 align='drive' on the route's concatenated 10 Hz frame (t = seg x 60 + k / 10): exactly one window per complete segment,
 w_idx = segment number; common.save_windows writes <external>/<dataset>/work/windows.npz + meta.parquet. Also written
 there: segments_qc.csv (per-segment quality numbers, pseudonymous ids only) and decode_summary.json.
+
+`--honda-gearbox-from-can` (off by default; the `ccs_honda` re-decode of the nine Honda platforms that the first run lost):
+opendbc 0.3.1's Honda CarState reads the gearbox message named by CarParams.transmissionType (cvt -> GEARBOX_CVT 0x191,
+anything else -> GEARBOX_AUTO 0x1A3) and its pure-Python parser holds canValid at 0 while a registered message has never
+arrived. The logging openpilot versions never set transmissionType for Honda (logged `unknown`), so every traditional-CVT
+Honda (Civic, Fit, HR-V, CR-V, Freed: 0x191 only) decoded with canValid 0. The option applies 0.3.1's own `_get_params`
+rule to the pt-bus addresses of the log before the interfaces are built (0x191 present and not an Acura RDX -> cvt,
+0x1A3 or neither -> automatic / manual) and records the result as `gearbox=<cvt|automatic|manual>` in `meta.note` and
+`segments_qc.csv` (Honda only; everything else is untouched, the default run is byte-identical).
+
+comma2k19 (2018 logs; all three options off by default, the ccs / ccs_honda paths stay byte-identical):
+  `--layout comma2k19`: segments at <root>/Chunk_N/<dongle>|<route>/<seg>/raw_log.bz2 (dongle = the part before '|', route = the
+  whole folder name; the list file, if any, holds Chunk_N/<folder>/<seg> lines). `--fingerprint-map Chunk_1=TOYOTA_RAV4,...`: a
+  2018 route logged carParams in its first segment only, and the chunks hold middle segments, so the CarParams of a mapped
+  segment is built the way openpilot builds it at start-up, with opendbc 0.3.1's `CarInterface.get_params(platform, fingerprint,
+  car_fw=[], alpha_long=False, is_release=False, docs=False)` from the mapped platform and the segment's own live fingerprint
+  (address -> payload length per bus, buses below 128, as `can_fingerprint` collects it); this sets transmissionType by 0.3.1's
+  own Honda rule, the safety configuration, the specs and the flags. Every segment of a mapped folder uses the constructed
+  CarParams (uniform provenance; `cp=constructed` in `meta.note`, `cp_source` in `segments_qc.csv`); a logged carParams, when one
+  exists, is only compared with it (`cp_logged_diff` column: fingerprint fold, transmissionType, safety model / param, wheelbase,
+  steerRatio, mass). `--das-from controlsState`: das_enabled = controlsState.enabled OR cruiseState.enabled (controlsState at
+  100 Hz, held onto the grid like pandaStates; `das=controlsState` and `ctrl_enabled=` in `meta.note`, `controls_enabled_frac`
+  in `segments_qc.csv`); the default `panda` keeps controlsAllowed (the 2018 `pandaStateDEPRECATED` runs at 1 Hz and is not read).
+  `--ignore-absent-messages`: 2018 openpilot logged buses 0 and 1 only (no camera bus) and the 2017 RAV4 carries no PRE_COLLISION
+  0x283 on bus 0, while 0.3.1's CarState parsers register the camera-bus HUD messages (Toyota LKAS_HUD; Honda ACC_HUD, LKAS_HUD,
+  BRAKE_COMMAND) and PRE_COLLISION and hold canValid at 0 while a registered message has never arrived (the Honda gearbox case
+  again). With the option, a registered message whose address never appears on the parser's bus in the segment's live
+  fingerprint is marked `ignore_alive` (the parser's own rule for messages registered without a frequency, e.g. BLINKERS_STATE),
+  also for messages the CarState registers lazily during the replay; checksum, counter and timeout checks of every message the
+  log does carry stay in force. The waived messages feed stockAeb / stockFcw / HUD pass-through / cruiseState.speed only, none of
+  the 20 channels; the list is written per segment as `absent_msgs` (`pt:NAME,...;cam:NAME,...`) to `segments_qc.csv`.
+
+`--yaw derived-understeer --understeer-k K` (the understeer-corrected re-decodes `ccs_us`, `ccs_honda_us`, `comma2k19_us`; off by
+  default, the `derived` path stays byte-identical): the kinematic bicycle yaw of `--yaw derived` overestimates the measured yaw
+  rate with speed (ratio about 1 + k v^2 against the logged `carState.yawRate` of comma2k19, CCS_PIPELINE.md known gap 9: the
+  understeer gradient the kinematic model ignores). The option divides the bicycle yaw by the linear single-track steady-state
+  factor, yaw = v tan(angle / steerRatio) / (wheelbase (1 + K v^2)), with ONE global K in s^2/m^2 given on the command line
+  (fitted on the lab's own IMU / pose yaw, validated on comma2k19; never per platform, so no lab calibration leaks into the
+  external features), before curv = yaw / v and lat_acc = v yaw are derived exactly as today. `yaw_source` = `derived-us` in
+  `segments_qc.csv`, `yaw=derived-us;k=K` in `meta.note`, `yaw` / `understeer_k` / `yaw_sources` in `decode_summary.json`. Nothing
+  else changes (same grid, lead gate - which keeps the uncorrected bicycle curvature for its in-path test - torque scale, labels,
+  pseudonyms), so a re-decode differs from the original in the three yaw-group channels only.
 """
 from __future__ import annotations
 
 import argparse
 import bz2
 import glob
+import importlib
 import json
 import logging
 import math
@@ -67,11 +110,26 @@ SCC_DIST_MAX_M, SCC_VREL_MAX_MPS = 200.0, 30.0   # SCC11 / SCC_CONTROL report 20
 MIN_CAN_VALID_FRAC = 0.5
 SEG_S = 60.0
 
+HONDA_GEARBOX_CVT, HONDA_GEARBOX_AUTO = 0x191, 0x1A3   # GEARBOX_CVT / GEARBOX_AUTO on the Honda powertrain bus
+LAYOUTS = ("ccs", "comma2k19")
+DAS_SOURCES = ("panda", "controlsState")
+YAW_UNDERSTEER = "derived-understeer"         # --yaw mode: bicycle yaw / (1 + K v^2); yaw_source 'derived-us', note 'yaw=derived-us;k=K'
+YAW_MODES = ("derived", "measured", "none", YAW_UNDERSTEER)
+
+
+def understeer_yaw(v, steer_angle_deg, steer_ratio: float, wheelbase_m: float, k: float) -> np.ndarray:
+    """Understeer-corrected steering-derived yaw rate (rad/s): the kinematic bicycle yaw of common.yaw_from_steering divided by the
+    linear single-track steady-state factor 1 + k v^2 (k in s^2/m^2 = understeer gradient / (g wheelbase); one global value)."""
+    v = np.asarray(v, float)
+    return T.yaw_from_steering(v, steer_angle_deg, steer_ratio, wheelbase_m) / (1.0 + float(k) * v * v)
+CP_COMPARE_TOL = dict(wheelbase=1e-3, steerRatio=1e-2, mass=1.0)   # logged vs constructed CarParams: tolerances of the numeric fields
+
 _W: dict = {}                                 # per-process state (schemas, opendbc modules, labeller)
 
 
 # ----------------------------------------------------------------------------- worker set-up
-def init_worker(cereal_dir: str, yaw_mode: str, use_scc: bool, scc_sign: float = 1.0) -> None:
+def init_worker(cereal_dir: str, yaw_mode: str, use_scc: bool, scc_sign: float = 1.0, honda_gearbox: bool = False,
+                das_from: str = "panda", fp_map: dict | None = None, ignore_absent: bool = False, understeer_k: float | None = None) -> None:
     import capnp
     import zstandard
     capnp.remove_import_hook()
@@ -84,7 +142,16 @@ def init_worker(cereal_dir: str, yaw_mode: str, use_scc: bool, scc_sign: float =
     from opendbc.car.carlog import carlog
     carlog.setLevel(logging.CRITICAL)                               # the pure-Python CANParser logs every stale message otherwise
     _W.update(structs=structs, MIGRATION={k: str(v) for k, v in MIGRATION.items()}, CanData=CanData, labeller=P.Labeller(),
-              yaw_mode=yaw_mode, use_scc=use_scc, scc_sign=float(scc_sign), brand_of={})
+              yaw_mode=yaw_mode, use_scc=use_scc, scc_sign=float(scc_sign), honda_gearbox=bool(honda_gearbox), brand_of={},
+              das_from=das_from, fp_map=dict(fp_map or {}), ignore_absent=bool(ignore_absent),
+              understeer_k=(float(understeer_k) if understeer_k is not None else None))
+    if yaw_mode == YAW_UNDERSTEER and not (_W["understeer_k"] is not None and _W["understeer_k"] > 0):
+        raise SystemExit("--yaw derived-understeer needs --understeer-k K (s^2/m^2, > 0)")
+    if _W["fp_map"]:
+        from opendbc.car.values import PLATFORMS
+        bad = sorted(v for v in _W["fp_map"].values() if v not in PLATFORMS)
+        if bad:
+            raise SystemExit(f"--fingerprint-map: unknown opendbc platform(s) {bad}")
 
 
 def _brand_of(fp: str) -> str | None:
@@ -128,6 +195,116 @@ def _which(e) -> str | None:
         return e.which()
     except Exception:                                               # union member unknown to the 2024 schema
         return None
+
+
+def mapped_platform(path: str) -> str | None:
+    """The platform of `--fingerprint-map` whose folder name is an ancestor of the segment path; None without a map or match."""
+    fp_map = _W.get("fp_map") or {}
+    if not fp_map:
+        return None
+    for part in Path(path).parts:
+        if part in fp_map:
+            return fp_map[part]
+    return None
+
+
+def live_fingerprint(evs) -> dict[int, dict[int, int]]:
+    """{bus: {address: payload length}} over the segment's own CAN, buses below 128 (the panda's transmit echoes excluded), as
+    opendbc's `can_fingerprint` collects it at start-up."""
+    from opendbc.car import gen_empty_fingerprint
+    finger = gen_empty_fingerprint()
+    for e in evs:
+        if _which(e) == "can":
+            for c in e.can:
+                src = int(c.src)
+                if src < 128:
+                    finger.setdefault(src, {})[int(c.address)] = len(c.dat)
+    return finger
+
+
+def construct_car_params(platform: str, finger: dict):
+    """CarParams built the way openpilot builds it at start-up: opendbc 0.3.1 `CarInterface.get_params` of the platform's brand from
+    the live fingerprint (no firmware versions, no alpha longitudinal, not a release build, not docs) -> reader."""
+    brand = _brand_of(platform)
+    if brand is None:
+        raise KeyError(f"no opendbc brand for platform {platform}")
+    CI_cls = importlib.import_module(f"opendbc.car.{brand}.interface").CarInterface
+    b = CI_cls.get_params(platform, finger, [], False, False, False)
+    if not str(b.brand):
+        b.brand = brand
+    return b.as_reader()
+
+
+def compare_car_params(CP_logged, CP_built) -> str:
+    """Differences between a logged CarParams (fingerprint already folded) and the constructed one; '' when equal on the compared
+    fields (fingerprint, transmissionType, safety model / param, wheelbase, steerRatio, mass)."""
+    diffs = []
+    if str(CP_logged.carFingerprint) != str(CP_built.carFingerprint):
+        diffs.append(f"fingerprint {CP_logged.carFingerprint}!={CP_built.carFingerprint}")
+    if str(CP_logged.transmissionType) != str(CP_built.transmissionType):
+        diffs.append(f"transmission {CP_logged.transmissionType}!={CP_built.transmissionType}")
+    sl = [(str(c.safetyModel), int(c.safetyParam)) for c in CP_logged.safetyConfigs]
+    if not sl and hasattr(CP_logged, "safetyModelDEPRECATED"):
+        sl = [(str(CP_logged.safetyModelDEPRECATED), int(CP_logged.safetyParamDEPRECATED))]
+    sb = [(str(c.safetyModel), int(c.safetyParam)) for c in CP_built.safetyConfigs]
+    if sl != sb:
+        diffs.append(f"safety {sl}!={sb}")
+    for k, tol in CP_COMPARE_TOL.items():
+        a, b = float(getattr(CP_logged, k)), float(getattr(CP_built, k))
+        if abs(a - b) > tol:
+            diffs.append(f"{k} {a:.3f}!={b:.3f}")
+    return "; ".join(diffs)
+
+
+def waive_absent_messages(CI, finger: dict) -> dict[str, list[str]]:
+    """Mark every registered CarState parser message whose address never appears on the parser's bus in the segment's live
+    fingerprint as `ignore_alive` (the parser's rule for messages registered without a frequency), now and at every later lazy
+    registration; returns the dict that collects the waived names per parser (filled during the replay)."""
+    waived: dict[str, list[str]] = {}
+    for bus_key, cp in CI.can_parsers.items():
+        present = finger.get(int(cp.bus), {})
+        key = str(bus_key)
+
+        def mark(cp=cp, present=present, key=key):
+            for addr, st in cp.message_states.items():
+                if addr not in present and not st.ignore_alive:
+                    st.ignore_alive = True
+                    waived.setdefault(key, []).append(str(st.name))
+
+        def add(name_or_addr, freq=None, _orig=cp._add_message, _mark=mark):
+            _orig(name_or_addr, freq)
+            _mark()
+
+        mark()
+        cp._add_message = add                                       # VLDict.__getitem__ registers through this attribute
+    return waived
+
+
+def honda_gearbox_from_can(CP, evs, folded: str):
+    """(CarParams with transmissionType set by opendbc's Honda `_get_params` rule applied to the logged pt-bus addresses, the
+    rule's result as a string). GEARBOX_CVT 0x191 present (and not an Acura RDX) -> cvt; GEARBOX_AUTO 0x1A3 (or 0x191 on the RDX)
+    -> automatic; neither -> manual. Honda only: other brands come back unchanged with None."""
+    if str(CP.brand) != "honda":
+        return CP, None
+    from opendbc.car.honda.hondacan import CanBus
+    from opendbc.car.honda.values import CAR
+    TT = _W["structs"].CarParams.TransmissionType
+    pt = CanBus(CP).pt
+    seen = set()
+    for e in evs:
+        if _which(e) == "can":
+            for c in e.can:
+                if int(c.src) == pt and int(c.address) in (HONDA_GEARBOX_CVT, HONDA_GEARBOX_AUTO):
+                    seen.add(int(c.address))
+    if not seen:
+        name = "manual"
+    elif HONDA_GEARBOX_CVT in seen and folded != str(CAR.ACURA_RDX):
+        name = "cvt"
+    else:
+        name = "automatic"
+    b = CP.as_builder()
+    b.transmissionType = getattr(TT, name)
+    return b.as_reader(), name
 
 
 def build_interfaces(CP):
@@ -197,19 +374,35 @@ def decode_segment(path: str) -> dict:
     t_start = time.time()
     evs, _raw = read_events(path)
     CP, raw_fp, folded = car_params(evs)
+    cp_source, cp_logged_diff = "logged", None
+    plat_map = mapped_platform(path)
+    finger = live_fingerprint(evs) if (plat_map is not None or _W.get("ignore_absent")) else None
+    if plat_map is not None:                                        # comma2k19: the CarParams of the mapped platform, built from the live fingerprint
+        CP_built = construct_car_params(plat_map, finger)
+        if CP is not None:
+            cp_logged_diff = compare_car_params(CP, CP_built) or "none"
+        CP, raw_fp, folded, cp_source = CP_built, plat_map, plat_map, "constructed"
     if CP is None:
         return dict(skip="no carParams")
     brand = str(CP.brand)
+    gearbox = None
+    if _W.get("honda_gearbox"):
+        CP, gearbox = honda_gearbox_from_can(CP, evs, folded)
+    elif cp_source == "constructed" and brand == "honda":
+        gearbox = str(CP.transmissionType)                          # set by 0.3.1's own rule inside get_params
     try:
         CI, RI = build_interfaces(CP)
     except Exception as ex:
         return dict(skip=f"no CarInterface for {folded} ({type(ex).__name__})", platform=folded, raw_fp=raw_fp)
+    waived = waive_absent_messages(CI, finger) if _W.get("ignore_absent") else None
     scc = scc_lead_parser(CP)
     CanData = _W["CanData"]
     steer_ratio, wheelbase = float(CP.steerRatio), float(CP.wheelbase)
     rows: list[tuple] = []
     radar: list[tuple] = []
     panda: list[tuple] = []
+    ctrl_state: list[tuple] = []
+    das_from = _W.get("das_from", "panda")
     ages: dict = {}
     n_radar_samples = 0
     last_v, last_curv = 0.0, 0.0
@@ -253,6 +446,8 @@ def decode_segment(path: str) -> dict:
                 panda.append((e.logMonoTime * 1e-9, float(bool(ps[0].controlsAllowed))))
         elif w == "pandaState":
             panda.append((e.logMonoTime * 1e-9, float(bool(e.pandaState.controlsAllowed))))
+        elif w == "controlsState" and das_from == "controlsState":
+            ctrl_state.append((e.logMonoTime * 1e-9, float(bool(e.controlsState.enabled))))
     if len(rows) < 100:
         return dict(skip=f"only {len(rows)} can packets", platform=folded, raw_fp=raw_fp)
     A = np.asarray(rows, dtype=np.float64)
@@ -276,7 +471,12 @@ def decode_segment(path: str) -> dict:
         Pn = np.asarray(panda, dtype=np.float64)
         _, held = T.resample_to_10hz(Pn[:, 0], Pn[:, 1], "hold", t_grid=grid, max_age_s=CTRL_MAX_AGE_S)
         ctrl = np.nan_to_num(held, nan=0.0)
-    das = ((cruise > 0.5) | (ctrl > 0.5)).astype(np.float64)
+    ctrl_en = np.zeros(GRID_N)
+    if ctrl_state:                                                  # controlsState.enabled (100 Hz) held onto the grid
+        Cn = np.asarray(ctrl_state, dtype=np.float64)
+        _, held = T.resample_to_10hz(Cn[:, 0], Cn[:, 1], "hold", t_grid=grid, max_age_s=CTRL_MAX_AGE_S)
+        ctrl_en = np.nan_to_num(held, nan=0.0)
+    das = ((cruise > 0.5) | ((ctrl_en if das_from == "controlsState" else ctrl) > 0.5)).astype(np.float64)
     # yaw
     yaw_src = "none"
     yaw = np.full(GRID_N, np.nan)
@@ -286,6 +486,8 @@ def decode_segment(path: str) -> dict:
         yaw, yaw_src = yaw_meas.copy(), "measured"
     elif mode in ("derived", "measured") and steer_ratio > 0 and wheelbase > 0:
         yaw, yaw_src = T.yaw_from_steering(v, sa, steer_ratio, wheelbase), "derived"
+    elif mode == YAW_UNDERSTEER and steer_ratio > 0 and wheelbase > 0:
+        yaw, yaw_src = understeer_yaw(v, sa, steer_ratio, wheelbase, _W["understeer_k"]), "derived-us"
     # lead at the grid (hold the native samples, max age 0.75 s)
     lead_src = "none"
     lv = np.zeros(GRID_N)
@@ -321,6 +523,12 @@ def decode_segment(path: str) -> dict:
               controls_allowed_frac=round(float(ctrl.mean()), 3), das_frac=round(float(das.mean()), 3), lead_source=lead_src,
               n_radar_samples=int(n_radar_samples), lead_valid_frac=round(float(lv.mean()), 3), scc_sign_corr=(round(scc_sign_corr, 2) if math.isfinite(scc_sign_corr) else None), yaw_source=yaw_src,
               steer_ratio=round(steer_ratio, 2), wheelbase_m=round(wheelbase, 3), decode_s=round(time.time() - t_start, 2))
+    if _W.get("honda_gearbox") or gearbox is not None:
+        qc["gearbox"] = gearbox
+    if cp_source != "logged" or das_from != "panda":
+        qc.update(cp_source=cp_source, cp_logged_diff=cp_logged_diff, das_source=das_from, controls_enabled_frac=round(float(ctrl_en.mean()), 3))
+    if waived is not None:
+        qc["absent_msgs"] = ";".join(f"{k}:{','.join(v)}" for k, v in sorted(waived.items())) or "none"
     return dict(seg=seg, t=grid, v=v, a=a, sa=sa, sr=sr, tq=tq, yaw=yaw, gas=gas, brake=brake, sp=sp, ss=ss, das=das,
                 lv=lv, ld=ld, lvr=lvr, qc=qc, platform=folded, raw_fp=raw_fp, lead_src=lead_src, yaw_src=yaw_src)
 
@@ -390,9 +598,15 @@ def process_route(task: tuple) -> dict:
             q = f["qc"] if f else {}
             widx.append(seg)
             notes.append(";".join([f"stratum={lab['stratum']}", f"label={lab['label_source']}", f"lead={q.get('lead_source', 'none')}",
-                                   f"yaw={q.get('yaw_source', 'none')}", f"torque={'route-q95' if torque_ok else 'absent'}",
+                                   f"yaw={q.get('yaw_source', 'none')}"]
+                                  + ([f"k={_W['understeer_k']:g}"] if q.get("yaw_source") == "derived-us" else [])
+                                  + [f"torque={'route-q95' if torque_ok else 'absent'}",
                                    f"can_valid={q.get('can_valid_frac', float('nan')):.2f}", f"ctrl_allowed={q.get('controls_allowed_frac', float('nan')):.2f}",
-                                   f"cruise={q.get('cruise_frac', float('nan')):.2f}"] + ([lab["note"]] if lab["note"] else [])))
+                                   f"cruise={q.get('cruise_frac', float('nan')):.2f}"]
+                                  + ([f"gearbox={q['gearbox']}"] if q.get("gearbox") else [])
+                                  + ([f"cp={q['cp_source']}"] if q.get("cp_source") not in (None, "logged") else [])
+                                  + ([f"das={q['das_source']}", f"ctrl_enabled={q.get('controls_enabled_frac', float('nan')):.2f}"] if q.get("das_source") not in (None, "panda") else [])
+                                  + ([lab["note"]] if lab["note"] else [])))
         meta["w_idx"] = np.asarray(widx, dtype=np.int32)
         meta["note"] = notes
         for f in frames:
@@ -408,28 +622,50 @@ def process_route(task: tuple) -> dict:
     return out
 
 
-def _init(cereal_dir: str, yaw_mode: str, use_scc: bool, scc_sign: float, dataset: str) -> None:
-    init_worker(cereal_dir, yaw_mode, use_scc, scc_sign)
+def _init(cereal_dir: str, yaw_mode: str, use_scc: bool, scc_sign: float, dataset: str, honda_gearbox: bool = False,
+          das_from: str = "panda", fp_map: dict | None = None, ignore_absent: bool = False, understeer_k: float | None = None) -> None:
+    init_worker(cereal_dir, yaw_mode, use_scc, scc_sign, honda_gearbox, das_from, fp_map, ignore_absent, understeer_k)
     _W["dataset"] = dataset
 
 
 # ----------------------------------------------------------------------------- driver
-def find_segments(root: Path, list_file: Path | None) -> list[tuple[str, str, list[tuple[int, str]]]]:
-    """[(dongle, route, [(seg, path)])] of the rlog.zst files under root/<dongle>/<route>/<seg>/ (restricted to a list)."""
+def find_segments(root: Path, list_file: Path | None, layout: str = "ccs") -> list[tuple[str, str, list[tuple[int, str]]]]:
+    """[(dongle, route, [(seg, path)])] of the log files under root (restricted to a list of <dir>/<dir>/<seg> lines).
+    layout ccs: root/<dongle>/<route>/<seg>/rlog.zst|rlog.bz2; layout comma2k19: root/Chunk_N/<dongle>|<route>/<seg>/raw_log.bz2
+    (dongle = the part before '|', route = the whole folder name)."""
     want = None
     if list_file:
         want = {ln.strip().rstrip("/") for ln in Path(list_file).read_text().splitlines() if ln.strip()}
     by_route: dict[tuple[str, str], list[tuple[int, str]]] = defaultdict(list)
-    for p in glob.glob(str(root / "*" / "*" / "*" / "rlog.zst")) + glob.glob(str(root / "*" / "*" / "*" / "rlog.bz2")):
+    names = ("raw_log.bz2",) if layout == "comma2k19" else ("rlog.zst", "rlog.bz2")
+    for p in [q for n in names for q in glob.glob(str(root / "*" / "*" / "*" / n))]:
         pp = Path(p)
-        seg_dir, route_dir, dongle_dir = pp.parent, pp.parent.parent, pp.parent.parent.parent
-        key = f"{dongle_dir.name}/{route_dir.name}/{seg_dir.name}"
+        seg_dir, route_dir, top_dir = pp.parent, pp.parent.parent, pp.parent.parent.parent
+        key = f"{top_dir.name}/{route_dir.name}/{seg_dir.name}"
         if want is not None and key not in want:
             continue
         if not seg_dir.name.isdigit():
             continue
-        by_route[(dongle_dir.name, route_dir.name)].append((int(seg_dir.name), p))
+        if layout == "comma2k19":
+            dongle, route = route_dir.name.split("|", 1)[0], route_dir.name
+        else:
+            dongle, route = top_dir.name, route_dir.name
+        by_route[(dongle, route)].append((int(seg_dir.name), p))
     return [(d, r, sorted(v)) for (d, r), v in sorted(by_route.items())]
+
+
+def parse_fingerprint_map(spec: str | None) -> dict[str, str]:
+    """'Chunk_1=TOYOTA_RAV4,Chunk_3=HONDA_CIVIC' -> {folder name: opendbc platform}."""
+    out: dict[str, str] = {}
+    for item in (spec or "").replace(";", ",").split(","):
+        item = item.strip()
+        if not item:
+            continue
+        if "=" not in item:
+            raise SystemExit(f"--fingerprint-map: expected <folder>=<PLATFORM>, got {item!r}")
+        k, v = (x.strip() for x in item.split("=", 1))
+        out[k] = v
+    return out
 
 
 def main(argv=None) -> int:
@@ -439,26 +675,52 @@ def main(argv=None) -> int:
     ap.add_argument("--dataset", default="ccs", help="dataset name for common.save_windows (ccs, ccs_sample, ...)")
     ap.add_argument("--workers", type=int, default=1)
     ap.add_argument("--limit", type=int, default=0, help="only the first N routes (smoke)")
-    ap.add_argument("--yaw", choices=("derived", "measured", "none"), default="derived",
-                    help="derived = kinematic bicycle model from steering (default); measured = CarState.yawRate where a brand provides it, else derived; none = yaw group absent")
+    ap.add_argument("--yaw", choices=YAW_MODES, default="derived",
+                    help="derived = kinematic bicycle model from steering (default); measured = CarState.yawRate where a brand provides it, else derived; none = yaw group absent; "
+                         "derived-understeer = the bicycle yaw divided by 1 + K v^2 (needs --understeer-k; module docstring)")
+    ap.add_argument("--understeer-k", type=float, default=None, metavar="K",
+                    help="understeer factor K in s^2/m^2 of --yaw derived-understeer (one global value, e.g. 0.001 = characteristic speed 32 m/s); required for that mode, refused otherwise")
     ap.add_argument("--no-scc-lead", action="store_true", help="do not use the stock ACC object of radar-less Hyundai / Kia / Genesis as lead")
     ap.add_argument("--scc-sign", type=float, default=1.0, choices=(1.0, -1.0),
                     help="sign applied to ACC_ObjRelSpd (default +1 = lead minus ego; check the scc_sign_corr column of segments_qc.csv)")
+    ap.add_argument("--honda-gearbox-from-can", action="store_true",
+                    help="Honda: set CarParams.transmissionType from the gearbox message seen on the pt bus (0x191 cvt / 0x1A3 automatic) before building "
+                         "the interfaces; recovers the traditional-CVT platforms that opendbc 0.3.1 decodes with canValid 0 (module docstring)")
+    ap.add_argument("--layout", choices=LAYOUTS, default="ccs",
+                    help="ccs (default): <root>/<dongle>/<route>/<seg>/rlog.zst; comma2k19: <root>/Chunk_N/<dongle>|<route>/<seg>/raw_log.bz2")
+    ap.add_argument("--fingerprint-map", default=None, metavar="FOLDER=PLATFORM,...",
+                    help="build the CarParams of every segment under the named folders with opendbc 0.3.1 CarInterface.get_params from the platform and the "
+                         "segment's live fingerprint (routes whose carParams event sits in a segment that is not present; module docstring)")
+    ap.add_argument("--das-from", choices=DAS_SOURCES, default="panda",
+                    help="second term of das_enabled next to cruiseState.enabled: panda = pandaStates.controlsAllowed (default), controlsState = controlsState.enabled")
+    ap.add_argument("--ignore-absent-messages", action="store_true",
+                    help="registered CarState parser messages that never appear on their bus in the segment's live fingerprint do not hold canValid at 0 "
+                         "(2018 logs without the camera bus; the waived names go to segments_qc.csv absent_msgs; module docstring)")
     ap.add_argument("--cereal-dir", type=Path, default=CEREAL_DIR, help="directory with cereal log.capnp (openpilot checkout)")
     ap.add_argument("--copy-sample-to", type=Path, default=None, help="also copy the result as sample_windows.npz / sample_meta.parquet into this folder")
     ap.add_argument("--root", type=Path, default=None, help="external data root for save_windows (default: common.EXTERNAL_ROOT)")
     a = ap.parse_args(argv)
 
-    tasks = find_segments(a.segments_root, a.list)
+    if a.yaw == YAW_UNDERSTEER and not (a.understeer_k is not None and a.understeer_k > 0):
+        ap.error("--yaw derived-understeer needs --understeer-k K (s^2/m^2, > 0)")
+    if a.yaw != YAW_UNDERSTEER and a.understeer_k is not None:
+        ap.error("--understeer-k applies to --yaw derived-understeer only")
+    fp_map = parse_fingerprint_map(a.fingerprint_map)
+    tasks = find_segments(a.segments_root, a.list, a.layout)
     if a.limit:
         tasks = tasks[:a.limit]
     n_seg = sum(len(t[2]) for t in tasks)
-    print(f"[ccs_decode] {n_seg} segments in {len(tasks)} routes under {a.segments_root} -> dataset {a.dataset!r}; workers={a.workers} yaw={a.yaw} scc_lead={not a.no_scc_lead}", flush=True)
+    print(f"[ccs_decode] {n_seg} segments in {len(tasks)} routes under {a.segments_root} -> dataset {a.dataset!r}; workers={a.workers} yaw={a.yaw} scc_lead={not a.no_scc_lead}"
+          + (f" understeer_k={a.understeer_k:g}" if a.yaw == YAW_UNDERSTEER else "")
+          + (" honda_gearbox_from_can=True" if a.honda_gearbox_from_can else "")
+          + (f" layout={a.layout} das_from={a.das_from} fingerprint_map={fp_map} ignore_absent_messages={a.ignore_absent_messages}"
+             if (a.layout != "ccs" or a.das_from != "panda" or fp_map or a.ignore_absent_messages) else ""), flush=True)
     if not tasks:
         return 2
     t0 = time.time()
     results = []
-    init_args = (str(a.cereal_dir), a.yaw, not a.no_scc_lead, a.scc_sign, a.dataset)
+    init_args = (str(a.cereal_dir), a.yaw, not a.no_scc_lead, a.scc_sign, a.dataset, a.honda_gearbox_from_can, a.das_from, fp_map, a.ignore_absent_messages,
+                 a.understeer_k)
     if a.workers <= 1:
         _init(*init_args)
         for i, task in enumerate(tasks, 1):
@@ -500,6 +762,19 @@ def main(argv=None) -> int:
                                                             brake=("brake_frac", "mean"), steer_pressed=("steer_pressed_frac", "mean"), das=("das_frac", "mean"),
                                                             lead_valid=("lead_valid_frac", "mean"), can_valid=("can_valid_frac", "mean"),
                                                             decode_s=("decode_s", "mean")).round(3).reset_index().to_dict(orient="records") if len(qc) else []))
+    if a.yaw == YAW_UNDERSTEER:
+        summary.update(understeer_k=a.understeer_k, yaw_formula="v tan(steer_angle / steerRatio) / (wheelbase (1 + K v^2))",
+                       yaw_sources=({str(k): int(v) for k, v in qc["yaw_source"].value_counts(dropna=False).items()} if len(qc) and "yaw_source" in qc else {}))
+    if a.honda_gearbox_from_can:
+        summary["honda_gearbox_from_can"] = True
+        summary["gearbox_counts"] = ({str(k): int(v) for k, v in qc["gearbox"].value_counts(dropna=False).items()} if len(qc) and "gearbox" in qc else {})
+    if a.layout != "ccs" or a.das_from != "panda" or fp_map or a.ignore_absent_messages:
+        summary.update(layout=a.layout, das_from=a.das_from, fingerprint_map=fp_map, ignore_absent_messages=a.ignore_absent_messages,
+                       absent_msgs=({str(k): int(v) for k, v in qc["absent_msgs"].value_counts(dropna=False).items()} if len(qc) and "absent_msgs" in qc else {}),
+                       cp_sources=({str(k): int(v) for k, v in qc["cp_source"].value_counts(dropna=False).items()} if len(qc) and "cp_source" in qc else {}),
+                       cp_logged_diffs=({str(k): int(v) for k, v in qc["cp_logged_diff"].value_counts(dropna=False).items()} if len(qc) and "cp_logged_diff" in qc else {}),
+                       gearbox_counts=({str(k): int(v) for k, v in qc["gearbox"].value_counts(dropna=False).items()} if len(qc) and "gearbox" in qc else {}),
+                       controls_enabled_mean=(round(float(qc["controls_enabled_frac"].mean()), 3) if len(qc) and "controls_enabled_frac" in qc else None))
     (wd / "decode_summary.json").write_text(json.dumps(summary, indent=1, default=str))
     # ---- validation printout
     print(f"[ccs_decode] decoded {len(qc)} segments -> {n_windows} windows; skipped {len(skipped)}; {summary['seconds']} s")
