@@ -6,6 +6,15 @@ printed (vehicle ids are only counted).
 
   source env.sh && $CPY experiments/transfer/review_recompute.py [--phase 1|2|3|all] [--raw-sign-check] [--no-windows] [--sections 20,22]
 
+Phase 3c (sections 42-50, added by the understeer review on 11 Nov; run with `--phase 3`, after sections 20-41): the understeer-corrected
+re-decodes `ccs_us`, `ccs_honda_us` and `comma2k19_us` (RESULTS.md 2.15 and 3.7, CCS_PIPELINE.md "Understeer-corrected yaw", UNDERSTEER.md)
+against their originals: the decode accounting, the alignment of each pair (rows, labels, meta, every non-yaw channel of windows.npz and the
+1 / (1 + k v^2) factor itself), every table of 2.15 ((a)-(e), the held-out table independently of us_heldout_compare.py) re-rendered cell by
+cell and searched in the section, the figures of the Reading bullets (speed bins, automation split, platform lists, Honda per-platform counts,
+comma2k19 per-car probabilities), the understeer block of section 0, 3.7, the new parts of 4 and 5, the pointers in 2.12-2.14, the result
+paragraph of CCS_PIPELINE.md, UNDERSTEER.md against understeer_fit.json and the scratch tables, and the hygiene of the new files and the three
+work folders. Same log as phase 3.
+
 Phase 3b (sections 34-41, added by the phase-3b review on 10 Nov, evening; run with `--phase 3`, after sections 20-33): the two sets decoded
 after the phase-3 write-up, `ccs_honda` (the nine recovered Honda platforms) and `comma2k19` (two cars on 2018 hardware): the decode
 accounting against decode_summary.json / segments_qc.csv (and the budget list for the Honda platforms), every table of RESULTS.md 2.13
@@ -597,6 +606,8 @@ def sec19_hygiene():
 # figures are printed next to the quoted value with "OK" / "MISMATCH". No device or route identifier is printed (pseudonyms are
 # only counted; the raw dongle ids under <external>/ccs/segments are only intersected and counted).
 import re as _re3
+
+_ABSPATH_RE = _re3.compile(r"(?<![\w.>$])/(?:home|data|mnt|tmp)/")   # a machine path; `<data-root>/tmp/...` and `$D/tmp` are placeholders
 
 CCS_STRATA = ("seen", "held-out", "absent")
 CCS_RUNS_SIZE = (("full", "full", "full (20 ch)"), ("V1", "full", "V1 lateral + speed"), ("V2", "full", "V2 longitudinal-only"), ("V3", "full", "V3 speed-only"),
@@ -1442,7 +1453,7 @@ def sec33_ccs_hygiene():
     print("\n## 33. Hygiene: 16-hex / 12-hex tokens, route stamps, absolute paths, ISO dates, the four-letter acronym, multi-decimal percentages in 2.12 / 3.6")
     hex16 = _re3.compile(r"(?<![0-9a-zA-Z_])[0-9a-f]{16}(?![0-9a-zA-Z])"); hex12 = _re3.compile(r"(?<![0-9a-zA-Z_])[0-9a-f]{12}(?![0-9a-zA-Z])")
     route1 = _re3.compile(r"\d{4}-\d{2}-\d{2}--\d{2}-\d{2}-\d{2}"); route2 = _re3.compile(r"\b[0-9a-f]{8}--[0-9a-f]{10}\b")
-    abspath = _re3.compile(r"(?<![\w.])/(?:home|data|mnt|tmp)/"); iso = _re3.compile(r"\b\d{4}-\d{2}-\d{2}\b"); acr = _re3.compile(r"(?<![A-Za-z])" + "A" + "D" + "A" + "S(?![A-Za-z])", _re3.I)
+    abspath = _ABSPATH_RE; iso = _re3.compile(r"\b\d{4}-\d{2}-\d{2}\b"); acr = _re3.compile(r"(?<![A-Za-z])" + "A" + "D" + "A" + "S(?![A-Za-z])", _re3.I)
     repo_files = [HERE_ / f for f in ("RESULTS.md", "RESULTS_TABLES.md", "results_summary.json", "CCS_PIPELINE.md", "CCS_SELECTION.md", "review_recompute.py")]
     work_files = [p for p in (EXT / "ccs" / "work").glob("*") if p.suffix in (".md", ".csv", ".json")]
     flagged = 0
@@ -1487,10 +1498,11 @@ def sec_text(where: str) -> str:
     if not _SEC_TXT:
         t = (HERE_ / "RESULTS.md").read_text()
         marks = {"0": ("## 0. Headline", "## 1. Set-up"), "1.1": ("### 1.1 ", "### 1.2 "), "1.3": ("### 1.3 ", "## 2. Results"),
-                 "2.12": ("### 2.12 ", "### 2.13 "), "2.13": ("### 2.13 ", "### 2.14 "), "2.14": ("### 2.14 ", "## 3. Cross-dataset summary"),
-                 "3.1": ("### 3.1 ", "### 3.2 "), "3.2": ("### 3.2 ", "### 3.3 "), "3.6": ("### 3.6 ", "## 4. What the owner"), "4": ("## 4. What the owner", "## 5. Files")}
+                 "2.12": ("### 2.12 ", "### 2.13 "), "2.13": ("### 2.13 ", "### 2.14 "), "2.14": ("### 2.14 ", "### 2.15 "), "2.15": ("### 2.15 ", "## 3. Cross-dataset summary"),
+                 "3.1": ("### 3.1 ", "### 3.2 "), "3.2": ("### 3.2 ", "### 3.3 "), "3.6": ("### 3.6 ", "### 3.7 "), "3.7": ("### 3.7 ", "## 4. What the owner"),
+                 "4": ("## 4. What the owner", "## 5. Files"), "5": ("## 5. Files", None)}
         for k, (a, b) in marks.items():
-            i = t.find(a); j = t.find(b, i + 1)
+            i = t.find(a); j = t.find(b, i + 1) if b else len(t)
             _SEC_TXT[k] = _re3.sub(r"[ \t]+", " ", t[i:j]) if i >= 0 and j > i else ""
     return _SEC_TXT.get(where, _RESULTS_TXT)
 
@@ -2013,7 +2025,7 @@ def sec40_hygiene_3b():
     print("\n## 40. Hygiene of the phase-3b outputs: 16-hex / 12-hex tokens, route stamps, absolute paths, ISO dates, the four-letter acronym (repository files + both work folders, names and contents); multi-decimal percentages in the new prose")
     hex16 = _re3.compile(r"(?<![0-9a-zA-Z_])[0-9a-f]{16}(?![0-9a-zA-Z])"); hex12 = _re3.compile(r"(?<![0-9a-zA-Z_])[0-9a-f]{12}(?![0-9a-zA-Z])")
     route1 = _re3.compile(r"\d{4}-\d{2}-\d{2}--\d{2}-\d{2}-\d{2}"); route2 = _re3.compile(r"\b[0-9a-f]{8}--[0-9a-f]{10}\b")
-    abspath = _re3.compile(r"(?<![\w.])/(?:home|data|mnt|tmp)/"); iso = _re3.compile(r"\b\d{4}-\d{2}-\d{2}\b"); acr = _re3.compile(r"(?<![A-Za-z])" + "A" + "D" + "A" + "S(?![A-Za-z])", _re3.I)
+    abspath = _ABSPATH_RE; iso = _re3.compile(r"\b\d{4}-\d{2}-\d{2}\b"); acr = _re3.compile(r"(?<![A-Za-z])" + "A" + "D" + "A" + "S(?![A-Za-z])", _re3.I)
     repo_files = [HERE_ / f for f in ("RESULTS.md", "RESULTS_TABLES.md", "results_summary.json", "CCS_PIPELINE.md", "review_recompute.py", "comma2k19_yaw_check.py", "ccs_honda_check.py", "ccs_honda_list.py", "ccs_decode.py") if (HERE_ / f).exists()]
     work_files = [p for ds in ("ccs_honda", "comma2k19") for p in (EXT / ds / "work").glob("*") if p.suffix in (".md", ".csv", ".json")]
     flagged = 0
@@ -2069,6 +2081,573 @@ def sec41_yaw_check():
         print(f"    both cars: k fit {bc['k_fit_decoder']:.5f} (decoder) / {bc['k_fit_log']:.5f} (bicycle from the log); " + ", ".join(f"{b} {bc['decoder_vs_logged'][b].get('slope', float('nan')):.2f}" for b in r["bins"]))
 
 
+# ============================================================================= phase 3c: understeer-corrected re-decodes (sections 42-50)
+# Added by the understeer review on 11 Nov. The three re-decodes (`ccs_us`, `ccs_honda_us`, `comma2k19_us`; RESULTS.md 2.15 and 3.7,
+# CCS_PIPELINE.md "Understeer-corrected yaw", UNDERSTEER.md) against their originals, recomputed from the probs__*__ens__*.npz files and
+# meta.parquet of both members of each pair, independently of collect_scores.py and us_heldout_compare.py: the decode accounting, the
+# alignment of the pairs (rows, labels, meta, every non-yaw channel of windows.npz, and the 1 / (1 + k v^2) factor itself), every table
+# of 2.15 ((a)-(e)) re-rendered in the report's cell format and searched in the section, the figures of its Reading bullets, the
+# understeer block of section 0, 3.7, the new parts of 4, the pointers in 2.12-2.14, the result paragraph of CCS_PIPELINE.md, the
+# UNDERSTEER.md numbers against understeer_fit.json and the scratch tables, and the hygiene of the new files and the three work folders.
+US_PAIRS = (("ccs_us", "ccs"), ("ccs_honda_us", "ccs_honda"), ("comma2k19_us", "comma2k19"))
+US_K = "0.00079289"
+US_KF = 0.00079289
+US_TASKNAME = {"size": "size", "bev_ice": "powertrain"}
+US_RUNS = (("full", "full"), ("V1", "full"))                     # (key, mask) of the runs compared per stratum in table (a)
+_US_VMEAN: dict = {}        # original set -> mean window speed with sample 0 excluded (from windows.npz; filled by section 43)
+
+
+def us_strata(m: pd.DataFrame):
+    out = [("all", np.ones(len(m), bool))]
+    for s in CCS_STRATA:
+        sel = (m["stratum"] == s).to_numpy()
+        if sel.any():
+            out.append((s, sel))
+    return out
+
+
+def us_eval(P, y, m, idx, level, k):
+    """unit_eval of one level over the windows idx (window = each window its own unit; vehicle = device; model = car model)."""
+    units = np.arange(len(idx)) if level == "window" else m[{"vehicle": "vehicle_id", "model": "model"}[level]].to_numpy()[idx]
+    return unit_eval(P[idx], y[idx], units, k)
+
+
+def us_hits(r) -> np.ndarray:
+    return np.diag(r["cm"])
+
+
+def us_delta(a: float, b: float) -> str:
+    return f"{100 * (b - a):+.1f}"
+
+
+def us_pair(ds_o: str, task: str, key: str, mask: str = "full"):
+    """(P original, P corrected, y, classes) of one run of a pair; the labels of the two metas must agree."""
+    ds_u = {o: u for u, o in US_PAIRS}[ds_o]
+    Po, yo, cl = set_load(ds_o, task, key, mask)
+    Pu, yu, _ = set_load(ds_u, task, key, mask)
+    assert (yo == yu).all() and Po.shape == Pu.shape, (ds_o, task, key, mask)
+    return Po, Pu, yo, cl
+
+
+def sec42_us_decode():
+    import json as _json
+    print("\n## 42. Decode accounting of the three understeer-corrected re-decodes (RESULTS.md 2.15 first paragraph, 1.1 rows, section 4, CCS_PIPELINE.md 'Result') against decode_summary.json / segments_qc.csv / meta of each *_us set and of its original")
+    quoted = {"ccs_us": ("49563 / 47006 (True) / 2557 / 45763 (True)", "10444", "2.9 h", "4,061 / 21,987 / 113 / 161 / 762.7"),
+              "ccs_honda_us": ("2198 / 2189 (True) / 9 / 2132 (True)", "591", "10 min", "230 / 913 / 5 / 9 / 35.5"),
+              "comma2k19_us": ("390 / 387 (True) / 3 / 381 (True)", "184", "3 min", "2 / 42 / 2 / 2 / 6.35")}
+    for ds, ds_o in US_PAIRS:
+        d = _json.load(open(EXT / ds / "work" / "decode_summary.json")); d0 = _json.load(open(EXT / ds_o / "work" / "decode_summary.json"))
+        qc = set_qc(ds); m = set_meta(ds); m0 = set_meta(ds_o)
+        q = quoted[ds]
+        chk(f"{ds}: found / decoded (== qc rows) / skipped / windows (== meta rows)", f"{d['segments_found']} / {d['segments_decoded']} ({len(qc) == d['segments_decoded']}) / {d['skipped']} / {d['windows']} ({d['windows'] == len(m) == int(qc['window'].sum())})", q[0])
+        chk(f"{ds}: same accounting as {ds_o} (found / decoded / skipped / windows / routes / skip reasons)", all(d[k_] == d0[k_] for k_ in ("segments_found", "segments_decoded", "skipped", "windows", "routes")) and d["skip_reasons"] == d0["skip_reasons"], True)
+        chk(f"{ds}: yaw mode / k / formula / workers", f"{d['yaw']} / {d['understeer_k']} / {d['yaw_formula']} / {d['workers']}", f"derived-understeer / {US_KF} / v tan(steer_angle / steerRatio) / (wheelbase (1 + K v^2)) / 6")
+        chk(f"{ds}: yaw sources of the decoded segments (original's: {d0.get('yaw_sources', 'not recorded by the earlier decoder')})", d["yaw_sources"], {"derived-us": d["segments_decoded"]})
+        chk(f"{ds}: seconds (report) / as hours or minutes", f"{d['seconds']:.0f} / {d['seconds'] / 3600:.1f} h" if d["seconds"] > 3600 else f"{d['seconds']:.0f} / {d['seconds'] / 60:.0f} min", f"{q[1]} / {q[2]}")
+        print(f"    (info) original decode took {d0['seconds']:.0f} s; qc yaw_source values {sorted(qc['yaw_source'].astype(str).unique()) if 'yaw_source' in qc else '-'}")
+        if ds == "ccs_honda_us":
+            chk(f"{ds}: Honda gearbox option / gearbox counts as the original", f"{d.get('honda_gearbox_from_can')} / {d['gearbox_counts'] == d0['gearbox_counts']} {d['gearbox_counts']}", f"True / True {d0['gearbox_counts']}")
+        if ds == "comma2k19_us":
+            chk(f"{ds}: the three comma2k19 options as the original (layout / das_from / fingerprint map / ignore absent / cp sources / absent msgs)", all(d.get(k_) == d0.get(k_) for k_ in ("layout", "das_from", "fingerprint_map", "ignore_absent_messages", "cp_sources", "absent_msgs")), True)
+        hrs = len(m) * 600 / 10 / 3600
+        chk(f"{ds}: devices / drives / models / platforms / hours", f"{fmt_int(m['vehicle_id'].nunique())} / {fmt_int(m['drive_id'].nunique())} / {m['model'].nunique()} / {m['platform'].nunique()} / {hrs:.2f}" if ds == "comma2k19_us" else f"{fmt_int(m['vehicle_id'].nunique())} / {fmt_int(m['drive_id'].nunique())} / {m['model'].nunique()} / {m['platform'].nunique()} / {hrs:.1f}", q[3])
+        st = m.groupby("stratum")["vehicle_id"].nunique().to_dict(); st0 = m0.groupby("stratum")["vehicle_id"].nunique().to_dict()
+        chk(f"{ds}: devices per stratum == original", f"{st} == {st0}", f"{st0} == {st0}")
+    found_in("1.1 row ccs_us", "49,563 found -> 47,006 decoded / 2,557 skipped -> 45,763 windows (762.7 h) of the same 4,061 devices, 21,987 drives, 113 models and 161 platforms", "1.1")
+    found_in("1.1 row ccs_honda_us", "2,189 decoded -> 2,132 windows (35.5 h), 913 drives, 230 devices, 9 platforms, 5 models", "1.1")
+    found_in("1.1 row comma2k19_us", "387 decoded -> 381 windows (6.4 h), 42 drives, 2 devices; 3 min", "1.1")
+    found_in("2.15 decode times", "Decode times 2.9 h / 10 min / 3 min with 6 workers", "2.15")
+    found_in("4: decode times", "`ccs_us` 2.9 h, `ccs_honda_us` 10 min, `comma2k19_us`", "4")
+    pipe = _re3.sub(r"[ \t]+", " ", (HERE_ / "CCS_PIPELINE.md").read_text())
+    for lab, s in (("seconds", "(`ccs_us` 10,444 s = 2.9 h, `ccs_honda_us` 591 s, `comma2k19_us` 184 s, 6 workers)"),
+                   ("accounting", "`ccs_us` 49,563 found -> 47,006 decoded / 2,557 skipped -> 45,763 windows; 2,132 and 381 windows on the other"),
+                   ("k", f"K = {US_K}")):
+        chk(f"CCS_PIPELINE.md 'Result': {lab} present", s in pipe, True)
+
+
+def sec43_us_alignment():
+    print("\n## 43. Alignment of each pair (2.15: same rows and labels, meta equal except the note, every non-yaw channel identical, the yaw group = original / (1 + k v^2)); the mean window speed for section 44")
+    import json as _json
+    rs = _json.load(open(HERE_ / "results_summary.json")).get("yaw_correction", {})
+    yaw_ch = ("yaw_rate_radps", "curv_1pm", "lat_acc_mps2")
+    for ds, ds_o in US_PAIRS:
+        m = set_meta(ds); m0 = set_meta(ds_o)
+        same_rows = len(m) == len(m0) and all((m[c].astype(str).to_numpy() == m0[c].astype(str).to_numpy()).all() for c in ("vehicle_id", "drive_id", "w_idx"))
+        same_lab = all((m[c].fillna("").astype(str).to_numpy() == m0[c].fillna("").astype(str).to_numpy()).all() for c in ("platform", "model", "size_class", "powertrain", "footprint_m2", "borderline"))
+        other = [c for c in m.columns if c not in ("note", "dataset", "stratum", "lead", "label_src", "gearbox", "pt_label", "n_ch", "has_torque", "has_lead", "pair", "state")]
+        same_meta = all(m[c].fillna("").astype(str).equals(m0[c].fillna("").astype(str)) for c in other)
+        strip = lambda n: _re3.sub(r"yaw=[^;]*;k=[^;]*", "yaw=*", _re3.sub(r"yaw=[^;]*", "yaw=*", n))  # noqa: E731
+        same_note = (m["note"].astype(str).map(strip).to_numpy() == m0["note"].astype(str).map(strip).to_numpy()).all()
+        kvals = sorted(note_field(m, "k").dropna().unique().tolist()); yvals = sorted(note_field(m, "yaw").dropna().unique().tolist()); y0 = sorted(note_field(m0, "yaw").dropna().unique().tolist())
+        chk(f"{ds} vs {ds_o}: rows / labels / other meta columns / notes after the yaw and k fields", f"{same_rows} / {same_lab} / {same_meta} / {same_note}", "True / True / True / True")
+        chk(f"{ds}: note k / yaw fields (original's yaw field)", f"{kvals} / {yvals} ({y0})", f"['{US_K}'] / ['derived-us'] (['derived'])")
+        for task in ("size", "bev_ice"):
+            chk(f"{ds}: task labels equal to the original ({task})", bool((T.task_labels(m, task) == T.task_labels(m0, task)).all()), True)
+        n_files = 0; n_rows_ok = 0
+        for task in ("size", "bev_ice"):
+            for key, mask, _ in CCS_RUNS_SIZE:
+                for d_ in (ds, ds_o):
+                    f = EXT / d_ / "work" / f"probs__{TAG[(task, key)]}__ens__{mask}.npz"
+                    if f.exists():
+                        n_files += 1
+                        z = np.load(f, allow_pickle=True); n_rows_ok += int(len(z["y"]) == len(m) and (z["vehicle_id"].astype(str) == m["vehicle_id"].astype(str).to_numpy()).all())
+        chk(f"{ds} + {ds_o}: ensemble probability files present / row-aligned with the meta (9 runs x 2 tasks x 2 sets)", f"{n_files} / {n_rows_ok}", "36 / 36")
+        if ARGS.no_windows:
+            print("    (windows.npz checks skipped: --no-windows)"); continue
+        X, _ = T.load_windows(ds); X0, _ = T.load_windows(ds_o)
+        chk(f"{ds}: tensor shape == original", f"{X.shape} == {X0.shape}", f"{X0.shape} == {X0.shape}")
+        bad = []; ydiff = {}
+        for c, k_ in T.CH.items():
+            a, b = X[:, :, k_], X0[:, :, k_]
+            na, nb = np.isnan(a), np.isnan(b); fin = ~na & ~nb
+            d = float(np.abs(a[fin] - b[fin]).max()) if fin.any() else 0.0
+            if c in yaw_ch:
+                ydiff[c] = d if (na == nb).all() else float("inf")
+            elif not (na == nb).all() or d > 0:
+                bad.append(c)
+        chk(f"{ds}: non-yaw channels with any difference or a different NaN pattern", bad, [])
+        al = rs.get(ds, {}).get("alignment", {}).get("yaw_max_abs_diff", {})
+        chk(f"{ds}: yaw group max |diff| (collector's results_summary.json in brackets)", " / ".join(f"{ydiff[c]:.3g}" for c in yaw_ch), " / ".join(f"{float(al.get(c, float('nan'))):.3g}" for c in yaw_ch))
+        if ds == "ccs_us":
+            chk("ccs_us: 2.15 quotes the yaw-group max |diff| as 12.2 rad/s / 0.175 1/m / 853 m/s^2", " / ".join(f"{ydiff[c]:.3g}" for c in yaw_ch), "12.2 / 0.175 / 853")
+        v = X0[:, :, T.CH["v_mps"]]; yo = X0[:, :, T.CH["yaw_rate_radps"]]; yu = X[:, :, T.CH["yaw_rate_radps"]]
+        sel = np.isfinite(v) & np.isfinite(yo) & np.isfinite(yu) & (np.abs(yo) > 0.01) & (v > 1.0)
+        ratio = yu[sel] / yo[sel]; expect = 1.0 / (1.0 + US_KF * v[sel] ** 2)
+        rel = np.abs(ratio / expect - 1.0)
+        chk(f"{ds}: yaw_us / yaw_orig = 1 / (1 + k v^2) with k = {US_K} on every moving sample (|rel err| max < 1e-4; samples)", f"{rel.max() < 1e-4} ({rel.max():.1e}; {sel.sum():,})", f"True ({rel.max():.1e}; {sel.sum():,})")
+        for c in ("curv_1pm", "lat_acc_mps2"):
+            a, b = X[:, :, T.CH[c]], X0[:, :, T.CH[c]]
+            s2 = sel & np.isfinite(a) & np.isfinite(b) & (np.abs(b) > 1e-4)
+            r2 = np.abs((a[s2] / b[s2]) / (yu[s2] / yo[s2]) - 1.0)
+            chk(f"{ds}: {c} scaled by the same factor as the yaw rate (|rel err| max < 1e-3)", bool(r2.max() < 1e-3), True)
+        big = np.nanmax(np.abs(yo), axis=1); bl = np.nanmax(np.abs(X0[:, :, T.CH["lat_acc_mps2"]]), axis=1)
+        i = int(np.nanargmax(np.abs(yo - yu)))
+        w_, s_ = divmod(i, yo.shape[1])
+        print(f"    (info) original windows with max |yaw| > 2 rad/s: {int((big > 2).sum())}; > 5 rad/s: {int((big > 5).sum())}; max |lat acc| > 30 m/s^2: {int((bl > 30).sum())}; the largest yaw change sits at v = {v[w_, s_]:.1f} m/s, steering angle {X0[w_, s_, T.CH['steer_angle_deg']]:.0f} deg, yaw {yo[w_, s_]:.1f} -> {yu[w_, s_]:.1f} rad/s (platform not printed)")
+        _US_VMEAN[ds_o] = np.nanmean(np.where(np.isfinite(v[:, 1:]), v[:, 1:], np.nan), axis=1)
+        del X, X0, v, yo, yu, ratio, expect, rel
+
+
+def sec44_us_strata():
+    print("\n## 44. Table (a) of 2.15 (full model and V1 per stratum, both tasks, original -> corrected), its window-level note, the speed-binned LARGE recall, the automation split and table (c)")
+    import json as _json
+    ref = _json.load(open(HERE_ / "internal_reference.json"))["tasks"]
+    for ds_u, ds_o in US_PAIRS:
+        m = set_meta(ds_o)
+        strata = us_strata(m)
+        for task in ("size", "bev_ice"):
+            k = 3 if task == "size" else 2
+            for key, mask in US_RUNS:
+                Po, Pu, y, cl = us_pair(ds_o, task, key, mask)
+                rows = {}
+                for sname, sel in strata:
+                    idx = np.flatnonzero(sel & (y >= 0))
+                    if len(idx) == 0:
+                        continue
+                    rows[sname] = {lv: (us_eval(Po, y, m, idx, lv, k), us_eval(Pu, y, m, idx, lv, k)) for lv in ("window", "vehicle", "model")}
+                if ds_o == "ccs":
+                    for sname, r in rows.items():
+                        va, vb = r["vehicle"]; ma, mb = r["model"]
+                        dev = "; ".join(f"{c} {fmt_int(h0)} -> {fmt_int(h1)} / {fmt_int(s)}" for c, h0, h1, s in zip(cl, us_hits(va), us_hits(vb), va["sup"]) if s > 0)
+                        mod = "; ".join(f"{c} {h0} -> {h1} / {s}" for c, h0, h1, s in zip(cl, us_hits(ma), us_hits(mb), ma["sup"]) if s > 0)
+                        f1 = f"{pct(va['f1'])} -> {pct(vb['f1'])}" if np.isfinite(va["f1"]) else "-"
+                        row = f"| `ccs` | {key} | {US_TASKNAME[task]} | {sname} | {pct(va['acc'])} -> {pct(vb['acc'])} ({us_delta(va['acc'], vb['acc'])}) | {f1} | {dev} | {us_hits(ma).sum()} -> {us_hits(mb).sum()} ({ma['n']}) | {mod} |"
+                        found_in(f"(a) ccs {key} {task} {sname}", row, "2.15")
+                elif ds_o == "ccs_honda":
+                    names = list(rows)
+                    accs = " / ".join((f"{pct(rows[s]['vehicle'][0]['acc'])} -> {pct(rows[s]['vehicle'][1]['acc'])}" + (f" ({us_delta(rows[s]['vehicle'][0]['acc'], rows[s]['vehicle'][1]['acc'])})" if s == "all" else "")) for s in names)
+                    fragA = f"| `ccs_honda` | {key} | {US_TASKNAME[task]} | {' / '.join(names)} | {accs} |"
+                    c0 = cl[0] if task == "size" else cl[1]; ci = 0 if task == "size" else 1
+                    hv = lambda s, j: int(us_hits(rows[s]['vehicle'][j])[ci])  # noqa: E731
+                    inner = f"seen {hv('seen', 0)} -> {hv('seen', 1)} / {rows['seen']['vehicle'][0]['n']}; HR-V {hv('held-out', 0)} -> {hv('held-out', 1)} / {rows['held-out']['vehicle'][0]['n']}" + (f"; Freed {hv('absent', 0)} -> {hv('absent', 1)} / {rows['absent']['vehicle'][0]['n']}" if "absent" in rows else "")
+                    ma, mb = rows["all"]["model"]
+                    fragB = f"| {c0} {hv('all', 0)} -> {hv('all', 1)} / {rows['all']['vehicle'][0]['n']} ({inner}) | {us_hits(ma).sum()} -> {us_hits(mb).sum()} ({ma['n']}) | {c0} {int(us_hits(ma)[ci])} -> {int(us_hits(mb)[ci])} / {ma['sup'][ci]}"
+                    found_in(f"(a) ccs_honda {key} {task} strata / accuracies", fragA, "2.15"); found_in(f"(a) ccs_honda {key} {task} devices / models", fragB, "2.15")
+                else:
+                    va, vb = rows["all"]["vehicle"]; ma, mb = rows["all"]["model"]
+                    c0 = cl[0] if task == "size" else cl[1]; ci = 0 if task == "size" else 1
+                    fragA = f"| `comma2k19` | {key} | {US_TASKNAME[task]} | all | {pct(va['acc'])} -> {pct(vb['acc'])} ({us_delta(va['acc'], vb['acc'])}) | - | {c0} {int(us_hits(va)[ci])} -> {int(us_hits(vb)[ci])} / 2"
+                    ok = _re3.sub(r"[ \t]+", " ", fragA) in sec_text("2.15") or _re3.sub(r"[ \t]+", " ", fragA.replace("| all |", "| all (= seen) |")) in sec_text("2.15")
+                    _NFOUND[0 if ok else 1] += 1; print(f"    {'FOUND    ' if ok else 'NOT FOUND'} (a) comma2k19 {key} {task}: {fragA}")
+                    found_in(f"(a) comma2k19 {key} {task} models", f"| {us_hits(ma).sum()} -> {us_hits(mb).sum()} (2) | {c0} {int(us_hits(ma)[ci])} -> {int(us_hits(mb)[ci])} / 2 |", "2.15")
+                wa, wb = rows["all"]["window"]
+                tag = f"{ds_o} {key} {US_TASKNAME[task]} window"
+                if ds_o == "ccs":
+                    q = {("full", "size"): ("49.6 -> 53.8 / 43.2 -> 51.0", "78.1 -> 74.5 / 32.6 -> 36.8 / 20.1 -> 39.0"), ("V1", "size"): ("47.5 -> 54.1 / 42.3 -> 51.1", None), ("full", "bev_ice"): ("81.8 -> 83.6 / 74.7 -> 76.4", None), ("V1", "bev_ice"): ("63.1 -> 71.1", None)}[(key, task)]
+                    chk(f"{tag} acc (/ F1)", f"{pct(wa['acc'])} -> {pct(wb['acc'])}" + (f" / {pct(wa['f1'])} -> {pct(wb['f1'])}" if "/" in q[0] else ""), q[0])
+                    if q[1]:
+                        chk(f"{tag} recall per class", " / ".join(f"{pct(a)} -> {pct(b)}" for a, b in zip(wa["rec"], wb["rec"])), q[1])
+                elif ds_o == "ccs_honda":
+                    chk(f"{tag} acc", f"{pct(wa['acc'])} -> {pct(wb['acc'])}", {("full", "size"): "83.8 -> 81.0", ("V1", "size"): "49.6 -> 59.3", ("full", "bev_ice"): "89.3 -> 90.5", ("V1", "bev_ice"): "72.7 -> 80.6"}[(key, task)])
+                else:
+                    chk(f"{tag} acc", f"{pct(wa['acc'])} -> {pct(wb['acc'])}", {("full", "size"): "51.7 -> 56.7", ("V1", "size"): "44.4 -> 48.0", ("full", "bev_ice"): "70.9 -> 78.0", ("V1", "bev_ice"): "60.4 -> 89.5"}[(key, task)])
+                    if key == "full" and task == "size":
+                        for p_, name, q in (("TOYOTA_RAV4", "RAV4", "55.7 -> 74.6"), ("HONDA_CIVIC", "Civic", "48.0 -> 39.8")):
+                            idx = np.flatnonzero((m["platform"] == p_).to_numpy() & (y >= 0))
+                            chk(f"comma2k19 full size window acc {name}", f"{pct((Po[idx].argmax(1) == y[idx]).mean())} -> {pct((Pu[idx].argmax(1) == y[idx]).mean())}", q)
+                # Reading-bullet figures at device level (all stratum)
+                va, vb = rows["all"]["vehicle"]; ma, mb = rows["all"]["model"]
+                if ds_o == "ccs" and key == "full" and task == "bev_ice":
+                    chk("ccs full powertrain device recall ICE / BEV", f"ICE {pct(va['rec'][1])} -> {pct(vb['rec'][1])}, BEV {pct(va['rec'][0])} -> {pct(vb['rec'][0])}", "ICE 88.2 -> 89.5, BEV 86.6 -> 86.8")
+                    hv = rows["held-out"]["vehicle"]; chk("ccs full powertrain held-out device accuracy", f"{pct(hv[0]['acc'])} -> {pct(hv[1]['acc'])}", "94.2 -> 94.4")
+                if ds_o == "ccs" and key == "V1" and task == "size":
+                    chk("ccs V1 size device recall SMALL / LARGE / MID", f"SMALL {pct(va['rec'][0])} -> {pct(vb['rec'][0])}, LARGE {pct(va['rec'][2])} -> {pct(vb['rec'][2])}, MID {pct(va['rec'][1])} -> {pct(vb['rec'][1])}", "SMALL 60.7 -> 74.9, LARGE 18.8 -> 41.9, MID 54.6 -> 50.9")
+                    chk("ccs V1 size: platforms... no: MID models called MID all / held-out (= MID hits at model level)", f"{int(us_hits(ma)[1])} -> {int(us_hits(mb)[1])}, held-out {int(us_hits(rows['held-out']['model'][0])[1])} -> {int(us_hits(rows['held-out']['model'][1])[1])}", "18 -> 12, held-out 8 -> 5")
+                if ds_o == "ccs" and key == "V1" and task == "bev_ice":
+                    chk("ccs V1 powertrain ICE device recall / ICE models", f"{pct(va['rec'][1])} -> {pct(vb['rec'][1])}, {int(us_hits(ma)[1])} -> {int(us_hits(mb)[1])}", "71.0 -> 83.0, 49 -> 58")
+                if ds_o == "ccs_honda" and key == "V1":
+                    hv = rows["held-out"]["vehicle"]
+                    chk(f"ccs_honda V1 {US_TASKNAME[task]} device accuracy / HR-V devices right", f"{pct(va['acc'])} -> {pct(vb['acc'])} / {int(us_hits(hv[0]).sum())} -> {int(us_hits(hv[1]).sum())} of {hv[0]['n']}", "47.8 -> 66.1 / 1 -> 4 of 5" if task == "size" else "86.0 -> 96.1 / 3 -> 5 of 5")
+    # ---- ccs full size: speed bins, automation split, table (c)
+    m = set_meta("ccs"); Po, Pu, y, cl = us_pair("ccs", "size", "full")
+    lab = y >= 0
+    if "ccs" in _US_VMEAN:
+        vm = _US_VMEAN["ccs"]; edges = [0, 5, 10, 15, 20, 25, 30, 45]
+        rec = {c: [] for c in cl}; n_b = []
+        for lo, hi in zip(edges[:-1], edges[1:]):
+            sel = lab & (vm >= lo) & (vm < hi)
+            n_b.append(int(sel.sum()))
+            for i, c in enumerate(cl):
+                s = sel & (y == i)
+                rec[c].append((float((Po[s].argmax(1) == i).mean()) if s.any() else np.nan, float((Pu[s].argmax(1) == i).mean()) if s.any() else np.nan))
+        print(f"    windows per speed bin {edges}: {n_b}")
+        chk("LARGE window recall by mean window speed (sample 0 excluded), 0-5 ... 30-45 m/s", ", ".join(f"{pct(a)} -> {pct(b)}" for a, b in rec["LARGE"]), "34.7 -> 38.2, 35.2 -> 45.5, 29.0 -> 45.0, 20.7 -> 42.1, 13.2 -> 40.6, 7.0 -> 31.1, 4.2 -> 28.0")
+        dS = [100 * (b - a) for a, b in rec["SMALL"]]; dM = [100 * (b - a) for a, b in rec["MID"]]
+        chk("SMALL recall change: range over the bins except 25-30 / the 25-30 bin", f"{min(dS[:5] + dS[6:]):+.1f} to {max(dS[:5] + dS[6:]):+.1f} / {dS[5]:+.1f}", "-6.5 to -2.0 / +0.6")
+        chk("MID recall change range over the bins", f"{min(dM):+.1f} to {max(dM):+.1f}", "-2.4 to +9.5")
+        chk("LARGE gain at 30-45 / at 0-5 (points)", f"{100 * (rec['LARGE'][6][1] - rec['LARGE'][6][0]):+.1f} / {100 * (rec['LARGE'][0][1] - rec['LARGE'][0][0]):+.1f}", "+23.8 / +3.5")
+        chk("factor 1 / (1 + k v^2) at 7.5 / 22.5 / 35 m/s", " / ".join(f"{1 / (1 + US_KF * v_ ** 2):.2f}" for v_ in (7.5, 22.5, 35)), "0.96 / 0.71 / 0.51")
+    else:
+        print("    (speed bins skipped: section 43 did not load windows.npz)")
+    hum = (m["state"] == "human").to_numpy()
+    out = []
+    for name, sel in (("human", hum), ("engaged", ~hum)):
+        idx = np.flatnonzero(sel & lab)
+        a = us_eval(Po, y, m, idx, "vehicle", 3); b = us_eval(Pu, y, m, idx, "vehicle", 3)
+        out.append(f"{name} {pct(a['acc'])} -> {pct(b['acc'])} % of {fmt_int(a['n'])} devices (window {pct((Po[idx].argmax(1) == y[idx]).mean())} -> {pct((Pu[idx].argmax(1) == y[idx]).mean())}; device delta {us_delta(a['acc'], b['acc'])})")
+    chk("automation split, full size model (device decided from its windows of that state)", "; ".join(out), "human 55.7 -> 63.6 % of 3,486 devices (window 51.0 -> 54.6; device delta +7.9); engaged 48.3 -> 56.3 % of 2,700 devices (window 47.6 -> 52.6; device delta +8.1)")
+    idx = np.flatnonzero(lab)
+    a = us_eval(Po, y, m, idx, "vehicle", 3); b = us_eval(Pu, y, m, idx, "vehicle", 3)
+    ir = ref["size"]["full (GRU S9, 20 ch)"]["subsets"]["all"]["vehicle"]
+    for i, c in enumerate(cl):
+        row = f"| {c} | {fmt_int(a['sup'][i])} | " + " | ".join(f"{fmt_int(a['cm'][i, j])} -> {fmt_int(b['cm'][i, j])}" for j in range(3)) + f" | {pct(a['rec'][i])} -> {pct(b['rec'][i])} | {pct(ir['per_class_recall'][i])} |"
+        found_in(f"(c) {c}", row, "2.15")
+    found_in("(c) all", f"| all | {fmt_int(a['n'])} | - | - | - | {pct(a['acc'])} -> {pct(b['acc'])} (macro-F1 {pct(a['f1'])} -> {pct(b['f1'])}) | {pct(ir['accuracy'])} ({pct(ir['macro_f1'])}) |", "2.15")
+    chk("residual gap: MID device recall after against the internal recall (points)", f"{100 * (ir['per_class_recall'][1] - b['rec'][1]):.1f}", "12.6")
+
+
+def sec45_us_platforms():
+    print("\n## 45. Table (b) of 2.15 (platform decision flips of the full model), the platform lists of the Reading bullets, the Honda per-platform counts and the comma2k19 per-car probabilities")
+    m = set_meta("ccs")
+    veh = m["vehicle_id"].to_numpy(); fp = m.groupby("platform")["footprint_m2"].first(); bl = m.groupby("platform")["borderline"].first()
+    plat = {}
+    for task in ("size", "bev_ice"):
+        Po, Pu, y, cl = us_pair("ccs", task, "full"); k = len(cl)
+        flips = []; n = 0; before = after = 0; rec = {c: 0 for c in cl}; lost = {c: 0 for c in cl}; ww = 0
+        for p_, g in m.groupby("platform", sort=True):
+            idx = g.index.to_numpy(); idx = idx[y[idx] >= 0]
+            if len(idx) == 0:
+                continue
+            n += 1
+            yt = int(np.bincount(y[idx], minlength=k).argmax()); lab = cl[yt]
+            pa, pb = Po[idx].mean(0), Pu[idx].mean(0); da, db = cl[int(pa.argmax())], cl[int(pb.argmax())]
+            before += da == lab; after += db == lab
+            _, _, yu, du0, _ = unit_dec(Po[idx], y[idx], veh[idx]); _, _, _, du1, _ = unit_dec(Pu[idx], y[idx], veh[idx])
+            vr0, vr1, nv = int((du0 == yu).sum()), int((du1 == yu).sum()), len(yu)
+            plat[(task, p_)] = dict(model=str(g["model"].iloc[0]), label=lab, stratum=str(g["stratum"].iloc[0]), da=da, db=db, pa=pa, pb=pb, yt=yt, vr0=vr0, vr1=vr1, nv=nv, nw=len(idx))
+            if da != db:
+                kind = "recovered" if db == lab else ("lost" if da == lab else "wrong -> wrong")
+                if kind == "recovered": rec[lab] += 1
+                elif kind == "lost": lost[lab] += 1
+                else: ww += 1
+                flips.append((p_, kind))
+                row = f"| {p_}{' (powertrain)' if task == 'bev_ice' else ''} | {g['model'].iloc[0]} | {fp[p_]:.2f}{'*' if bool(bl[p_]) else ''} | {lab} | {g['stratum'].iloc[0]} | {da} -> {db} | {pa[yt]:.2f} -> {pb[yt]:.2f} | {vr0} -> {vr1} / {nv} |"
+                found_in(f"(b) {task} {kind}", row, "2.15")
+        if task == "size":
+            chk("size: platforms changed / platforms right / recovered-lost LARGE, MID, SMALL / wrong -> wrong", f"{len(flips)} of {n}; {before} -> {after}; LARGE {rec['LARGE']}/{lost['LARGE']}, MID {rec['MID']}/{lost['MID']}, SMALL {rec['SMALL']}/{lost['SMALL']}; {ww}", "27 of 161; 95 -> 108; LARGE 15/0, MID 4/2, SMALL 0/4; 2")
+            chk("size: flips with 'lost' on one-device platforms (ILX 4 windows, Escape 1 window)", f"{plat[('size', 'ACURA_ILX')]['nw']} / {plat[('size', 'FORD_ESCAPE_MK4_5')]['nw']}", "4 / 1")
+        else:
+            chk("powertrain: platforms changed / platforms right / the flip", f"{len(flips)} of {n}; {before} -> {after}; {flips}", "1 of 108; 106 -> 105; [('FORD_F_150_LIGHTNING_MK1', 'lost')]")
+            q = plat[("bev_ice", "FORD_F_150_LIGHTNING_MK1")]
+            chk("F-150 Lightning P(BEV) before -> after / devices right / devices", f"{q['pa'][0]:.2f} -> {q['pb'][0]:.2f} / {q['vr0']} -> {q['vr1']} / {q['nv']}", "0.52 -> 0.46 / 4 -> 4 / 6")
+    # LARGE platforms still missed after the correction
+    missed = {p_: v for (t, p_), v in plat.items() if t == "size" and v["label"] == "LARGE" and v["db"] != "LARGE"}
+    quoted = {"HONDA_ODYSSEY": "11 / 96 (0.18)", "HONDA_PILOT": "5 / 77 (0.19)", "HONDA_RIDGELINE": "26 / 56 (0.34)", "FORD_EXPLORER_MK6": "23 / 44 (0.38)", "TOYOTA_SIENNA": "1 / 62 (0.12)",
+              "KIA_CARNIVAL_4TH_GEN": "0 / 15 (0.12)", "VOLKSWAGEN_ATLAS_MK1": "1 / 32 (0.19)", "GENESIS_G90": "0 / 9 (0.11)", "GENESIS_GV80": "0 / 3 (0.12)", "HYUNDAI_SANTA_CRUZ_1ST_GEN": "0 / 1",
+              "VOLKSWAGEN_TRANSPORTER_T61": "0 / 2", "HYUNDAI_STARIA_4TH_GEN": "0 / 1", "DODGE_DURANGO": "0 / 1"}
+    chk("LARGE platforms still missed after the correction (set)", sorted(missed), sorted(quoted))
+    for p_, q in quoted.items():
+        v = missed.get(p_)
+        if v is None:
+            continue
+        got = f"{v['vr1']} / {v['nv']}" + (f" ({v['pb'][2]:.2f})" if "(" in q else "")
+        chk(f"  {p_} ({v['model']}): devices right after / devices (P(LARGE) after); decision {v['da']} -> {v['db']}", got, q)
+    chk("the Pilot and the Carnival move SMALL -> MID", f"{plat[('size', 'HONDA_PILOT')]['da']} -> {plat[('size', 'HONDA_PILOT')]['db']}, {plat[('size', 'KIA_CARNIVAL_4TH_GEN')]['da']} -> {plat[('size', 'KIA_CARNIVAL_4TH_GEN')]['db']}", "SMALL -> MID, SMALL -> MID")
+    sums = lambda ps: (sum(plat[('size', p)]['vr0'] for p in ps), sum(plat[('size', p)]['vr1'] for p in ps), sum(plat[('size', p)]['nv'] for p in ps))  # noqa: E731
+    chk("the four Pacifica platforms: devices right before -> after of devices", "%d -> %d of %d" % sums([p for p in m["platform"].unique() if p.startswith("CHRYSLER_PACIFICA")]), "27 -> 115 of 184")
+    for p_, q in (("CHEVROLET_SILVERADO", "31 -> 42 / 52"), ("RAM_1500_5TH_GEN", "57 -> 81 / 99"), ("FORD_F_150_MK14", "25 -> 40 / 42"), ("FORD_F_150_LIGHTNING_MK1", "5 -> 6 / 6"),
+                  ("LEXUS_ES_TSS2", "21 -> 33 / 62"), ("TOYOTA_HIGHLANDER_TSS2", "37 -> 63 / 164"), ("HYUNDAI_SONATA", "2 -> 9 / 37"), ("HYUNDAI_SONATA_HYBRID", "1 -> 9 / 13"),
+                  ("LEXUS_RX", "4 -> 11 / 55"), ("LEXUS_RX_TSS2", "3 -> 12 / 69"), ("HYUNDAI_IONIQ_5", "46 -> 57 / 101"), ("TOYOTA_CAMRY", "4 -> 1 / 86"), ("TOYOTA_CAMRY_TSS2", "8 -> 5 / 81"),
+                  ("SUBARU_ASCENT", "0 -> 0 / 34"), ("ACURA_RDX_3G", "0 -> 0 / 18"), ("HYUNDAI_TUCSON_4TH_GEN", "3 -> 3 / 27"), ("TESLA_MODEL_3", "17 -> 11 / 28"), ("FORD_MUSTANG_MACH_E_MK1", "7 -> 5 / 12"), ("HONDA_ACCORD", "55 -> 61 / 120")):
+        v = plat[("size", p_)]
+        chk(f"  {p_} ({v['model']}, {v['label']}): devices right before -> after / devices; decision {v['da']} -> {v['db']}", f"{v['vr0']} -> {v['vr1']} / {v['nv']}", q)
+    chk("G90 + GV80 devices right after / devices", "%d / %d" % (sums(["GENESIS_G90", "GENESIS_GV80"])[1], sums(["GENESIS_G90", "GENESIS_GV80"])[2]), "0 / 12")
+    chk("Sorento 4th gen (+ HEV) devices right after / devices", "%d / %d" % (sums(["KIA_SORENTO_4TH_GEN", "KIA_SORENTO_HEV_4TH_GEN"])[1], sums(["KIA_SORENTO_4TH_GEN", "KIA_SORENTO_HEV_4TH_GEN"])[2]), "0 / 16")
+    chk("the Avalon platforms: devices right before -> after / devices", "%d -> %d / %d" % sums([p for p in m["platform"].unique() if p.startswith("TOYOTA_AVALON")]), "1 -> 3 / 37")
+    chk("Ioniq 5 decision before -> after (already MID)", f"{plat[('size', 'HYUNDAI_IONIQ_5')]['da']} -> {plat[('size', 'HYUNDAI_IONIQ_5')]['db']}", "MID -> MID")
+    chk("Camry / Ascent / RDX 3G / Tucson / Sorento 4th gen / Avalon platforms stay SMALL after", all(plat[("size", p)]["db"] == "SMALL" for p in ("TOYOTA_CAMRY", "TOYOTA_CAMRY_TSS2", "SUBARU_ASCENT", "ACURA_RDX_3G", "HYUNDAI_TUCSON_4TH_GEN", "KIA_SORENTO_4TH_GEN", "KIA_SORENTO_HEV_4TH_GEN", "TOYOTA_AVALON", "TOYOTA_AVALON_2019", "TOYOTA_AVALON_TSS2")), True)
+    chk("MID flips at P(true) 0.44-0.51 and LARGE recoveries at 0.39-0.72: all 19 recovered platforms have P(true) after >= 0.39", all(v["pb"][v["yt"]] >= 0.39 for (t, p_), v in plat.items() if t == "size" and v["da"] != v["db"] and v["db"] == v["label"]), True)
+    # ---- ccs_honda per platform and device decisions
+    mh = set_meta("ccs_honda"); Po, Pu, y, cl = us_pair("ccs_honda", "size", "full"); vh = mh["vehicle_id"].to_numpy(); lab = y >= 0
+    per = {}
+    for p_, g in mh.groupby("platform", sort=True):
+        idx = g.index.to_numpy(); idx = idx[lab[idx]]
+        _, pa_, yu, du0, _ = unit_dec(Po[idx], y[idx], vh[idx]); _, _, _, du1, _ = unit_dec(Pu[idx], y[idx], vh[idx])
+        per[p_] = (int((du0 == yu).sum()), int((du1 == yu).sum()), len(yu), Po[idx].mean(0)[0], Pu[idx].mean(0)[0], cl[int(Pu[idx].mean(0).argmax())])
+    chk("ccs_honda per platform devices right before -> after / devices (Civic, Civic 2022, Civic Bosch, CR-V 5G)", "; ".join(f"{p_} {per[p_][0]} -> {per[p_][1]} / {per[p_][2]}" for p_ in ("HONDA_CIVIC", "HONDA_CIVIC_2022", "HONDA_CIVIC_BOSCH", "HONDA_CRV_5G")), "HONDA_CIVIC 32 -> 29 / 33; HONDA_CIVIC_2022 35 -> 33 / 36; HONDA_CIVIC_BOSCH 55 -> 53 / 55; HONDA_CRV_5G 91 -> 87 / 92")
+    chk("ccs_honda: HR-V, CR-V 2016, Fit and Freed unchanged", all(per[p_][0] == per[p_][1] for p_ in ("HONDA_HRV", "HONDA_HRV_3G", "HONDA_CRV", "HONDA_FIT", "HONDA_FREED")), True)
+    chk("ccs_honda: every platform SMALL after; P(SMALL) after range", f"{all(v[5] == 'SMALL' for v in per.values())}; {min(v[4] for v in per.values()):.2f}-{max(v[4] for v in per.values()):.2f}", "True; 0.55-0.77")
+    print(f"    (info) per-platform device x platform pairs sum to {sum(v[2] for v in per.values())} for {mh['vehicle_id'].nunique()} devices; devices right summed over platforms {sum(v[0] for v in per.values())} -> {sum(v[1] for v in per.values())}")
+    _, _, yu, du0, _ = unit_dec(Po, y, vh); _, _, _, du1, _ = unit_dec(Pu, y, vh)
+    cnt = lambda d: " / ".join(str(int((d == i).sum())) for i in range(3))  # noqa: E731
+    chk("ccs_honda device decisions SMALL / MID / LARGE before -> after", f"{cnt(du0)} -> {cnt(du1)}", "226 / 3 / 1 -> 215 / 12 / 3")
+    tr = {(cl[i], cl[j]): int(((du0 == i) & (du1 == j)).sum()) for i in range(3) for j in range(3) if i != j and ((du0 == i) & (du1 == j)).any()}
+    chk("ccs_honda device transitions (2.15 / 0 / 2.13 / 3.7 / CCS_PIPELINE: 10 SMALL -> MID, 2 SMALL -> LARGE, 1 MID -> SMALL; the writer had said 11 to MID)", tr, {("SMALL", "MID"): 10, ("SMALL", "LARGE"): 2, ("MID", "SMALL"): 1})
+    hum = (mh["state"] == "human").to_numpy()
+    chk("ccs_honda full size window accuracy human / engaged before -> after", f"{pct((Po[hum & lab].argmax(1) == y[hum & lab]).mean())} -> {pct((Pu[hum & lab].argmax(1) == y[hum & lab]).mean())} / {pct((Po[~hum & lab].argmax(1) == y[~hum & lab]).mean())} -> {pct((Pu[~hum & lab].argmax(1) == y[~hum & lab]).mean())}", "91.1 -> 86.0 / 73.7 -> 74.2")
+    # ---- comma2k19 per car
+    mc = set_meta("comma2k19"); Po, Pu, y, cl = us_pair("comma2k19", "size", "full"); Qo, Qu, yb, clb = us_pair("comma2k19", "bev_ice", "full")
+    r = (mc["platform"] == "TOYOTA_RAV4").to_numpy(); c = ~r; eng = (mc["state"] == "engaged").to_numpy()
+    chk("comma2k19 full size: RAV4 P(SMALL), Civic P(MID) / P(SMALL) before -> after", f"RAV4 {Po[r].mean(0)[0]:.2f} -> {Pu[r].mean(0)[0]:.2f}; Civic MID {Po[c].mean(0)[1]:.3f} -> {Pu[c].mean(0)[1]:.3f} against SMALL {Po[c].mean(0)[0]:.3f} -> {Pu[c].mean(0)[0]:.3f}", "RAV4 0.54 -> 0.59; Civic MID 0.491 -> 0.507 against SMALL 0.485 -> 0.434")
+    chk("comma2k19 full powertrain: P(ICE) RAV4 / Civic before -> after", f"{Qo[r].mean(0)[1]:.2f} / {Qo[c].mean(0)[1]:.2f} -> {Qu[r].mean(0)[1]:.2f} / {Qu[c].mean(0)[1]:.2f}", "0.68 / 0.71 -> 0.73 / 0.74")
+    chk("comma2k19 engaged windows: RAV4 P(SMALL) before -> after, engaged-window acc (all windows); Civic P(MID) after, engaged-window acc (all windows)", f"RAV4 {Po[r & eng].mean(0)[0]:.2f} -> {Pu[r & eng].mean(0)[0]:.2f}, {pct((Po[r & eng].argmax(1) == 0).mean())} -> {pct((Pu[r & eng].argmax(1) == 0).mean())} ({pct((Po[r].argmax(1) == 0).mean())} -> {pct((Pu[r].argmax(1) == 0).mean())}); Civic MID {Pu[c & eng].mean(0)[1]:.2f}, {pct((Po[c & eng].argmax(1) == 0).mean())} -> {pct((Pu[c & eng].argmax(1) == 0).mean())} ({pct((Po[c].argmax(1) == 0).mean())} -> {pct((Pu[c].argmax(1) == 0).mean())})", "RAV4 0.40 -> 0.56, 28.6 -> 73.3 (55.7 -> 74.6); Civic MID 0.60, 24.0 -> 17.4 (48.0 -> 39.8)")
+    chk("comma2k19 engaged windows P(ICE) RAV4 / Civic before -> after", f"{Qo[r & eng].mean(0)[1]:.2f} / {Qo[c & eng].mean(0)[1]:.2f} -> {Qu[r & eng].mean(0)[1]:.2f} / {Qu[c & eng].mean(0)[1]:.2f}", "0.49 / 0.56 -> 0.57 / 0.61")
+    print(f"    (info) comma2k19 engaged-window P(MID) before -> after RAV4 {Po[r & eng].mean(0)[1]:.2f} -> {Pu[r & eng].mean(0)[1]:.2f}, Civic {Po[c & eng].mean(0)[1]:.2f} -> {Pu[c & eng].mean(0)[1]:.2f}; human-window P(SMALL) RAV4 {Pu[r & ~eng].mean(0)[0]:.2f}, Civic {Pu[c & ~eng].mean(0)[0]:.2f}")
+
+
+def sec46_us_heldout():
+    print("\n## 46. Table (d) of 2.15: the 29 held-out models of ccs, original -> corrected, re-derived independently of us_heldout_compare.py; the 864 / 871 convention; the agreement with the internal per-model test")
+    m = set_meta("ccs"); Po, Pu, y, cl = us_pair("ccs", "size", "full"); veh = m["vehicle_id"].to_numpy()
+    ho = (m["stratum"] == "held-out").to_numpy() & (y >= 0)
+    ipm = _internal_per_model_rows("size")
+    models = sorted(set(m.loc[ho, "model"]))
+    chk("held-out models / devices / device x model pairs / devices under two models", f"{len(models)} / {m.loc[ho, 'vehicle_id'].nunique()} / {m.loc[ho].groupby(['vehicle_id', 'model']).ngroups} / {int((m.loc[ho].groupby('vehicle_id')['model'].nunique() > 1).sum())}", "29 / 864 / 871 / 7")
+    tot = dict(ra=0, rb=0, n=0, ma=0, mb=0, both_a=0, both_b=0, ext_only_b=[], int_only_b=[], both_wrong_b=[], agree_a=0, agree_b=0)
+    for model in models:
+        idx = np.flatnonzero(ho & (m["model"] == model).to_numpy())
+        yt = int(np.bincount(y[idx], minlength=3).argmax()); lab = cl[yt]
+        pa, pb = Po[idx].mean(0), Pu[idx].mean(0); da, db = cl[int(pa.argmax())], cl[int(pb.argmax())]
+        _, _, yu, du0, _ = unit_dec(Po[idx], y[idx], veh[idx]); _, _, _, du1, _ = unit_dec(Pu[idx], y[idx], veh[idx])
+        ra, rb, n = int((du0 == yu).sum()), int((du1 == yu).sum()), len(yu)
+        kind = "same" if da == db else ("recovered" if db == lab else ("lost" if da == lab else "wrong->wrong"))
+        ir = ipm.get(model)
+        internal = (f"{ir[1]} / {ir[2]} ({ir[3]:.2f})" + ("" if ir[4] else " miss")) if ir else "-"
+        row = f"| {model} | {lab} | {n} | {len(idx)} | {ra}/{n} ({pct(ra / n)}) -> {rb}/{n} ({pct(rb / n)}) | {100 * (rb - ra) / n:+.1f} | {da} ({pa[yt]:.2f}) -> {db} ({pb[yt]:.2f}) {'OK' if db == lab else 'miss'} | {kind} | {internal} |"
+        found_in(f"(d) {model}", row, "2.15")
+        tot["ra"] += ra; tot["rb"] += rb; tot["n"] += n; tot["ma"] += da == lab; tot["mb"] += db == lab
+        if ir:
+            ea, eb, ih = da == lab, db == lab, ir[4]
+            tot["agree_a"] += ea == ih; tot["agree_b"] += eb == ih; tot["both_a"] += ea and ih; tot["both_b"] += eb and ih
+            if eb and not ih: tot["ext_only_b"].append(model)
+            if ih and not eb: tot["int_only_b"].append(model)
+            if not eb and not ih: tot["both_wrong_b"].append(model)
+    chk("held-out: devices right before -> after of pairs (%)", f"{tot['ra']} -> {tot['rb']} of {tot['n']} ({pct(tot['ra'] / tot['n'])} -> {pct(tot['rb'] / tot['n'])})", "470 -> 507 of 871 (54.0 -> 58.2)")
+    chk("held-out: models right before -> after", f"{tot['ma']} -> {tot['mb']} of {len(models)}", "13 -> 14 of 29")
+    chk("agreement with the internal test after (both hit, both miss) / before", f"{tot['agree_b']} ({tot['both_b']}, {tot['agree_b'] - tot['both_b']}) / {tot['agree_a']}", "20 (12, 8) / 19")
+    chk("right here, wrong internally (after)", sorted(tot["ext_only_b"]), ["Genesis G80", "Kia Stinger"])
+    chk("right internally, wrong here (after)", sorted(tot["int_only_b"]), sorted(["Kia Carnival", "Toyota Sienna", "Genesis GV80", "Hyundai Santa Cruz", "Genesis GV70", "Kia Optima", "Hyundai Azera"]))
+    chk("the Grand Cherokee is wrong in both after", "Jeep Grand Cherokee" in tot["both_wrong_b"], True)
+    # the stratum rows of (a) use 864 devices with a majority label per device
+    idx = np.flatnonzero(ho)
+    a = us_eval(Po, y, m, idx, "vehicle", 3); b = us_eval(Pu, y, m, idx, "vehicle", 3)
+    chk("held-out stratum at device level (864 devices, majority label): right before -> after, accuracy", f"{int(us_hits(a).sum())} -> {int(us_hits(b).sum())} of {a['n']}, {pct(a['acc'])} -> {pct(b['acc'])}", "465 -> 501 of 864, 53.8 -> 58.0")
+    f = HERE_ / "us_heldout_compare.md"
+    if f.exists():
+        t = f.read_text()
+        chk("us_heldout_compare.md summary line agrees", "devices right 470 -> 507 of 871 (54.0 -> 58.2 %); models right 13 -> 14; recovered 2, lost 1." in t, True)
+
+
+def sec47_us_mask():
+    print("\n## 47. Table (e) of 2.15: the yaw-masked full model of both decodes must be identical (the mask hides the only channels that changed); the unmasked runs must differ")
+    for ds_u, ds_o in US_PAIRS:
+        m = set_meta(ds_o)
+        for task in ("size", "bev_ice"):
+            k = 3 if task == "size" else 2
+            Po, Pu, y, cl = us_pair(ds_o, task, "full", "mask-yaw")
+            idx = np.flatnonzero(y >= 0)
+            cells = []
+            for lv in ("window", "vehicle", "model"):
+                a = us_eval(Po, y, m, idx, lv, k); b = us_eval(Pu, y, m, idx, lv, k)
+                cells.append(f"{pct(a['acc'])} / {pct(a['f1'])} = {pct(b['acc'])} / {pct(b['f1'])}" if np.isfinite(a["f1"]) else f"{pct(a['acc'])} = {pct(b['acc'])}")
+            eq = bool(np.array_equal(Po, Pu)); close = bool(np.allclose(Po, Pu, atol=1e-6))
+            found_in(f"(e) {ds_o} {task}", f"| `{ds_o}` | {US_TASKNAME[task]} | {cells[0]} | {cells[1]} | {cells[2]} | {'yes' if close else 'no'} |", "2.15")
+            chk(f"{ds_o} {task}: masked probabilities equal exactly / within 1e-6 (max |diff|)", f"{eq} / {close} ({np.abs(Po - Pu).max():.1e})", f"True / True ({np.abs(Po - Pu).max():.1e})")
+            Fo, Fu, _, _ = us_pair(ds_o, task, "full", "full")
+            chk(f"{ds_o} {task}: the unmasked full-model probabilities differ (max |diff| > 0.01)", bool(np.abs(Fo - Fu).max() > 0.01), True)
+
+
+def sec48_us_prose():
+    print("\n## 48. The understeer block of section 0, the pointers in 2.12-2.14, 3.6 point 9, 3.7, section 4 and section 5: the quoted figures against the recomputed ones and the internal references")
+    import json as _json
+    ref = _json.load(open(HERE_ / "internal_reference.json"))["tasks"]
+    s_full = ref["size"]["full (GRU S9, 20 ch)"]["subsets"]["all"]; s_v1 = ref["size"]["V1 lateral + speed (10 ch)"]["subsets"]["all"]; s_v3 = ref["size"]["V3 speed-only (3 ch)"]["subsets"]["all"]
+    p_full = ref["bev_ice"]["full (ResNet B5, 20 ch)"]["subsets"]["all"]; p_v1 = ref["bev_ice"]["V1 lateral + speed (10 ch)"]["subsets"]["all"]
+    chk("internal size full vehicle acc / F1; drive; per-class recall", f"{pct(s_full['vehicle']['accuracy'])} / {pct(s_full['vehicle']['macro_f1'])}; {pct(s_full['drive']['accuracy'])} / {pct(s_full['drive']['macro_f1'])}; {' / '.join(pct(x) for x in s_full['vehicle']['per_class_recall'])}", "63.5 / 59.7; 70.8 / 67.3; 79.2 / 47.3 / 50.6")
+    chk("internal powertrain full vehicle acc / F1; V1 size / V1 powertrain / V3 size vehicle acc", f"{pct(p_full['vehicle']['accuracy'])} / {pct(p_full['vehicle']['macro_f1'])}; {pct(s_v1['vehicle']['accuracy'])} / {pct(p_v1['vehicle']['accuracy'])} / {pct(s_v3['vehicle']['accuracy'])}", "93.9 / 93.4; 62.6 / 75.8 / 54.4")
+    m = set_meta("ccs"); P3, y3, _ = set_load("ccs", "size", "V3"); v3 = us_eval(P3, y3, m, np.flatnonzero(y3 >= 0), "vehicle", 3)
+    Po, Pu, y, cl = us_pair("ccs", "size", "full"); idx = np.flatnonzero(y >= 0)
+    a = us_eval(Po, y, m, idx, "vehicle", 3); b = us_eval(Pu, y, m, idx, "vehicle", 3); ma = us_eval(Po, y, m, idx, "model", 3); mb = us_eval(Pu, y, m, idx, "model", 3)
+    hv = us_eval(Pu, y, m, np.flatnonzero(idx.size and (m["stratum"] == "held-out").to_numpy() & (y >= 0)), "vehicle", 3)
+    chk("V3 on ccs (device acc / F1); corrected full minus V3 (points); as-run full minus V3", f"{pct(v3['acc'])} / {pct(v3['f1'])}; {100 * (b['acc'] - v3['acc']):.1f}; {100 * (a['acc'] - v3['acc']):.1f}", "53.7 / 50.0; 9.5; 0.4")
+    chk("internal full minus internal V3 (vehicle acc, points) = 'the margin the lateral channels add internally'", f"{100 * (s_full['vehicle']['accuracy'] - s_v3['vehicle']['accuracy']):.1f}", "9.1")
+    chk("models right after of 113 (%) against the internal 28 of 41 (%)", f"{int(us_hits(mb).sum())} of {mb['n']} ({pct(us_hits(mb).sum() / mb['n'])}) / {pct(28 / 41)}", "72 of 113 (63.7) / 68.3")
+    chk("held-out stratum after against the internal held-out test (points under)", f"{100 * (s_full['vehicle']['accuracy'] - hv['acc']):.1f}", "5.5")
+    want = {
+        "0": ["moves from 54.1 to 63.2 % of 4,061 devices (+9.1; macro-F1 46.4 -> 60.3)", "Models 63 -> 72 of 113, platforms 95 -> 108 of 161 (27 changed decision:",
+              "15 LARGE platforms recovered and none lost, 4 MID recovered and 2 lost, 4 SMALL lost, 2 LARGE wrong -> wrong)", "LARGE 241 -> 532 of 1,025 (23.5 -> 51.9 %; internal LARGE vehicle recall 50.6), MID 351 -> 442 of 1,274 (27.6 -> 34.7; internal",
+              "47.3), SMALL 1,606 -> 1,594 of 1,762 (91.1 -> 90.5; internal 79.2); seen 53.9 -> 64.3 % of devices, held-out 53.8 -> 58.0 %,", "absent 88.9 -> 88.9.",
+              "87.8 -> 88.9 % of devices, 86 -> 85 of 88 models: the F-150 Lightning goes from P(BEV)", "0.52 to 0.46 on 6 devices", "`ccs_honda_us` 98.3 -> 93.5 % of 230", "devices SMALL, 11 devices fewer in SMALL (10 to MID, 2 to LARGE, one back from MID), every platform still SMALL; powertrain", "`comma2k19_us` 1 of 2 SMALL and 2 of 2",
+              f"k = {US_K} s^2/m^2 (characteristic speed 35.5 m/s)", "6,657 usable drives, 78 eligible platforms", "62 train / validation platforms (423.8 h)", "MID stays the weak class (8 of 33 models", "not with a sensor (2.14)",
+              "output of 2018 openpilot's single-track vehicle model, not a sensor; 2.14, `UNDERSTEER.md`"],
+        "1.3": ["one global k fitted on", "never on the external labels", "excluded from every pooled table", "as-run numbers", "remain the primary results"],
+        "2.12": ["the same windows give 63.2 % of the devices and 72 of 113 models"],
+        "2.13": ["moves 12 of the 230 devices out of SMALL (10 to MID, 2 to LARGE) and one MID device back", "(98.3 -> 93.5 %), every platform staying SMALL", "(99.1 -> 99.6 %)"],
+        "2.14": ["relative error of 3e-8", "the 2018 model carried a k of 0.0011-0.0014", "the table above compares two models", "not an inertial sensor", "on these two cars it changes no car-level decision"],
+        "3.6": ["(2018 openpilot's vehicle-model output, not a sensor; the lab's IMU / pose yaw shows the", "Done: 3.7."],
+        "3.7": [f"one global k = {US_K} s^2/m^2 fitted on the lab's own", "IMU / pose yaw, 62 platforms, never on the external labels): full-model size device accuracy 54.1 -> 63.2 % (macro-F1 46.4 ->",
+                "60.3) against the internal held-out vehicle accuracy of 63.5 / 59.7; models 63 -> 72 of 113; platforms 95 -> 108 of 161;", "seen 53.9 -> 64.3 % of devices, held-out 53.8 -> 58.0 %, absent unchanged at 88.9 %", "transfers in aggregate once the yaw is derived consistently with training; the gain is uneven", "rather than a model limit",
+                "Device recall LARGE 23.5 -> 51.9 % (internal 50.6), MID 27.6 ->", "34.7 (internal 47.3), SMALL 91.1 -> 90.5 (internal 79.2); LARGE models 6 -> 17 of 30, MID 8 -> 8 of 33",
+                "`ccs` powertrain 87.8 -> 88.9 % of devices, 86 -> 85 of 88", "(10 to MID and 2 to LARGE, one back from MID;", "(size 48.2 -> 59.0 %, powertrain 76.4 -> 84.9 % of devices on `ccs`)", "Post hoc and read next to the as-run results, which stay primary", "against a vehicle-model yaw (not a sensor)", "MID below it"],
+        "4": ["(54.1 -> 63.2 % of devices, internal 63.5; LARGE 23.5 -> 51.9 % of devices, internal 50.6)", "MID (27.6 -> 34.7 %, internal 47.3)", "powertrain result does not move (87.8 -> 88.9 %)",
+              f"`--yaw derived-understeer --understeer-k {US_K}`", "(a > 1.1 on 32.1 %, a < 0.9", "would have tuned the input on the test data", "the 2018 comma2k19 `yawRate` is a model output"],
+        "5": ["`experiments/transfer/understeer_fit.py`", "us_heldout_compare.py", "27 runs", "`<external>/logs/review_recompute_phase3.log`"],
+    }
+    for sec, items in want.items():
+        for s in items:
+            found_in(f"{sec}", s, sec)
+    pipe = _re3.sub(r"[ \t]+", " ", (HERE_ / "CCS_PIPELINE.md").read_text())
+    for s in ("accuracy 54.1 -> 63.2 % (+9.1; macro-F1 46.4 -> 60.3; the lab's internal held-out vehicle reference is 63.5 / 59.7), models",
+              "63 -> 72 of 113, platforms right 95 -> 108 of 161 (27 changed decision: LARGE recovered 15 / lost 0, MID recovered 4 / lost 2,",
+              "SMALL lost 4, 2 LARGE wrong -> wrong), devices right SMALL 1,606 -> 1,594 of 1,762, MID 351 -> 442 of 1,274, LARGE 241 -> 532 of", "1,025 (",
+              "powertrain device accuracy 87.8 -> 88.9 % (+1.1), models 86 -> 85 of 88 (the F-150 Lightning at P(BEV) 0.52 -> 0.46), devices", "BEV 538 -> 539 of 621, ICE 1,667 -> 1,693 of 1,891",
+              "(SMALL 226 -> 215: 10 devices to MID, 2 to LARGE, one back from MID; no platform changed), powertrain 99.1 -> 99.6 %", "car-level decision changes (size 1 of 2, powertrain 2 of 2)",
+              "The correction is post hoc (motivated by the comma2k19 ratio,", "fitted on the lab's own IMU / pose yaw, never tuned on the external labels)", "output of 2018 openpilot's single-track vehicle model, not an inertial sensor",
+              "so the ratios", "below compare two models", "`--yaw derived-understeer` is the recommended option for future external decodes"):
+        chk(f"CCS_PIPELINE.md: '{s[:60]}...' present", _re3.sub(r"[ \t]+", " ", s) in pipe, True)
+    Po, Pu, y, cl = us_pair("ccs", "bev_ice", "full"); idx = np.flatnonzero(y >= 0)
+    a = us_eval(Po, y, m, idx, "vehicle", 2); b = us_eval(Pu, y, m, idx, "vehicle", 2)
+    chk("CCS_PIPELINE.md / 0: powertrain devices right BEV / ICE before -> after", f"BEV {fmt_int(us_hits(a)[0])} -> {fmt_int(us_hits(b)[0])} of {fmt_int(a['sup'][0])}, ICE {fmt_int(us_hits(a)[1])} -> {fmt_int(us_hits(b)[1])} of {fmt_int(a['sup'][1])}", "BEV 538 -> 539 of 621, ICE 1,667 -> 1,693 of 1,891")
+
+
+def sec49_us_hygiene():
+    print("\n## 49. Hygiene of the understeer step: 16-hex / 12-hex tokens, route stamps, absolute paths, ISO dates, the four-letter acronym (repository files + the three *_us work folders, names and contents); multi-decimal percentages in the new prose")
+    hex16 = _re3.compile(r"(?<![0-9a-zA-Z_])[0-9a-f]{16}(?![0-9a-zA-Z])"); hex12 = _re3.compile(r"(?<![0-9a-zA-Z_])[0-9a-f]{12}(?![0-9a-zA-Z])")
+    route1 = _re3.compile(r"\d{4}-\d{2}-\d{2}--\d{2}-\d{2}-\d{2}"); route2 = _re3.compile(r"\b[0-9a-f]{8}--[0-9a-f]{10}\b")
+    abspath = _ABSPATH_RE; iso = _re3.compile(r"\b\d{4}-\d{2}-\d{2}\b"); acr = _re3.compile(r"(?<![A-Za-z])" + "A" + "D" + "A" + "S(?![A-Za-z])", _re3.I)
+    repo_files = [HERE_ / f for f in ("RESULTS.md", "RESULTS_TABLES.md", "results_summary.json", "CCS_PIPELINE.md", "UNDERSTEER.md", "understeer_fit.py", "understeer_fit.json",
+                                       "us_heldout_compare.py", "us_heldout_compare.md", "review_recompute.py", "ccs_decode.py", "collect_scores.py", "ccs_selftest.py") if (HERE_ / f).exists()]
+    work_files = [p for ds, _ in US_PAIRS for p in (EXT / ds / "work").glob("*") if p.suffix in (".md", ".csv", ".json")]
+    flagged = 0
+    for f in repo_files + work_files:
+        t = f.read_text(errors="replace")
+        mant = _re3.compile(r"^\d+e$")      # a 16-character digit run ending in "e" is the mantissa of a float in scientific notation (JSON), not a token
+        h16 = [x for x in hex16.findall(t) if _re3.search(r"[a-f]", x) and not mant.match(x)]; h12 = [x for x in hex12.findall(t) if _re3.search(r"[a-f]", x) and not mant.match(x)]
+        rt = route1.findall(t) + route2.findall(t); ap = abspath.findall(t) if f in repo_files else []; isod = iso.findall(t) if f in repo_files else []; ac = acr.findall(t)
+        if h16 or h12 or rt or ap or isod or ac:
+            flagged += 1
+            print(f"    FLAG {f.name}: hex16 {len(h16)} hex12 {len(h12)} route stamps {len(rt)} abs paths {len(ap)} {sorted(set(ap))} iso dates {len(isod)} {sorted(set(isod))[:5]} acronym {len(ac)}")
+    names = [p.name for ds, _ in US_PAIRS for p in (EXT / ds / "work").iterdir()]
+    badn = [n for n in names if hex16.search(n) or hex12.search(n) or route1.search(n) or route2.search(n)]
+    chk("files flagged (repo + the three work folders) / work-folder names flagged", f"{flagged} of {len(repo_files) + len(work_files)} / {len(badn)} of {len(names)}", f"0 of {len(repo_files) + len(work_files)} / 0 of {len(names)}")
+    for ds, _ in US_PAIRS:
+        m = set_meta(ds); qc = set_qc(ds)
+        toks = sum(bool(hex16.search(str(x)) or hex12.search(str(x)) or route1.search(str(x)) or route2.search(str(x))) for col in ("vehicle_id", "drive_id", "model", "platform", "note") for x in m[col].unique())
+        chk(f"{ds}: meta strings with a long hex / route token; pseudonym format; qc ids pseudonymous", f"{toks}; {bool(m['vehicle_id'].str.fullmatch(r'ccs_v_[0-9a-f]{10}').all() and m['drive_id'].str.fullmatch(r'ccs_d_[0-9a-f]{10}').all())}; {bool(qc['vehicle_id'].str.fullmatch(r'ccs_v_[0-9a-f]{10}').all() and qc['drive_id'].str.fullmatch(r'ccs_d_[0-9a-f]{10}').all())}", "0; True; True")
+    t0 = sec_text("0"); i = t0.find("Understeer-corrected re-decode of the three"); j = t0.find("Phase 2 (two sets")
+    new = sec_text("2.15") + sec_text("3.7") + sec_text("1.3") + sec_text("4") + (t0[i:j] if 0 <= i < j else "")
+    pipe = (HERE_ / "CCS_PIPELINE.md").read_text(); i = pipe.find("## Understeer-corrected yaw"); j = pipe.find("## Scoring and tables")
+    new += pipe[i:j] + (HERE_ / "UNDERSTEER.md").read_text()
+    multi = sorted(set(_re3.findall(r"\d+\.\d{2,} %", new)))
+    chk("percentages with two or more decimals in 2.15 / 3.7 / 1.3 / 4 / the understeer block of 0 / CCS_PIPELINE 'Understeer-corrected yaw' / UNDERSTEER.md", multi, [])
+    chk("the four-letter acronym in that text", len(acr.findall(new)), 0)
+    pipe_n = _re3.sub(r"[ \t]+", " ", pipe)
+    chk("2.15 / 3.7 / 4 / CCS_PIPELINE say 'post hoc' and 'never' tuned on the external labels", f"{'post hoc' in sec_text('2.15')} / {'Post hoc' in sec_text('3.7')} / {'never on the external labels' in sec_text('3.7')} / {'post hoc' in pipe_n and 'never tuned on the external labels' in pipe_n}", "True / True / True / True")
+    chk("2.15 / 1.3 / CCS_PIPELINE keep the as-run numbers primary", f"{'remain the primary results' in sec_text('2.15')} / {'remain the primary results' in sec_text('1.3')} / {'stay the as-run results' in pipe_n}", "True / True / True")
+
+
+def sec50_understeer_spotcheck():
+    import json as _json
+    print("\n## 50. UNDERSTEER.md against understeer_fit.json and the scratch tables under <data-root>/tmp/understeer; the k written in CCS_PIPELINE.md / 2.15 / 1.1 / 0 against the three decode summaries")
+    fj = _json.load(open(HERE_ / "understeer_fit.json"))
+    ut = _re3.sub(r"[ \t]+", " ", (HERE_ / "UNDERSTEER.md").read_text())
+    g = lambda d, k_: d[k_]  # noqa: E731
+    k1, k2, kb, ka, a_ = fj["k_1par_train_val"], fj["k_2par_train_val"], fj["k_bin_train_val"], fj["k_1par_all_eligible"], fj["a_train_val"]
+    chk("k_global / characteristic speed", f"{fj['k_global']:.8f} / {fj['v_char_mps']:.1f}", f"{US_K} / 35.5")
+    chk("1-par train/val: hours-weighted median / plain median / IQR / w-mean / min-max (n, hours)", f"{k1['wmedian']:.6f} / {k1['median']:.6f} / {k1['q25']:.6f} - {k1['q75']:.6f} / {k1['wmean']:.6f} / {k1['min']:.6f} - {k1['max']:.6f} ({k1['n']}, {k1['hours']:.1f})", "0.000793 / 0.000837 / 0.000690 - 0.001223 / 0.000890 / 0.000201 - 0.002421 (62, 423.8)")
+    chk("2-par train/val: w-median / median / IQR / w-mean / min-max", f"{k2['wmedian']:.6f} / {k2['median']:.6f} / {k2['q25']:.6f} - {k2['q75']:.6f} / {k2['wmean']:.6f} / {k2['min']:.6f} - {k2['max']:.6f}", "0.000752 / 0.000855 / 0.000731 - 0.000985 / 0.000792 / 0.000338 - 0.001884")
+    chk("k_bin train/val: w-median / median / IQR / w-mean / min-max", f"{kb['wmedian']:.6f} / {kb['median']:.6f} / {kb['q25']:.6f} - {kb['q75']:.6f} / {kb['wmean']:.6f} / {kb['min']:.6f} - {kb['max']:.6f}", "0.000785 / 0.000833 / 0.000687 - 0.001104 / 0.000840 / 0.000376 - 0.002016")
+    chk("1-par all eligible: w-median / median / IQR / w-mean / min-max (n, hours)", f"{ka['wmedian']:.6f} / {ka['median']:.6f} / {ka['q25']:.6f} - {ka['q75']:.6f} / {ka['wmean']:.6f} / {ka['min']:.6f} - {ka['max']:.6f} ({ka['n']}, {ka['hours']:.1f})", "0.000807 / 0.000939 / 0.000690 - 0.001274 / 0.000910 / -0.000155 - 0.002505 (78, 468.9)")
+    chk("a train/val: w-median / median / IQR / range; all eligible median / range; a > 1.10 / a < 0.90 (%)", f"{a_['wmedian']:.3f} / {a_['median']:.3f} / {a_['q25']:.3f} - {a_['q75']:.3f} / {a_['min']:.3f} - {a_['max']:.3f}; {fj['a_all_eligible']['median']:.3f} / {fj['a_all_eligible']['min']:.3f} - {fj['a_all_eligible']['max']:.3f}; {pct(fj['a_frac_above_1_10'])} / {pct(fj['a_frac_below_0_90'])}", "1.046 / 1.021 / 0.955 - 1.110 / 0.827 - 1.236; 1.046 / 0.795 - 1.236; 32.1 / 10.3")
+    chk("estimators within (2-par vs k_global, %) / angle & subset variants max shift (%)", f"{100 * (fj['k_global'] - k2['wmedian']) / fj['k_global']:.1f} / {100 * max(abs(v['k_global'] - fj['k_global']) for v in fj['variants'].values()) / fj['k_global']:.1f}", "5.2 / 3.7")
+    chk("variants k_global: raw/all, offset/human (n, h), offset/das (n, h), raw/human, raw/das", f"{fj['variants']['raw/all']['k_global']:.6f}, {fj['variants']['offset/human']['k_global']:.6f} ({fj['variants']['offset/human']['n_platforms_train_val']}, {fj['variants']['offset/human']['hours_train_val']:.1f}), {fj['variants']['offset/das']['k_global']:.6f} ({fj['variants']['offset/das']['n_platforms_train_val']}, {fj['variants']['offset/das']['hours_train_val']:.1f}), {fj['variants']['raw/human']['k_global']:.6f}, {fj['variants']['raw/das']['k_global']:.6f}", "0.000822, 0.000815 (39, 151.4), 0.000787 (44, 243.2), 0.000809, 0.000798")
+    chk("Spearman k1 / k2 vs footprint, k1 vs wheelbase", f"{fj['spearman_k1_footprint']:.2f} / {fj['spearman_k2_footprint']:.2f}, {fj['spearman_k1_wheelbase']:.2f}", "-0.11 / -0.26, -0.09")
+    chk("median k1 by class (n) and by powertrain", f"SMALL {fj['k1_median_by_class']['SMALL']:.6f} ({fj['k1_n_by_class']['SMALL']}), MID {fj['k1_median_by_class']['MID']:.6f} ({fj['k1_n_by_class']['MID']}), LARGE {fj['k1_median_by_class']['LARGE']:.6f} ({fj['k1_n_by_class']['LARGE']}); " + ", ".join(f"{p} {fj['k1_median_by_powertrain'][p]:.6f}" for p in ("ICE", "PHEV", "BEV", "HEV")), "SMALL 0.001007 (35), MID 0.000867 (22), LARGE 0.000837 (21); ICE 0.000837, PHEV 0.000828, BEV 0.000957, HEV 0.001237")
+    chk("drives read / usable / skipped (no_straight, low_corr, neg_corr, no_samples); platforms lab / with steerRatio / with samples / eligible / train-val", f"{fj['n_drives']} / {fj['n_drives_usable']} / {fj['n_drives_skipped']['no_straight']}, {fj['n_drives_skipped']['low_corr']}, {fj['n_drives_skipped']['neg_corr']}, {fj['n_drives_skipped']['no_samples']}; {fj['n_platforms_lab']} / {fj['n_platforms_with_steer_ratio']} / {fj['n_platforms_with_samples']} / {fj['n_platforms_eligible']} / {fj['n_platforms_train_val']}", "7472 / 6657 / 700, 99, 2, 14; 361 / 232 / 225 / 78 / 62")
+    el = {p: v for p, v in fj["platforms"].items() if v.get("eligible")}
+    r2min = min(min(v["r2_1par"], v["r2"]) for v in el.values()); r2max = max(max(v["r2_1par"], v["r2"]) for v in el.values()); kept = [v["kept_1par"] for v in el.values()]
+    chk("eligible platforms: R^2 min-max (1-par / 2-par together), kept fraction min-max (%)", f"{r2min:.2f}-{r2max:.2f}, {100 * min(kept):.1f} - {100 * max(kept):.1f}", "0.91-1.00, 86.9 - 99.0")
+    tv = {p: v for p, v in el.items() if v["split"] in ("train", "validation")}
+    chk("k1 range train/val / all eligible (1e-3 s^2/m^2); a range all eligible", f"{1e3 * min(v['k_1par'] for v in tv.values()):.4f}-{1e3 * max(v['k_1par'] for v in tv.values()):.4f} / {1e3 * min(v['k_1par'] for v in el.values()):.4f}-{1e3 * max(v['k_1par'] for v in el.values()):.4f}; {min(v['a'] for v in el.values()):.2f}-{max(v['a'] for v in el.values()):.2f}", "0.2007-2.4212 / -0.1549-2.5049; 0.79-1.24")
+    top = sorted(tv.items(), key=lambda kv: -kv[1]["hours"])[:7]
+    chk("heaviest train/val platforms by hours", [p for p, _ in top], ["RIVIAN_R1_GEN1", "HONDA_CIVIC_BOSCH", "RIVIAN_R1", "FORD_F_150_MK14", "TESLA_MODEL_3", "HYUNDAI_TUCSON_4TH_GEN", "HYUNDAI_IONIQ_6"])
+    for p_, q in (("HONDA_ODYSSEY_5G_MMR", "0.00020"), ("HONDA_ODYSSEY", "0.00133"), ("HONDA_CIVIC_BOSCH", "0.00055"), ("HONDA_CIVIC_2022", "0.00050"), ("HONDA_CRV_5G", "0.00111"), ("TOYOTA_RAV4", "0.000837")):
+        chk(f"2.15 / UNDERSTEER.md quote k1 of {p_}", f"{fj['platforms'][p_]['k_1par']:.5f}" if len(q) == 7 else f"{fj['platforms'][p_]['k_1par']:.6f}", q)
+    # section 7 table rows and section 8 rows against the scratch tables
+    scratch = Path(str(EXT.parent)) / "tmp" / "understeer"
+    for fname, head in (("platform_table.md", "| platform |"), ("c2k_table.md", "| chunk / car |")):
+        f = scratch / fname
+        if not f.exists():
+            print(f"    ({f.name} not under <data-root>/tmp/understeer: scratch not kept; table rows checked against the JSON only)"); continue
+        rows = [ln for ln in f.read_text().splitlines() if ln.startswith("| ") and not ln.startswith(head) and not ln.startswith("|---")]
+        hit = sum(_re3.sub(r"[ \t]+", " ", ln) in ut for ln in rows)
+        chk(f"UNDERSTEER.md contains every row of {fname} verbatim", f"{hit} of {len(rows)}", f"{len(rows)} of {len(rows)}")
+    f = scratch / "fit.json"
+    if f.exists():
+        chk("understeer_fit.json equals <data-root>/tmp/understeer/fit.json", _json.load(open(f)) == fj, True)
+    f = scratch / "platform_table.csv"
+    if f.exists():
+        tab = pd.read_csv(f).set_index("platform")
+        for p_ in ("RIVIAN_R1", "HONDA_ODYSSEY", "ACURA_RDX_3G", "LEXUS_RX", "GENESIS_GV60_EV_1ST_GEN"):
+            r = tab.loc[p_]; v = fj["platforms"][p_]
+            chk(f"platform_table.csv == JSON for {p_} (k_1par, a, k, k_bin, hours, n)", f"{abs(r['k_1par'] - v['k_1par']) < 1e-12 and abs(r['a'] - v['a']) < 1e-12 and abs(r['k'] - v['k']) < 1e-12 and abs(r['k_bin'] - v['k_bin']) < 1e-12 and abs(r['hours'] - v['hours']) < 1e-9 and int(r['n']) == v['n']}", "True")
+    c1, c3 = fj["comma2k19"]["Chunk_1"], fj["comma2k19"]["Chunk_3"]
+    chk("comma2k19 segments RAV4 / Civic; 2018 model (a, k) RAV4 / Civic", f"{c1['n_segments']} / {c3['n_segments']}; {c1['model_2018']['a']:.3f}, {c1['model_2018']['k']:.6f} / {c3['model_2018']['a']:.3f}, {c3['model_2018']['k']:.6f}", "188 / 202; 0.966, 0.001144 / 0.951, 0.000621")
+    chk("yaw_is_model_test: median relative error RAV4 / Civic; implied (a, k) RAV4 / Civic", f"{c1['all']['yaw_is_model_test']['rel_err_median']:.0e} / {c3['all']['yaw_is_model_test']['rel_err_median']:.0e}; {c1['all']['yaw_is_model_test']['a']:.3f}, {c1['all']['yaw_is_model_test']['k']:.5f} / {c3['all']['yaw_is_model_test']['a']:.3f}, {c3['all']['yaw_is_model_test']['k']:.5f}", "3e-08 / 3e-08; 0.966, 0.00114 / 0.845, 0.00140")
+    rg = lambda d, v: f"{min(x['median'] for x in d[v].values()):.2f}-{max(x['median'] for x in d[v].values()):.2f}"  # noqa: E731
+    chk("ratio ranges over the bins (all segments): RAV4 uncorrected -> global_k; Civic", f"{rg(c1['all'], 'uncorrected')} -> {rg(c1['all'], 'global_k')}; {rg(c3['all'], 'uncorrected')} -> {rg(c3['all'], 'global_k')}", "0.98-2.06 -> 0.97-1.15; 0.86-2.01 -> 0.85-1.13")
+    chk("residual at 30-40 m/s with the global k: RAV4 all / Civic all / Civic subset10 (%) [UNDERSTEER.md 8 after the review: +15.3 / +12.8 / +13.3]", f"{100 * c1['all']['residual_global_k']['30-40']:+.1f} / {100 * c3['all']['residual_global_k']['30-40']:+.1f} / {100 * c3['subset10']['residual_global_k']['30-40']:+.1f}", "+15.3 / +12.8 / +13.3")
+    chk("residual below +5 % up to 20 m/s (both cars, all segments)", all(c['all']['residual_global_k'][b] < 0.05 for c in (c1, c3) for b in ("1-5", "5-10", "10-15", "15-20")), True)
+    chk("own k fitted on comma2k19 (all segments): 1-par RAV4 / Civic; 2-par RAV4 / Civic; Civic a [UNDERSTEER.md 8 after the review: 0.00106 / 0.00101; 0.00113 / 0.00138; 0.852]", f"{c1['all']['fit_on_c2k']['k_1par']:.5f} / {c3['all']['fit_on_c2k']['k_1par']:.5f}; {c1['all']['fit_on_c2k']['k']:.5f} / {c3['all']['fit_on_c2k']['k']:.5f}; {c3['all']['fit_on_c2k']['a']:.3f}", "0.00106 / 0.00101; 0.00113 / 0.00138; 0.852")
+    chk("Civic implied steerRatio from a = 0.852 (15.38 a)", f"{15.38 * c3['all']['fit_on_c2k']['a']:.1f}", "13.1")
+    for ds, _ in US_PAIRS:
+        d = _json.load(open(EXT / ds / "work" / "decode_summary.json"))
+        chk(f"{ds}: decode_summary understeer_k == the k of CCS_PIPELINE / 2.15 / 1.1 / 0 ({US_K}) == understeer_fit.json k_global rounded to 8 decimals", f"{d['understeer_k']:.8f} / {fj['k_global']:.8f}", f"{US_K} / {US_K}")
+    pipe = (HERE_ / "CCS_PIPELINE.md").read_text()
+    toks = sorted(set(_re3.findall(r"0\.00079\d*", results_text() + pipe)))
+    chk(f"RESULTS.md + CCS_PIPELINE.md: every k-like token is {US_K} (occurrences)", f"{toks} ({(results_text() + pipe).count(US_K)})", f"['{US_K}'] ({(results_text() + pipe).count(US_K)})")
+    chk("RESULTS.md: 2.15 / 1.1 / 0 / 4 / 3.7 and CCS_PIPELINE.md each quote the k at least once", all(US_K in sec_text(w) for w in ("2.15", "1.1", "0", "4", "3.7")) and US_K in pipe, True)
+
+
+def phase3c():
+    secs = {42: sec42_us_decode, 43: sec43_us_alignment, 44: sec44_us_strata, 45: sec45_us_platforms, 46: sec46_us_heldout, 47: sec47_us_mask, 48: sec48_us_prose, 49: sec49_us_hygiene, 50: sec50_understeer_spotcheck}
+    want = [int(x) for x in ARGS.sections.split(",") if int(x) in secs] if ARGS.sections else list(secs)
+    for k in want:
+        secs[k]()
+    print(f"    checks so far: {_NCHK[0]} OK / {_NCHK[1]} MISMATCH; table cells: {_NFOUND[0]} FOUND / {_NFOUND[1]} NOT FOUND")
+    return 0
+
+
+
 def phase3b():
     secs = {34: sec34_honda_decode, 35: sec35_honda_tables, 36: sec36_comma2k19, 37: sec37_pooled_3b, 38: sec38_labels_3b, 39: sec39_windows_3b, 40: sec40_hygiene_3b, 41: sec41_yaw_check}
     want = [int(x) for x in ARGS.sections.split(",") if int(x) in secs] if ARGS.sections else list(secs)
@@ -2087,6 +2666,9 @@ def phase3():
     if not ARGS.sections or any(34 <= int(x) <= 41 for x in ARGS.sections.split(",")):
         print("\n" + "-" * 100 + "\n# PHASE 3b (ccs_honda, comma2k19)\n")
         phase3b()
+    if not ARGS.sections or any(42 <= int(x) <= 50 for x in ARGS.sections.split(",")):
+        print("\n" + "-" * 100 + "\n# PHASE 3c (ccs_us, ccs_honda_us, comma2k19_us)\n")
+        phase3c()
     return 0
 
 HERE_ = Path(__file__).resolve().parent

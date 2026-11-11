@@ -1,6 +1,6 @@
 # Zero-shot transfer: generated tables
 
-Generated 10 Nov 2026 21:06 by experiments/transfer/collect_scores.py from the score__*.json / probs__*__ens__*.npz files of score.py and internal_reference.json. Accuracy and macro-F1 in percent (one decimal); 95 % intervals from the vehicle-cluster bootstrap (1,000 resamples; absent when a set has fewer than about 20 bootstrap-able clusters or one vehicle). Chance = 1 / K and the majority share.
+Generated 11 Nov 2026 05:11 by experiments/transfer/collect_scores.py from the score__*.json / probs__*__ens__*.npz files of score.py and internal_reference.json. Accuracy and macro-F1 in percent (one decimal); 95 % intervals from the vehicle-cluster bootstrap (1,000 resamples; absent when a set has fewer than about 20 bootstrap-able clusters or one vehicle). Chance = 1 / K and the majority share.
 
 ## Cross-dataset summary
 
@@ -3202,4 +3202,249 @@ Per car model, primary run (full 20-ch model (radar / stock-ACC / no lead by pla
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Honda Civic | SMALL | 4.197 |  | ICE | 1 | 21 | 196 | 61.7 | 0.48 | 48.0 | 52.4 | 0/1 | MID (0.48, 0.49, 0.02) MISS |
 | Toyota RAV4 | SMALL | 4.134 |  | ICE | 1 | 21 | 185 | 55.7 | 0.54 | 55.7 | 57.1 | 1/1 | SMALL (0.54, 0.44, 0.02) OK |
+
+## Understeer-corrected yaw re-decodes
+
+Each set re-decoded by `ccs_decode.py --yaw derived-understeer --understeer-k K` (the bicycle yaw divided by 1 + K v^2, then curvature and lateral acceleration from it; CCS_PIPELINE.md "Understeer-corrected yaw") against its original decode, scored with the same nine runs. The re-decodes are kept out of every table above. Alignment = same rows (device, drive, segment), same labels, every non-yaw channel identical (max |diff| 0 in float32, same NaN pattern), yaw group changed. Device = vehicle_id (device pseudonym); model = car model; strata as in the commaCarSegments tables; no bootstrap intervals here (the pooled score files of each set carry them).
+
+### ccs_us against ccs (K = 0.00079289)
+
+Alignment: OK over 45,763 windows; non-yaw channels max |diff| 0; yaw group max |diff| yaw_rate_radps 12.2, curv_1pm 0.175, lat_acc_mps2 853; meta columns equal except the note: yes; notes equal after the yaw field: yes.
+
+size (SMALL / MID / LARGE), original -> corrected per stratum (window / device / model levels):
+
+| run | stratum | level | units | accuracy % orig -> corr (delta) | macro-F1 % orig -> corr (delta) | recall per class % orig -> corr | units right per class orig->corr/support |
+|---|---|---|---|---|---|---|---|
+| full | all | window | 45763 | 49.6 -> 53.8 (+4.2) | 43.2 -> 51.0 (+7.8) | SMALL 78.1 -> 74.5 / MID 32.6 -> 36.8 / LARGE 20.1 -> 39.0 | SMALL 15654->14931/20036 / MID 4943->5578/15159 / LARGE 2120->4122/10568 |
+|  | all | vehicle | 4061 | 54.1 -> 63.2 (+9.1) | 46.4 -> 60.3 (+13.8) | SMALL 91.1 -> 90.5 / MID 27.6 -> 34.7 / LARGE 23.5 -> 51.9 | SMALL 1606->1594/1762 / MID 351->442/1274 / LARGE 241->532/1025 |
+|  | all | model | 113 | 55.8 -> 63.7 (+8.0) | 45.6 -> 58.7 (+13.1) | SMALL 98.0 -> 94.0 / MID 24.2 -> 24.2 / LARGE 20.0 -> 56.7 | SMALL 49->47/50 / MID 8->8/33 / LARGE 6->17/30 |
+|  | seen | window | 25667 | 53.3 -> 59.4 (+6.1) | 46.1 -> 55.9 (+9.8) | SMALL 81.3 -> 79.1 / MID 31.2 -> 35.0 / LARGE 24.8 -> 49.4 | SMALL 9868->9606/12141 / MID 2264->2540/7254 / LARGE 1557->3100/6272 |
+|  | seen | vehicle | 3199 | 53.9 -> 64.3 (+10.4) | 47.3 -> 61.8 (+14.5) | SMALL 90.8 -> 90.9 / MID 28.3 -> 34.6 / LARGE 25.8 -> 57.2 | SMALL 1220->1221/1343 / MID 281->343/992 / LARGE 223->494/864 |
+|  | seen | model | 70 | 57.1 -> 67.1 (+10.0) | 47.1 -> 61.2 (+14.1) | SMALL 96.9 -> 93.8 / MID 20.0 -> 20.0 / LARGE 27.8 -> 72.2 | SMALL 31->30/32 / MID 4->4/20 / LARGE 5->13/18 |
+|  | held-out | window | 18710 | 42.3 -> 44.7 (+2.3) | 37.1 -> 41.9 (+4.8) | SMALL 71.0 -> 65.1 / MID 33.9 -> 38.6 / LARGE 13.2 -> 23.9 | SMALL 4700->4312/6620 / MID 2663->3034/7855 / LARGE 560->1014/4235 |
+|  | held-out | vehicle | 864 | 53.8 -> 58.0 (+4.2) | 41.6 -> 50.5 (+8.9) | SMALL 91.1 -> 88.1 / MID 25.6 -> 34.8 / LARGE 13.2 -> 25.7 | SMALL 368->356/404 / MID 75->102/293 / LARGE 22->43/167 |
+|  | held-out | model | 29 | 44.8 -> 48.3 (+3.4) | 40.0 -> 48.1 (+8.1) | SMALL 100.0 -> 87.5 / MID 33.3 -> 33.3 / LARGE 11.1 -> 33.3 | SMALL 8->7/8 / MID 4->4/12 / LARGE 1->3/9 |
+|  | absent | window | 1386 | 79.7 -> 74.0 (-5.8) | 36.5 -> 33.9 (-2.5) | SMALL 85.2 -> 79.5 / MID 32.0 -> 8.0 / LARGE 4.9 -> 13.1 | SMALL 1086->1013/1275 / MID 16->4/50 / LARGE 3->8/61 |
+|  | absent | vehicle | 36 | 88.9 -> 88.9 (+0.0) | 31.4 -> 48.0 (+16.6) | SMALL 100.0 -> 96.9 / MID 0.0 -> 0.0 / LARGE 0.0 -> 33.3 | SMALL 32->31/32 / MID 0->0/1 / LARGE 0->1/3 |
+|  | absent | model | 14 | 71.4 -> 78.6 (+7.1) | 27.8 -> 45.7 (+17.9) | SMALL 100.0 -> 100.0 / MID 0.0 -> 0.0 / LARGE 0.0 -> 33.3 | SMALL 10->10/10 / MID 0->0/1 / LARGE 0->1/3 |
+| V1 | all | window | 45763 | 47.5 -> 54.1 (+6.6) | 42.3 -> 51.1 (+8.8) | SMALL 64.2 -> 71.4 / MID 47.1 -> 47.9 / LARGE 16.4 -> 30.4 | SMALL 12872->14305/20036 / MID 7141->7255/15159 / LARGE 1734->3209/10568 |
+|  | all | vehicle | 4061 | 48.2 -> 59.0 (+10.9) | 44.2 -> 57.8 (+13.6) | SMALL 60.7 -> 74.9 / MID 54.6 -> 50.9 / LARGE 18.8 -> 41.9 | SMALL 1069->1320/1762 / MID 695->649/1274 / LARGE 193->429/1025 |
+|  | all | model | 113 | 54.0 -> 60.2 (+6.2) | 46.2 -> 55.9 (+9.7) | SMALL 78.0 -> 88.0 / MID 54.5 -> 36.4 / LARGE 13.3 -> 40.0 | SMALL 39->44/50 / MID 18->12/33 / LARGE 4->12/30 |
+|  | seen | window | 25667 | 48.7 -> 57.4 (+8.8) | 44.4 -> 55.1 (+10.8) | SMALL 63.8 -> 72.9 / MID 47.1 -> 46.1 / LARGE 21.3 -> 40.5 | SMALL 7740->8854/12141 / MID 3414->3347/7254 / LARGE 1339->2541/6272 |
+|  | seen | vehicle | 3199 | 48.1 -> 59.7 (+11.6) | 45.1 -> 59.1 (+14.0) | SMALL 60.8 -> 75.6 / MID 54.2 -> 49.4 / LARGE 21.4 -> 46.9 | SMALL 817->1015/1343 / MID 538->490/992 / LARGE 185->405/864 |
+|  | seen | model | 70 | 54.3 -> 67.1 (+12.9) | 48.7 -> 64.0 (+15.3) | SMALL 75.0 -> 90.6 / MID 50.0 -> 35.0 / LARGE 22.2 -> 61.1 | SMALL 24->29/32 / MID 10->7/20 / LARGE 4->11/18 |
+|  | held-out | window | 18710 | 44.3 -> 48.5 (+4.2) | 37.8 -> 43.3 (+5.5) | SMALL 63.4 -> 68.4 / MID 47.2 -> 49.6 / LARGE 9.3 -> 15.6 | SMALL 4196->4526/6620 / MID 3707->3895/7855 / LARGE 393->660/4235 |
+|  | held-out | vehicle | 864 | 47.8 -> 55.8 (+8.0) | 38.8 -> 48.7 (+9.8) | SMALL 58.4 -> 71.8 / MID 56.3 -> 55.6 / LARGE 7.2 -> 17.4 | SMALL 236->290/404 / MID 165->163/293 / LARGE 12->29/167 |
+|  | held-out | model | 29 | 48.3 -> 41.4 (-6.9) | 38.0 -> 37.2 (-0.8) | SMALL 75.0 -> 75.0 / MID 66.7 -> 41.7 / LARGE 0.0 -> 11.1 | SMALL 6->6/8 / MID 8->5/12 / LARGE 0->1/9 |
+|  | absent | window | 1386 | 69.1 -> 68.3 (-0.9) | 32.5 -> 35.4 (+2.9) | SMALL 73.4 -> 72.5 / MID 40.0 -> 26.0 / LARGE 3.3 -> 13.1 | SMALL 936->925/1275 / MID 20->13/50 / LARGE 2->8/61 |
+|  | absent | vehicle | 36 | 75.0 -> 75.0 (+0.0) | 29.0 -> 29.0 (+0.0) | SMALL 84.4 -> 84.4 / MID 0.0 -> 0.0 / LARGE 0.0 -> 0.0 | SMALL 27->27/32 / MID 0->0/1 / LARGE 0->0/3 |
+|  | absent | model | 14 | 64.3 -> 64.3 (+0.0) | 27.3 -> 27.3 (+0.0) | SMALL 90.0 -> 90.0 / MID 0.0 -> 0.0 / LARGE 0.0 -> 0.0 | SMALL 9->9/10 / MID 0->0/1 / LARGE 0->0/3 |
+
+bev_ice (BEV / ICE), original -> corrected per stratum (window / device / model levels):
+
+| run | stratum | level | units | accuracy % orig -> corr (delta) | macro-F1 % orig -> corr (delta) | recall per class % orig -> corr | units right per class orig->corr/support |
+|---|---|---|---|---|---|---|---|
+| full | all | window | 29585 | 81.8 -> 83.6 (+1.8) | 74.7 -> 76.4 (+1.7) | BEV 78.7 -> 77.6 / ICE 82.5 -> 84.9 | BEV 4268->4208/5420 / ICE 19937->20519/24165 |
+|  | all | vehicle | 2512 | 87.8 -> 88.9 (+1.1) | 84.7 -> 85.9 (+1.2) | BEV 86.6 -> 86.8 / ICE 88.2 -> 89.5 | BEV 538->539/621 / ICE 1667->1693/1891 |
+|  | all | model | 88 | 97.7 -> 96.6 (-1.1) | 96.0 -> 93.8 (-2.2) | BEV 93.3 -> 86.7 / ICE 98.6 -> 98.6 | BEV 14->13/15 / ICE 72->72/73 |
+|  | seen | window | 15640 | 82.2 -> 84.0 (+1.8) | 75.9 -> 77.7 (+1.8) | BEV 81.5 -> 80.4 / ICE 82.4 -> 84.9 | BEV 2433->2401/2985 / ICE 10424->10742/12655 |
+|  | seen | vehicle | 2041 | 86.1 -> 87.4 (+1.3) | 83.5 -> 84.8 (+1.3) | BEV 86.4 -> 86.4 / ICE 86.0 -> 87.8 | BEV 471->471/545 / ICE 1287->1313/1496 |
+|  | seen | model | 51 | 98.0 -> 98.0 (+0.0) | 96.5 -> 96.5 (+0.0) | BEV 88.9 -> 88.9 / ICE 100.0 -> 100.0 | BEV 8->8/9 / ICE 42->42/42 |
+|  | held-out | window | 13070 | 81.2 -> 82.9 (+1.6) | 73.9 -> 75.4 (+1.5) | BEV 75.4 -> 74.2 / ICE 82.6 -> 84.9 | BEV 1835->1807/2435 / ICE 8784->9027/10635 |
+|  | held-out | vehicle | 463 | 94.2 -> 94.4 (+0.2) | 90.0 -> 90.5 (+0.4) | BEV 86.2 -> 87.5 / ICE 95.8 -> 95.8 | BEV 69->70/80 / ICE 367->367/383 |
+|  | held-out | model | 27 | 100.0 -> 96.3 (-3.7) | 100.0 -> 94.3 (-5.7) | BEV 100.0 -> 83.3 / ICE 100.0 -> 100.0 | BEV 6->5/6 / ICE 21->21/21 |
+|  | absent | window | 875 | 83.3 -> 85.7 (+2.4) | - -> - (-) | BEV - -> - / ICE 83.3 -> 85.7 | BEV 0->0/0 / ICE 729->750/875 |
+|  | absent | vehicle | 22 | 95.5 -> 95.5 (+0.0) | - -> - (-) | BEV - -> - / ICE 95.5 -> 95.5 | BEV 0->0/0 / ICE 21->21/22 |
+|  | absent | model | 10 | 90.0 -> 90.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 90.0 -> 90.0 | BEV 0->0/0 / ICE 9->9/10 |
+| V1 | all | window | 29585 | 63.1 -> 71.1 (+8.1) | 58.8 -> 65.1 (+6.4) | BEV 83.9 -> 81.1 / ICE 58.4 -> 68.9 | BEV 4548->4394/5420 / ICE 14113->16650/24165 |
+|  | all | vehicle | 2512 | 76.4 -> 84.9 (+8.5) | 74.0 -> 82.0 (+8.0) | BEV 92.9 -> 90.8 / ICE 71.0 -> 83.0 | BEV 577->564/621 / ICE 1343->1569/1891 |
+|  | all | model | 88 | 72.7 -> 80.7 (+8.0) | 67.9 -> 73.8 (+5.9) | BEV 100.0 -> 86.7 / ICE 67.1 -> 79.5 | BEV 15->13/15 / ICE 49->58/73 |
+|  | seen | window | 15640 | 68.6 -> 77.9 (+9.3) | 64.5 -> 72.7 (+8.2) | BEV 90.3 -> 89.2 / ICE 63.5 -> 75.3 | BEV 2694->2662/2985 / ICE 8038->9528/12655 |
+|  | seen | vehicle | 2041 | 79.0 -> 87.6 (+8.6) | 77.1 -> 85.5 (+8.4) | BEV 94.3 -> 93.2 / ICE 73.4 -> 85.6 | BEV 514->508/545 / ICE 1098->1280/1496 |
+|  | seen | model | 51 | 80.4 -> 92.2 (+11.8) | 75.4 -> 88.4 (+13.0) | BEV 100.0 -> 100.0 / ICE 76.2 -> 90.5 | BEV 9->9/9 / ICE 32->38/42 |
+|  | held-out | window | 13070 | 56.7 -> 63.3 (+6.5) | 53.0 -> 57.5 (+4.6) | BEV 76.1 -> 71.1 / ICE 52.3 -> 61.4 | BEV 1854->1732/2435 / ICE 5562->6535/10635 |
+|  | held-out | vehicle | 463 | 66.3 -> 73.4 (+7.1) | 60.8 -> 65.7 (+4.8) | BEV 83.8 -> 75.0 / ICE 62.7 -> 73.1 | BEV 67->60/80 / ICE 240->280/383 |
+|  | held-out | model | 27 | 63.0 -> 63.0 (+0.0) | 61.6 -> 58.3 (-3.3) | BEV 100.0 -> 66.7 / ICE 52.4 -> 61.9 | BEV 6->4/6 / ICE 11->13/21 |
+|  | absent | window | 875 | 58.6 -> 67.1 (+8.5) | - -> - (-) | BEV - -> - / ICE 58.6 -> 67.1 | BEV 0->0/0 / ICE 513->587/875 |
+|  | absent | vehicle | 22 | 59.1 -> 77.3 (+18.2) | - -> - (-) | BEV - -> - / ICE 59.1 -> 77.3 | BEV 0->0/0 / ICE 13->17/22 |
+|  | absent | model | 10 | 60.0 -> 70.0 (+10.0) | - -> - (-) | BEV - -> - / ICE 60.0 -> 70.0 | BEV 0->0/0 / ICE 6->7/10 |
+
+size: platform decision flips of the full model (mean probability over the platform's labelled windows -> arg-max): 27 of 161 platforms changed; platforms right 95 -> 108; MID platforms recovered 4 / lost 2; LARGE platforms recovered 15 / lost 0; devices right before -> after per class: SMALL 1606 -> 1594 of 1762, MID 351 -> 442 of 1274, LARGE 241 -> 532 of 1025.
+
+| platform | model | stratum | label | veh | win | decision before -> after | P(true) before -> after | devices right before -> after | kind |
+|---|---|---|---|---|---|---|---|---|---|
+| ACURA_ILX | Acura ILX | seen | SMALL | 1 | 4 | SMALL -> LARGE | 0.40 -> 0.27 | 1 -> 0 | lost |
+| CADILLAC_ESCALADE | Cadillac Escalade | absent | LARGE | 1 | 1 | SMALL -> LARGE | 0.19 -> 0.96 | 0 -> 1 | recovered |
+| CADILLAC_ESCALADE_ESV_2019 | Cadillac Escalade ESV | seen | LARGE | 1 | 8 | SMALL -> LARGE | 0.08 -> 0.72 | 0 -> 1 | recovered |
+| CHRYSLER_PACIFICA_2018 | Chrysler Pacifica | seen | LARGE | 18 | 338 | SMALL -> LARGE | 0.22 -> 0.46 | 2 -> 15 | recovered |
+| CHRYSLER_PACIFICA_2018_HYBRID | Chrysler Pacifica | seen | LARGE | 29 | 378 | SMALL -> LARGE | 0.17 -> 0.39 | 0 -> 16 | recovered |
+| CHRYSLER_PACIFICA_2019_HYBRID | Chrysler Pacifica | seen | LARGE | 96 | 388 | SMALL -> LARGE | 0.20 -> 0.43 | 18 -> 55 | recovered |
+| CHRYSLER_PACIFICA_2020 | Chrysler Pacifica | seen | LARGE | 41 | 371 | SMALL -> LARGE | 0.24 -> 0.49 | 7 -> 29 | recovered |
+| FORD_ESCAPE_MK4_5 | Ford Escape | seen | SMALL | 1 | 1 | SMALL -> MID | 0.58 -> 0.38 | 1 -> 0 | lost |
+| FORD_MAVERICK_MK1 | Ford Maverick | seen | LARGE | 32 | 382 | SMALL -> LARGE | 0.21 -> 0.40 | 2 -> 19 | recovered |
+| FORD_MUSTANG_MACH_E_MK1 | Ford Mustang Mach-E | seen | MID | 12 | 305 | MID -> SMALL | 0.46 -> 0.35 | 7 -> 5 | lost |
+| FORD_RANGER_MK2 | Ford Ranger | held-out | LARGE | 3 | 82 | SMALL -> LARGE | 0.38 -> 0.55 | 2 -> 3 | recovered |
+| GENESIS_G80 | Genesis G80 | held-out | LARGE | 7 | 304 | SMALL -> LARGE | 0.26 -> 0.46 | 1 -> 7 | recovered |
+| HONDA_ACCORD | Honda Accord | seen | MID | 120 | 390 | SMALL -> MID | 0.45 -> 0.44 | 55 -> 61 | recovered |
+| HONDA_PILOT | Honda Pilot | seen | LARGE | 77 | 396 | SMALL -> MID | 0.09 -> 0.19 | 2 -> 5 | wrong->wrong |
+| HYUNDAI_GENESIS | Hyundai Genesis | seen | LARGE | 13 | 279 | MID -> LARGE | 0.24 -> 0.47 | 2 -> 9 | recovered |
+| HYUNDAI_IONIQ_6 | Hyundai Ioniq 6 | seen | MID | 24 | 280 | SMALL -> MID | 0.43 -> 0.47 | 7 -> 9 | recovered |
+| HYUNDAI_PALISADE | Hyundai Palisade | seen | LARGE | 63 | 379 | SMALL -> LARGE | 0.30 -> 0.47 | 24 -> 46 | recovered |
+| HYUNDAI_SANTA_FE_HEV_2022 | Hyundai Santa Fe | held-out | MID | 8 | 262 | SMALL -> MID | 0.42 -> 0.47 | 4 -> 6 | recovered |
+| JEEP_GRAND_CHEROKEE | Jeep Grand Cherokee | held-out | SMALL | 21 | 803 | SMALL -> MID | 0.50 -> 0.37 | 16 -> 7 | lost |
+| JEEP_GRAND_CHEROKEE_2019 | Jeep Grand Cherokee | held-out | SMALL | 15 | 635 | SMALL -> MID | 0.47 -> 0.34 | 10 -> 4 | lost |
+| KIA_CARNIVAL_4TH_GEN | Kia Carnival | held-out | LARGE | 15 | 477 | SMALL -> MID | 0.07 -> 0.12 | 0 -> 0 | wrong->wrong |
+| KIA_SORENTO | Kia Sorento | held-out | MID | 1 | 10 | SMALL -> MID | 0.45 -> 0.51 | 0 -> 1 | recovered |
+| MAZDA_CX9_2021 | Mazda CX-9 | seen | LARGE | 13 | 362 | SMALL -> LARGE | 0.36 -> 0.49 | 4 -> 10 | recovered |
+| RIVIAN_R1 | Rivian R1T/R1S | seen | LARGE | 96 | 386 | SMALL -> LARGE | 0.33 -> 0.49 | 39 -> 62 | recovered |
+| TESLA_MODEL_3 | Tesla Model 3 | seen | MID | 28 | 352 | MID -> SMALL | 0.53 -> 0.46 | 17 -> 11 | lost |
+| TOYOTA_SIENNA_4TH_GEN | Toyota Sienna | held-out | LARGE | 32 | 879 | SMALL -> LARGE | 0.34 -> 0.49 | 15 -> 27 | recovered |
+| VOLKSWAGEN_CRAFTER_MK2 | Volkswagen Crafter | seen | LARGE | 4 | 115 | SMALL -> LARGE | 0.28 -> 0.56 | 0 -> 3 | recovered |
+
+bev_ice: platform decision flips of the full model (mean probability over the platform's labelled windows -> arg-max): 1 of 108 platforms changed; platforms right 106 -> 105; devices right before -> after per class: BEV 538 -> 539 of 621, ICE 1667 -> 1693 of 1891.
+
+| platform | model | stratum | label | veh | win | decision before -> after | P(true) before -> after | devices right before -> after | kind |
+|---|---|---|---|---|---|---|---|---|---|
+| FORD_F_150_LIGHTNING_MK1 | Ford F-150 Lightning | held-out | BEV | 6 | 113 | BEV -> ICE | 0.52 -> 0.46 | 4 -> 4 | lost |
+
+Reference: the full model with the yaw group masked, both decodes (the mask hides the only channels that changed, so the two runs should agree):
+
+| task | level | units | original: acc / F1 % | corrected: acc / F1 % | probabilities equal |
+|---|---|---|---|---|---|
+| size | window | 45763 | 35.6 / 34.8 | 35.6 / 34.8 | yes |
+| size | vehicle | 4061 | 39.8 / 37.5 | 39.8 / 37.5 | yes |
+| size | model | 113 | 38.1 / 33.3 | 38.1 / 33.3 | yes |
+| bev_ice | window | 29585 | 82.4 / 75.2 | 82.4 / 75.2 | yes |
+| bev_ice | vehicle | 2512 | 86.2 / 83.1 | 86.2 / 83.1 | yes |
+| bev_ice | model | 88 | 98.9 / 97.9 | 98.9 / 97.9 | yes |
+
+Summary: ccs_us (K = 0.00079289) against ccs: size: device accuracy 54.1 -> 63.2 (+9.1), model level 63/113 -> 72/113, platforms right 95 -> 108; bev_ice: device accuracy 87.8 -> 88.9 (+1.1), model level 86/88 -> 85/88, platforms right 106 -> 105; yaw-masked runs agree: yes
+
+### ccs_honda_us against ccs_honda (K = 0.00079289)
+
+Alignment: OK over 2,132 windows; non-yaw channels max |diff| 0; yaw group max |diff| yaw_rate_radps 0.153, curv_1pm 0.00516, lat_acc_mps2 5.81; meta columns equal except the note: yes; notes equal after the yaw field: yes.
+
+size (SMALL / MID / LARGE), original -> corrected per stratum (window / device / model levels):
+
+| run | stratum | level | units | accuracy % orig -> corr (delta) | macro-F1 % orig -> corr (delta) | recall per class % orig -> corr | units right per class orig->corr/support |
+|---|---|---|---|---|---|---|---|
+| full | all | window | 2132 | 83.8 -> 81.0 (-2.8) | - -> - (-) | SMALL 83.8 -> 81.0 / MID - -> - / LARGE - -> - | SMALL 1786->1727/2132 / MID 0->0/0 / LARGE 0->0/0 |
+|  | all | vehicle | 230 | 98.3 -> 93.5 (-4.8) | - -> - (-) | SMALL 98.3 -> 93.5 / MID - -> - / LARGE - -> - | SMALL 226->215/230 / MID 0->0/0 / LARGE 0->0/0 |
+|  | all | model | 5 | 100.0 -> 100.0 (+0.0) | - -> - (-) | SMALL 100.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 5->5/5 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | window | 1932 | 83.5 -> 80.5 (-3.0) | - -> - (-) | SMALL 83.5 -> 80.5 / MID - -> - / LARGE - -> - | SMALL 1613->1556/1932 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | vehicle | 224 | 98.2 -> 93.3 (-4.9) | - -> - (-) | SMALL 98.2 -> 93.3 / MID - -> - / LARGE - -> - | SMALL 220->209/224 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | model | 3 | 100.0 -> 100.0 (+0.0) | - -> - (-) | SMALL 100.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 3->3/3 / MID 0->0/0 / LARGE 0->0/0 |
+|  | held-out | window | 152 | 90.1 -> 90.1 (+0.0) | - -> - (-) | SMALL 90.1 -> 90.1 / MID - -> - / LARGE - -> - | SMALL 137->137/152 / MID 0->0/0 / LARGE 0->0/0 |
+|  | held-out | vehicle | 5 | 100.0 -> 100.0 (+0.0) | - -> - (-) | SMALL 100.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 5->5/5 / MID 0->0/0 / LARGE 0->0/0 |
+|  | held-out | model | 1 | 100.0 -> 100.0 (+0.0) | - -> - (-) | SMALL 100.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 1->1/1 / MID 0->0/0 / LARGE 0->0/0 |
+|  | absent | window | 48 | 75.0 -> 70.8 (-4.2) | - -> - (-) | SMALL 75.0 -> 70.8 / MID - -> - / LARGE - -> - | SMALL 36->34/48 / MID 0->0/0 / LARGE 0->0/0 |
+|  | absent | vehicle | 1 | 100.0 -> 100.0 (+0.0) | - -> - (-) | SMALL 100.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 1->1/1 / MID 0->0/0 / LARGE 0->0/0 |
+|  | absent | model | 1 | 100.0 -> 100.0 (+0.0) | - -> - (-) | SMALL 100.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 1->1/1 / MID 0->0/0 / LARGE 0->0/0 |
+| V1 | all | window | 2132 | 49.6 -> 59.3 (+9.7) | - -> - (-) | SMALL 49.6 -> 59.3 / MID - -> - / LARGE - -> - | SMALL 1057->1264/2132 / MID 0->0/0 / LARGE 0->0/0 |
+|  | all | vehicle | 230 | 47.8 -> 66.1 (+18.3) | - -> - (-) | SMALL 47.8 -> 66.1 / MID - -> - / LARGE - -> - | SMALL 110->152/230 / MID 0->0/0 / LARGE 0->0/0 |
+|  | all | model | 5 | 60.0 -> 80.0 (+20.0) | - -> - (-) | SMALL 60.0 -> 80.0 / MID - -> - / LARGE - -> - | SMALL 3->4/5 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | window | 1932 | 49.7 -> 59.5 (+9.7) | - -> - (-) | SMALL 49.7 -> 59.5 / MID - -> - / LARGE - -> - | SMALL 961->1149/1932 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | vehicle | 224 | 48.2 -> 65.6 (+17.4) | - -> - (-) | SMALL 48.2 -> 65.6 / MID - -> - / LARGE - -> - | SMALL 108->147/224 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | model | 3 | 66.7 -> 66.7 (+0.0) | - -> - (-) | SMALL 66.7 -> 66.7 / MID - -> - / LARGE - -> - | SMALL 2->2/3 / MID 0->0/0 / LARGE 0->0/0 |
+|  | held-out | window | 152 | 42.1 -> 53.9 (+11.8) | - -> - (-) | SMALL 42.1 -> 53.9 / MID - -> - / LARGE - -> - | SMALL 64->82/152 / MID 0->0/0 / LARGE 0->0/0 |
+|  | held-out | vehicle | 5 | 20.0 -> 80.0 (+60.0) | - -> - (-) | SMALL 20.0 -> 80.0 / MID - -> - / LARGE - -> - | SMALL 1->4/5 / MID 0->0/0 / LARGE 0->0/0 |
+|  | held-out | model | 1 | 0.0 -> 100.0 (+100.0) | - -> - (-) | SMALL 0.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 0->1/1 / MID 0->0/0 / LARGE 0->0/0 |
+|  | absent | window | 48 | 66.7 -> 68.8 (+2.1) | - -> - (-) | SMALL 66.7 -> 68.8 / MID - -> - / LARGE - -> - | SMALL 32->33/48 / MID 0->0/0 / LARGE 0->0/0 |
+|  | absent | vehicle | 1 | 100.0 -> 100.0 (+0.0) | - -> - (-) | SMALL 100.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 1->1/1 / MID 0->0/0 / LARGE 0->0/0 |
+|  | absent | model | 1 | 100.0 -> 100.0 (+0.0) | - -> - (-) | SMALL 100.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 1->1/1 / MID 0->0/0 / LARGE 0->0/0 |
+
+bev_ice (BEV / ICE), original -> corrected per stratum (window / device / model levels):
+
+| run | stratum | level | units | accuracy % orig -> corr (delta) | macro-F1 % orig -> corr (delta) | recall per class % orig -> corr | units right per class orig->corr/support |
+|---|---|---|---|---|---|---|---|
+| full | all | window | 2084 | 89.3 -> 90.5 (+1.3) | - -> - (-) | BEV - -> - / ICE 89.3 -> 90.5 | BEV 0->0/0 / ICE 1860->1887/2084 |
+|  | all | vehicle | 229 | 99.1 -> 99.6 (+0.4) | - -> - (-) | BEV - -> - / ICE 99.1 -> 99.6 | BEV 0->0/0 / ICE 227->228/229 |
+|  | all | model | 4 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 4->4/4 |
+|  | seen | window | 1932 | 89.1 -> 90.4 (+1.3) | - -> - (-) | BEV - -> - / ICE 89.1 -> 90.4 | BEV 0->0/0 / ICE 1721->1747/1932 |
+|  | seen | vehicle | 224 | 99.1 -> 99.6 (+0.4) | - -> - (-) | BEV - -> - / ICE 99.1 -> 99.6 | BEV 0->0/0 / ICE 222->223/224 |
+|  | seen | model | 3 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 3->3/3 |
+|  | held-out | window | 152 | 91.4 -> 92.1 (+0.7) | - -> - (-) | BEV - -> - / ICE 91.4 -> 92.1 | BEV 0->0/0 / ICE 139->140/152 |
+|  | held-out | vehicle | 5 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 5->5/5 |
+|  | held-out | model | 1 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 1->1/1 |
+| V1 | all | window | 2084 | 72.7 -> 80.6 (+7.9) | - -> - (-) | BEV - -> - / ICE 72.7 -> 80.6 | BEV 0->0/0 / ICE 1515->1679/2084 |
+|  | all | vehicle | 229 | 86.0 -> 96.1 (+10.0) | - -> - (-) | BEV - -> - / ICE 86.0 -> 96.1 | BEV 0->0/0 / ICE 197->220/229 |
+|  | all | model | 4 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 4->4/4 |
+|  | seen | window | 1932 | 72.2 -> 80.2 (+8.0) | - -> - (-) | BEV - -> - / ICE 72.2 -> 80.2 | BEV 0->0/0 / ICE 1394->1549/1932 |
+|  | seen | vehicle | 224 | 86.6 -> 96.0 (+9.4) | - -> - (-) | BEV - -> - / ICE 86.6 -> 96.0 | BEV 0->0/0 / ICE 194->215/224 |
+|  | seen | model | 3 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 3->3/3 |
+|  | held-out | window | 152 | 79.6 -> 85.5 (+5.9) | - -> - (-) | BEV - -> - / ICE 79.6 -> 85.5 | BEV 0->0/0 / ICE 121->130/152 |
+|  | held-out | vehicle | 5 | 60.0 -> 100.0 (+40.0) | - -> - (-) | BEV - -> - / ICE 60.0 -> 100.0 | BEV 0->0/0 / ICE 3->5/5 |
+|  | held-out | model | 1 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 1->1/1 |
+
+size: platform decision flips of the full model (mean probability over the platform's labelled windows -> arg-max): 0 of 9 platforms changed; platforms right 9 -> 9; MID platforms recovered 0 / lost 0; LARGE platforms recovered 0 / lost 0; devices right before -> after per class: SMALL 226 -> 215 of 230, MID 0 -> 0 of 0, LARGE 0 -> 0 of 0.
+
+bev_ice: platform decision flips of the full model (mean probability over the platform's labelled windows -> arg-max): 0 of 8 platforms changed; platforms right 8 -> 8; devices right before -> after per class: BEV 0 -> 0 of 0, ICE 227 -> 228 of 229.
+
+Reference: the full model with the yaw group masked, both decodes (the mask hides the only channels that changed, so the two runs should agree):
+
+| task | level | units | original: acc / F1 % | corrected: acc / F1 % | probabilities equal |
+|---|---|---|---|---|---|
+| size | window | 2132 | 20.2 / - | 20.2 / - | yes |
+| size | vehicle | 230 | 14.3 / - | 14.3 / - | yes |
+| size | model | 5 | 0.0 / - | 0.0 / - | yes |
+| bev_ice | window | 2084 | 87.5 / - | 87.5 / - | yes |
+| bev_ice | vehicle | 229 | 98.7 / - | 98.7 / - | yes |
+| bev_ice | model | 4 | 100.0 / - | 100.0 / - | yes |
+
+Summary: ccs_honda_us (K = 0.00079289) against ccs_honda: size: device accuracy 98.3 -> 93.5 (-4.8), model level 5/5 -> 5/5, platforms right 9 -> 9; bev_ice: device accuracy 99.1 -> 99.6 (+0.4), model level 4/4 -> 4/4, platforms right 8 -> 8; yaw-masked runs agree: yes
+
+### comma2k19_us against comma2k19 (K = 0.00079289)
+
+Alignment: OK over 381 windows; non-yaw channels max |diff| 0; yaw group max |diff| yaw_rate_radps 0.14, curv_1pm 0.00447, lat_acc_mps2 4.38; meta columns equal except the note: yes; notes equal after the yaw field: yes.
+
+size (SMALL / MID / LARGE), original -> corrected per stratum (window / device / model levels):
+
+| run | stratum | level | units | accuracy % orig -> corr (delta) | macro-F1 % orig -> corr (delta) | recall per class % orig -> corr | units right per class orig->corr/support |
+|---|---|---|---|---|---|---|---|
+| full | all | window | 381 | 51.7 -> 56.7 (+5.0) | - -> - (-) | SMALL 51.7 -> 56.7 / MID - -> - / LARGE - -> - | SMALL 197->216/381 / MID 0->0/0 / LARGE 0->0/0 |
+|  | all | vehicle | 2 | 50.0 -> 50.0 (+0.0) | - -> - (-) | SMALL 50.0 -> 50.0 / MID - -> - / LARGE - -> - | SMALL 1->1/2 / MID 0->0/0 / LARGE 0->0/0 |
+|  | all | model | 2 | 50.0 -> 50.0 (+0.0) | - -> - (-) | SMALL 50.0 -> 50.0 / MID - -> - / LARGE - -> - | SMALL 1->1/2 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | window | 381 | 51.7 -> 56.7 (+5.0) | - -> - (-) | SMALL 51.7 -> 56.7 / MID - -> - / LARGE - -> - | SMALL 197->216/381 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | vehicle | 2 | 50.0 -> 50.0 (+0.0) | - -> - (-) | SMALL 50.0 -> 50.0 / MID - -> - / LARGE - -> - | SMALL 1->1/2 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | model | 2 | 50.0 -> 50.0 (+0.0) | - -> - (-) | SMALL 50.0 -> 50.0 / MID - -> - / LARGE - -> - | SMALL 1->1/2 / MID 0->0/0 / LARGE 0->0/0 |
+| V1 | all | window | 381 | 44.4 -> 48.0 (+3.7) | - -> - (-) | SMALL 44.4 -> 48.0 / MID - -> - / LARGE - -> - | SMALL 169->183/381 / MID 0->0/0 / LARGE 0->0/0 |
+|  | all | vehicle | 2 | 0.0 -> 100.0 (+100.0) | - -> - (-) | SMALL 0.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 0->2/2 / MID 0->0/0 / LARGE 0->0/0 |
+|  | all | model | 2 | 0.0 -> 100.0 (+100.0) | - -> - (-) | SMALL 0.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 0->2/2 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | window | 381 | 44.4 -> 48.0 (+3.7) | - -> - (-) | SMALL 44.4 -> 48.0 / MID - -> - / LARGE - -> - | SMALL 169->183/381 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | vehicle | 2 | 0.0 -> 100.0 (+100.0) | - -> - (-) | SMALL 0.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 0->2/2 / MID 0->0/0 / LARGE 0->0/0 |
+|  | seen | model | 2 | 0.0 -> 100.0 (+100.0) | - -> - (-) | SMALL 0.0 -> 100.0 / MID - -> - / LARGE - -> - | SMALL 0->2/2 / MID 0->0/0 / LARGE 0->0/0 |
+
+bev_ice (BEV / ICE), original -> corrected per stratum (window / device / model levels):
+
+| run | stratum | level | units | accuracy % orig -> corr (delta) | macro-F1 % orig -> corr (delta) | recall per class % orig -> corr | units right per class orig->corr/support |
+|---|---|---|---|---|---|---|---|
+| full | all | window | 381 | 70.9 -> 78.0 (+7.1) | - -> - (-) | BEV - -> - / ICE 70.9 -> 78.0 | BEV 0->0/0 / ICE 270->297/381 |
+|  | all | vehicle | 2 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 2->2/2 |
+|  | all | model | 2 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 2->2/2 |
+|  | seen | window | 381 | 70.9 -> 78.0 (+7.1) | - -> - (-) | BEV - -> - / ICE 70.9 -> 78.0 | BEV 0->0/0 / ICE 270->297/381 |
+|  | seen | vehicle | 2 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 2->2/2 |
+|  | seen | model | 2 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 2->2/2 |
+| V1 | all | window | 381 | 60.4 -> 89.5 (+29.1) | - -> - (-) | BEV - -> - / ICE 60.4 -> 89.5 | BEV 0->0/0 / ICE 230->341/381 |
+|  | all | vehicle | 2 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 2->2/2 |
+|  | all | model | 2 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 2->2/2 |
+|  | seen | window | 381 | 60.4 -> 89.5 (+29.1) | - -> - (-) | BEV - -> - / ICE 60.4 -> 89.5 | BEV 0->0/0 / ICE 230->341/381 |
+|  | seen | vehicle | 2 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 2->2/2 |
+|  | seen | model | 2 | 100.0 -> 100.0 (+0.0) | - -> - (-) | BEV - -> - / ICE 100.0 -> 100.0 | BEV 0->0/0 / ICE 2->2/2 |
+
+size: platform decision flips of the full model (mean probability over the platform's labelled windows -> arg-max): 0 of 2 platforms changed; platforms right 1 -> 1; MID platforms recovered 0 / lost 0; LARGE platforms recovered 0 / lost 0; devices right before -> after per class: SMALL 1 -> 1 of 2, MID 0 -> 0 of 0, LARGE 0 -> 0 of 0.
+
+bev_ice: platform decision flips of the full model (mean probability over the platform's labelled windows -> arg-max): 0 of 2 platforms changed; platforms right 2 -> 2; devices right before -> after per class: BEV 0 -> 0 of 0, ICE 2 -> 2 of 2.
+
+Reference: the full model with the yaw group masked, both decodes (the mask hides the only channels that changed, so the two runs should agree):
+
+| task | level | units | original: acc / F1 % | corrected: acc / F1 % | probabilities equal |
+|---|---|---|---|---|---|
+| size | window | 381 | 3.4 / - | 3.4 / - | yes |
+| size | vehicle | 2 | 0.0 / - | 0.0 / - | yes |
+| size | model | 2 | 0.0 / - | 0.0 / - | yes |
+| bev_ice | window | 381 | 78.0 / - | 78.0 / - | yes |
+| bev_ice | vehicle | 2 | 100.0 / - | 100.0 / - | yes |
+| bev_ice | model | 2 | 100.0 / - | 100.0 / - | yes |
+
+Summary: comma2k19_us (K = 0.00079289) against comma2k19: size: device accuracy 50.0 -> 50.0 (+0.0), model level 1/2 -> 1/2, platforms right 1 -> 1; bev_ice: device accuracy 100.0 -> 100.0 (+0.0), model level 2/2 -> 2/2, platforms right 2 -> 2; yaw-masked runs agree: yes
 

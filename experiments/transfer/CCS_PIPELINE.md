@@ -131,14 +131,18 @@ workers (`nice -n 10`); the budget list (49,563) ~ 4.5 h. Memory: X is 2.9 GB fl
    ICE 30,563, HEV 17,330, PHEV 2,488, FCEV 299, unknown 4,337.
 8. Identifiers: `select.txt`, `select_budget.txt`, `select_summary.json`, `shared_dongles.txt` and `database.json`
    stay in `$EXT/ccs/` (device and route ids); the decoder writes pseudonyms only; the two markdown reports carry counts.
-9. Understeer bias of the derived yaw (found on comma2k19, whose 2018 logs carry a measured `carState.yawRate`; it
-   concerns `ccs`, `ccs_honda` and `comma2k19` alike): the bicycle-model yaw of gap 1 matches the measured one at low
-   speed and overestimates it with speed, ratio derived / measured 0.98 / 0.87 at 1-5 m/s (RAV4 / Civic), 1.13 / 1.03 at
+9. Understeer bias of the derived yaw (found on comma2k19, whose 2018 logs carry a `carState.yawRate`; that field is the
+   output of 2018 openpilot's single-track vehicle model, not an inertial sensor - `understeer_fit.py`'s `yaw_is_model_test`
+   reproduces it from the same steering angle and speed to a relative error of 3e-8, UNDERSTEER.md section 9 - so the ratios
+   below compare two models, and the evidence that the lab's models see the same bias is the lab's own IMU / pose yaw, on
+   which the 1 + k v^2 shape appears on 78 platforms; the bias concerns `ccs`, `ccs_honda` and `comma2k19` alike): the
+   bicycle-model yaw of gap 1 matches the logged one at low
+   speed and overestimates it with speed, ratio derived / logged 0.98 / 0.87 at 1-5 m/s (RAV4 / Civic), 1.13 / 1.03 at
    10-15, 1.54 / 1.53 at 20-25, 1.85 / 1.78 at 25-30, 2.06 / 2.01 at 30-40 (correlation 0.999, same sign), i.e. about
    1 + k v^2 with k ~ 0.001 s^2/m^2, the understeer gradient the kinematic model ignores. Yaw, curvature and lateral
    acceleration are therefore 1.5-2x too large on highway windows relative to the lab's IMU / pose yaw. Remedy: the
    `--yaw derived-understeer --understeer-k K` option and the re-decode of the three sets as `ccs_us`, `ccs_honda_us`,
-   `comma2k19_us` (section "Understeer-corrected yaw" below; RESULTS.md section 4). Verified by the
+   `comma2k19_us` (section "Understeer-corrected yaw" below, with the result; RESULTS.md 2.15 and 3.7). Verified by the
    review with `comma2k19_yaw_check.py` (lab venv, `$PY`) over all 381 windows: per-bin medians within 0.03 of these values, slopes
    1.00 / 1.13 / 1.54 / 1.82 / 2.08 (RAV4) and 0.88 / 1.02 / 1.47 / 1.76 / 2.07 (Civic), k 0.0009-0.0010; the bicycle model
    recomputed from the logged steering angle and speed gives the same ratios (`yaw_check.json`, `yaw_check_all.json` in the work
@@ -394,7 +398,7 @@ rows; every pre-existing table is unchanged except those pooled totals (checked 
 ## Understeer-corrected yaw (`ccs_us`, `ccs_honda_us`, `comma2k19_us`)
 
 **Formula.** The default `--yaw derived` is the kinematic bicycle model, yaw = v tan(angle / steerRatio) / wheelbase (known gap
-9: it overestimates the measured yaw rate by about 1 + k v^2). `--yaw derived-understeer --understeer-k K` divides it by the
+9: it overestimates the lab's IMU / pose yaw, and the yaw 2018 openpilot's vehicle model logged on comma2k19, by about 1 + k v^2). `--yaw derived-understeer --understeer-k K` divides it by the
 linear single-track steady-state factor,
 
     yaw_us = v tan(steer_angle / steerRatio) / (wheelbase (1 + K v^2)),      K in s^2/m^2
@@ -411,6 +415,10 @@ and `yaw = derived-understeer`, `understeer_k`, `yaw_formula`, `yaw_sources` in 
 byte-identical to the previous script: the five verification segments decoded with the edited script give the same sha1 for
 `windows.npz` and `meta.parquet` as `$EXT/ccs_sample/work/` and the copies `$EXT/ccs/work/sample_windows.npz` /
 `sample_meta.parquet` (checked 10 Nov 2026).
+
+**Fit of K.** The global value is K = 0.00079289 s^2/m^2 (hours-weighted median of the one-parameter k over the 62 train /
+validation lab platforms, 423.8 h; `understeer_fit.py`, numbers in `understeer_fit.json`); method, spread, per-platform table,
+comma2k19 validation and caveats in `UNDERSTEER.md`. The three re-decodes use exactly this K.
 
 **Smoke (K = 0.001, two comma2k19 segments per car, the fastest and a mixed-speed one).** Corrected and original yaw against the
 logged 2018 `carState.yawRate` matched to the decoder grid by nearest time (sample 0 excluded; least-squares slope through the
@@ -461,6 +469,25 @@ changed), scores it with the nine runs, checks the alignment result, the read-ba
 the flip bookkeeping and the masked-run identity, verifies that two misaligned copies (rows permuted; one speed sample changed)
 are refused, and runs the collector twice (with and without the synthetic pair registered): everything before the understeer
 section must be byte-identical.
+
+**Result (11 Nov 2026; RESULTS.md 2.15 and 3.7, the full tables in the collector section).** The three re-decodes ran with
+K = 0.00079289 (`ccs_us` 10,444 s = 2.9 h, `ccs_honda_us` 591 s, `comma2k19_us` 184 s, 6 workers) with the same accounting as
+their originals (`ccs_us` 49,563 found -> 47,006 decoded / 2,557 skipped -> 45,763 windows; 2,132 and 381 windows on the other
+two); the alignment check passed on all three (same rows and labels, every non-yaw channel with max |diff| 0, the yaw-masked
+runs of both decodes identical) and `ccs_selftest.py` passes with the pair. `ccs_us` against `ccs`, full models: size device
+accuracy 54.1 -> 63.2 % (+9.1; macro-F1 46.4 -> 60.3; the lab's internal held-out vehicle reference is 63.5 / 59.7), models
+63 -> 72 of 113, platforms right 95 -> 108 of 161 (27 changed decision: LARGE recovered 15 / lost 0, MID recovered 4 / lost 2,
+SMALL lost 4, 2 LARGE wrong -> wrong), devices right SMALL 1,606 -> 1,594 of 1,762, MID 351 -> 442 of 1,274, LARGE 241 -> 532 of
+1,025 (the four Pacifica platforms, Palisade, CX-9, Sienna 4th gen, Rivian R1, Maverick, Ranger, G80, Hyundai Genesis, both
+Escalades and the Crafter come back; the Honda Odyssey / Pilot / Ridgeline, Carnival, Atlas, Explorer and G90 / GV80 do not);
+powertrain device accuracy 87.8 -> 88.9 % (+1.1), models 86 -> 85 of 88 (the F-150 Lightning at P(BEV) 0.52 -> 0.46), devices
+BEV 538 -> 539 of 621, ICE 1,667 -> 1,693 of 1,891. `ccs_honda_us` against `ccs_honda`: size 98.3 -> 93.5 % of 230 devices
+(SMALL 226 -> 215: 10 devices to MID, 2 to LARGE, one back from MID; no platform changed), powertrain 99.1 -> 99.6 %. `comma2k19_us` against `comma2k19`: no
+car-level decision changes (size 1 of 2, powertrain 2 of 2). The correction is post hoc (motivated by the comma2k19 ratio,
+fitted on the lab's own IMU / pose yaw, never tuned on the external labels); the original decodes stay the as-run results of
+RESULTS.md 2.12-2.14 and `--yaw derived-understeer` is the recommended option for future external decodes; the `*_us` sets
+stay out of every pooled table. Remaining: the +15 % residual at 30-40 m/s, the geometry scale a of a third of the platforms
+(UNDERSTEER.md section 5), the sample-0 and oncoming-lead artefacts of gap 10.
 
 ## Scoring and tables
 

@@ -1346,7 +1346,7 @@ def main(out_dir: Path | str | None = None) -> int:
     L += yaw_correction_tables(out)
     out_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "RESULTS_TABLES.md").write_text("\n".join(L) + "\n")
-    (out_dir / "results_summary.json").write_text(json.dumps(_round_floats(out), indent=1, default=lambda o: round(float(o), 6) if isinstance(o, np.floating) else str(o)))
+    (out_dir / "results_summary.json").write_text(json.dumps(_round_floats(out), separators=(",", ":"), default=lambda o: round(float(o), 6) if isinstance(o, np.floating) else str(o)))
     print(f"wrote {out_dir / 'RESULTS_TABLES.md'} and results_summary.json")
     return 0
 
