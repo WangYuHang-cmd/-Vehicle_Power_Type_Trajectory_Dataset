@@ -11,6 +11,8 @@ dataset cannot provide. Variants (recipe ids):
                          curv_1pm, lat_acc_mps2, steer_pressed               (commaSteeringControl-like inputs)
   V2 longitudinal-only:  v_mps, a_mps2, standstill, das_enabled, lead group   (ULTra-AV / OpenACC / UGA / microSIM)
   V3 speed-only:         v_mps, a_mps2, standstill                            (Yuan Tesla, VED, one-vehicle OpenACC)
+  V4 no pedal flags:     all 20 inputs except gas_pressed and brake_pressed   (internal ablation, no external set: how much
+                         of the decision rests on the driver's pedal use, e.g. one-pedal BEV driving)
 Outputs follow the published layout with the tag prefix `transfer`: checkpoints <data-root>/experiments/ckpt/
 transfer__<task>__<arch>__<Vk>__s<seed>.pt (cfg["channels"] = the list) and results <data-root>/experiments/results/
 <tag>.json + <tag>_probs.npz (test_full window probabilities), which the transfer scorer loads by tag. Finished runs
@@ -53,6 +55,11 @@ VARIANTS = {
     "V3": dict(name="speed-only", channels=["v_mps", "a_mps2", "standstill"],
                masked="everything but speed, acceleration and the standstill flag (no automation flag, no lead, no lateral channels, no pedals)",
                datasets="Yuan et al. Tesla Model 3, VED, OpenACC one-vehicle campaign"),
+    "V4": dict(name="no pedal flags", channels=["v_mps", "a_mps2", "steer_angle_deg", "steer_rate_degps", "steer_torque_norm",
+                                                "yaw_rate_radps", "curv_1pm", "lat_acc_mps2", "steer_pressed", "standstill", "das_enabled",
+                                                *LEAD],
+               masked="only the two pedal flags (gas_pressed, brake_pressed)",
+               datasets="none (internal ablation: how much of the decision rests on the driver's pedal use)"),
 }
 # diagnostics (size task, seed 0 only): attribute the V2 < V3 anomaly; `kwargs` override the recipe's kwargs
 DIAGNOSTICS = {
@@ -80,6 +87,17 @@ NOTES = {
           "91.0, -6.1 / -4.8 / -1.8; BEV recall 78.4, ICE 95.9): the lead group adds nothing to the powertrain decision, the loss "
           "against the full model is the missing pedal flags. Speed-only external sets (Yuan Tesla, VED, one-vehicle OpenACC) are "
           "therefore meaningful for the powertrain task and only indicative for size.",
+    "V4": "Masking only the two pedal flags leaves the size task unchanged (54.5 / 67.0 / 57.6 window / drive / vehicle against "
+          "53.2 / 67.1 / 60.0; the human-only window score rises from 47.8 to 51.2), so size does not rest on the pedals. For "
+          "BEV vs ICE the 18-channel model falls to 62.2 / 65.0 / 67.2 (-17.7 / -28.0 / -25.6), far below the 3-channel "
+          "speed-only variant V3 (73.8 / 88.1 / 91.0) although it sees a superset of V3's inputs. Its validation score stays at "
+          "74.7 (the validation split shares 53 of its 56 car models with training) while the window score on the held-out "
+          "car models falls to 62.2, a gap that neither the full model (79.3 / 79.9) nor V3 (74.4 / 73.8) shows: without the "
+          "pedal flags the network fits the training car models through the channels that identify them (steering geometry "
+          "and torque scale, lead sensor, automation flag; see the last reading note) instead of the powertrain. The pedal "
+          "flags therefore carry the powertrain cue that transfers to unseen car models (deceleration without a brake "
+          "application, i.e. regenerative or one-pedal driving), the BEV vs ICE headline (93.0 drive-level) rests on them, "
+          "and the motion-only reference for BEV vs ICE is V3 (88.1 drive, 91.0 vehicle), not V4.",
 }
 READING = [
     "* The variants reuse the final recipes unchanged (same kwargs, same fixed epoch counts chosen for the 20-channel models, two "
@@ -149,13 +167,14 @@ def _cell(vals: list[float], ref: float | None = None) -> str:
 
 
 def render(tasks: list[str], variants: list[str], seeds: list[int], final_seeds: tuple[int, ...] = (0, 1, 2)) -> str:
-    L = ["# Channel-subset variants of the final models (our data, held-out car models)", "", "Written 9 Nov 2026 by experiments/transfer/train_variants.py --render.", "",
+    L = ["# Channel-subset variants of the final models (our data, held-out car models)", "",
+         "Written 9 Nov 2026 by experiments/transfer/train_variants.py --render; pedal-flag ablation V4 added 16 Nov 2026.", "",
          "Macro-F1 in percent on the `split_platform` test split (car models held out), mean ± std over seeds; in brackets the "
          "difference to the full model. `window` = one prediction per 60-s window (`test_full`), `drive` = mean class probability "
          "over the windows of a drive, `vehicle` = the same over all test drives of a vehicle (docs/PROTOCOLS.md). The full "
          "models are the final runs of experiments/final_manifest.json (3 seeds, the numbers of experiments/RESULTS.md); every "
-         "variant re-trains the same recipe with the same fixed epoch count and kwargs, seeds "
-         + ", ".join(map(str, seeds)) + ", with every channel outside its list set to NaN (= the missing value 0) on train, "
+         "variant re-trains the same recipe with the same fixed epoch count and kwargs (seeds 0 and 1 for V1-V3, 0-2 for V4; the "
+         "last column gives the count), with every channel outside its list set to NaN (= the missing value 0) on train, "
          "validation and test (`experiments.train.run(channels=...)`). Chance level is about 33 (size) and 50 (BEV vs ICE).", "",
          "| variant | inputs kept | masked |", "|---|---|---|"]
     for vk in variants:

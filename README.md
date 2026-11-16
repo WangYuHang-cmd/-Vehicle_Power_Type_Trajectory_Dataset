@@ -157,6 +157,12 @@ cell and by distance of the footprint to the class thresholds.
 features with code (`experiments/llm_features/`, one module per feature, built by `llm_features_build.py` from the
 verified proposals), which were computed for every window (`llm_features_compute.py`) and evaluated with the same
 classifiers and protocols as the plain statistics (`llm_features_eval.py`).
+`experiments/transfer/VARIANTS.md` retrains the two final recipes with reduced input sets
+(`experiments/transfer/train_variants.py`): lateral + speed, longitudinal-only, speed-only, and the pedal-flag ablation V4
+(every input except the accelerator and brake pressed flags). Size is unchanged without the pedal flags; BEV vs ICE falls
+from 93.0 to 65.0 drive-level macro-F1 because the network then fits the training car models, while speed, acceleration
+and standstill alone keep 88.1 (91.0 per vehicle). The zero-shot transfer study on public datasets is in
+`experiments/transfer/RESULTS.md`.
 
 ## Paper
 

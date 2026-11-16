@@ -1,14 +1,15 @@
 # Channel-subset variants of the final models (our data, held-out car models)
 
-Written 9 Nov 2026 by experiments/transfer/train_variants.py --render.
+Written 9 Nov 2026 by experiments/transfer/train_variants.py --render; pedal-flag ablation V4 added 16 Nov 2026.
 
-Macro-F1 in percent on the `split_platform` test split (car models held out), mean ± std over seeds; in brackets the difference to the full model. `window` = one prediction per 60-s window (`test_full`), `drive` = mean class probability over the windows of a drive, `vehicle` = the same over all test drives of a vehicle (docs/PROTOCOLS.md). The full models are the final runs of experiments/final_manifest.json (3 seeds, the numbers of experiments/RESULTS.md); every variant re-trains the same recipe with the same fixed epoch count and kwargs, seeds 0, 1, with every channel outside its list set to NaN (= the missing value 0) on train, validation and test (`experiments.train.run(channels=...)`). Chance level is about 33 (size) and 50 (BEV vs ICE).
+Macro-F1 in percent on the `split_platform` test split (car models held out), mean ± std over seeds; in brackets the difference to the full model. `window` = one prediction per 60-s window (`test_full`), `drive` = mean class probability over the windows of a drive, `vehicle` = the same over all test drives of a vehicle (docs/PROTOCOLS.md). The full models are the final runs of experiments/final_manifest.json (3 seeds, the numbers of experiments/RESULTS.md); every variant re-trains the same recipe with the same fixed epoch count and kwargs (seeds 0 and 1 for V1-V3, 0-2 for V4; the last column gives the count), with every channel outside its list set to NaN (= the missing value 0) on train, validation and test (`experiments.train.run(channels=...)`). Chance level is about 33 (size) and 50 (BEV vs ICE).
 
 | variant | inputs kept | masked |
 |---|---|---|
 | V1 lateral + speed (10 of 20) | `v_mps, a_mps2, standstill, das_enabled, steer_angle_deg, steer_rate_degps, yaw_rate_radps, curv_1pm, lat_acc_mps2, steer_pressed` | lead group, steering torque, gas / brake pedal flags; external sets: commaSteeringControl |
 | V2 longitudinal-only (11 of 20) | `v_mps, a_mps2, standstill, das_enabled, lead_valid, lead_d_m, lead_v_rel_mps, lead_speed_mps, lead_a_slope_mps2, thw_s, ttc_s` | every lateral channel (steering angle / rate / torque, yaw rate, curvature, lateral acceleration), steer_pressed, pedal flags; external sets: ULTra-AV, OpenACC platoons, UGA EV platoon, microSIM-ACC |
 | V3 speed-only (3 of 20) | `v_mps, a_mps2, standstill` | everything but speed, acceleration and the standstill flag (no automation flag, no lead, no lateral channels, no pedals); external sets: Yuan et al. Tesla Model 3, VED, OpenACC one-vehicle campaign |
+| V4 no pedal flags (18 of 20) | `v_mps, a_mps2, steer_angle_deg, steer_rate_degps, steer_torque_norm, yaw_rate_radps, curv_1pm, lat_acc_mps2, steer_pressed, standstill, das_enabled, lead_valid, lead_d_m, lead_v_rel_mps, lead_speed_mps, lead_a_slope_mps2, thw_s, ttc_s` | only the two pedal flags (gas_pressed, brake_pressed); external sets: none (internal ablation: how much of the decision rests on the driver's pedal use) |
 
 ## size (SMALL / MID / LARGE), bi-GRU recipe S9, 11 epochs
 
@@ -18,6 +19,7 @@ Macro-F1 in percent on the `split_platform` test split (car models held out), me
 | V1 lateral + speed | 10 | 54.5 ± 0.7 (+1.3) | 51.6 ± 0.4 (+1.5) | 53.7 ± 0.5 (+5.9) | 66.1 ± 0.9 (−1.0) | 65.2 ± 0.3 (+3.5) | 59.5 ± 1.6 (−0.5) | 61.3 ± 1.0 (+0.5) | 2 |
 | V2 longitudinal-only | 11 | 34.8 ± 0.0 (−18.4) | 33.3 ± 0.0 (−16.8) | 33.4 ± 0.1 (−14.5) | 33.4 ± 0.4 (−33.7) | 36.0 ± 0.1 (−25.6) | 33.2 ± 0.0 (−26.9) | 38.5 ± 0.0 (−22.3) | 2 |
 | V3 speed-only | 3 | 40.7 ± 0.7 (−12.5) | 40.2 ± 0.6 (−9.9) | 41.3 ± 0.4 (−6.6) | 45.3 ± 0.9 (−21.7) | 46.7 ± 0.8 (−15.0) | 45.7 ± 0.9 (−14.4) | 48.9 ± 0.6 (−11.9) | 2 |
+| V4 no pedal flags | 18 | 54.5 ± 0.1 (+1.3) | 51.4 ± 0.2 (+1.3) | 51.2 ± 0.5 (+3.4) | 67.0 ± 0.4 (−0.0) | 65.3 ± 0.1 (+3.6) | 57.6 ± 1.0 (−2.4) | 60.4 ± 0.8 (−0.3) | 3 |
 
 Per-class recall of the drive-level decision (`drive full`, mean over seeds):
 
@@ -27,6 +29,7 @@ Per-class recall of the drive-level decision (`drive full`, mean over seeds):
 | V1 lateral + speed | 83.7 | 49.5 | 62.5 |
 | V2 longitudinal-only | 70.6 | 10.8 | 22.1 |
 | V3 speed-only | 72.7 | 37.2 | 25.5 |
+| V4 no pedal flags | 83.7 | 55.7 | 59.1 |
 
 ## BEV vs ICE, 1-D ResNet recipe B5, 7 epochs
 
@@ -36,6 +39,7 @@ Per-class recall of the drive-level decision (`drive full`, mean over seeds):
 | V1 lateral + speed | 10 | 67.3 ± 0.0 (−12.6) | 68.6 ± 0.3 (−11.6) | 66.6 ± 0.7 (−16.6) | 74.2 ± 0.5 (−18.7) | 69.8 ± 0.5 (−18.9) | 74.2 ± 1.0 (−18.6) | 73.4 ± 0.0 (−6.0) | 2 |
 | V2 longitudinal-only | 11 | 73.0 ± 0.4 (−6.9) | 72.3 ± 0.2 (−7.9) | 71.2 ± 0.7 (−12.0) | 88.8 ± 0.3 (−4.1) | 83.8 ± 0.7 (−4.9) | 89.8 ± 0.7 (−3.0) | 71.3 ± 0.2 (−8.0) | 2 |
 | V3 speed-only | 3 | 73.8 ± 0.1 (−6.1) | 72.5 ± 0.2 (−7.7) | 72.2 ± 0.5 (−11.0) | 88.1 ± 0.2 (−4.8) | 85.2 ± 0.3 (−3.4) | 91.0 ± 0.0 (−1.8) | 74.4 ± 0.2 (−4.9) | 2 |
+| V4 no pedal flags | 18 | 62.2 ± 1.2 (−17.7) | 64.7 ± 1.1 (−15.4) | 61.8 ± 0.7 (−21.4) | 65.0 ± 1.4 (−28.0) | 64.9 ± 0.7 (−23.8) | 67.2 ± 2.8 (−25.6) | 74.7 ± 0.1 (−4.6) | 3 |
 
 Per-class recall of the drive-level decision (`drive full`, mean over seeds):
 
@@ -45,6 +49,7 @@ Per-class recall of the drive-level decision (`drive full`, mean over seeds):
 | V1 lateral + speed | 71.6 | 77.5 |
 | V2 longitudinal-only | 78.3 | 97.1 |
 | V3 speed-only | 78.4 | 95.9 |
+| V4 no pedal flags | 63.0 | 67.8 |
 
 ## Diagnostics (size task, seed 0): why longitudinal-only (V2) scores below speed-only (V3)
 
@@ -63,6 +68,7 @@ Same recipe (S9) unless stated; one seed, so differences below about 2 points ar
 * **V1 lateral + speed**: Nothing is lost for the size task (54.5 / 66.1 / 59.5 window / drive / vehicle against 53.2 / 67.1 / 60.0; the human-only window score even rises by 6 points), so the size signal lives in the lateral channels (steering geometry at a given speed and yaw) and the lead, torque and pedal groups are dispensable for it. For BEV vs ICE the variant loses the pedal flags, i.e. the direct view of deceleration without a brake application (regenerative braking), and drops to 67.3 / 74.2 / 74.2 (-12.6 / -18.7 / -18.6); both classes suffer (drive-level recall BEV 71.6, ICE 77.5), so commaSteeringControl powertrain numbers must be read against roughly 74, not 93.
 * **V2 longitudinal-only**: For the size task the variant is at chance (34.8 / 33.4 / 33.2; drive-level recall MID 10.8, LARGE 22.1): without the lateral channels the recipe cannot learn size, and the lead group and the automation flag make it worse than the speed-only inputs (diagnostics below), so size results on longitudinal-only external sets are not interpretable with this variant; use V3 as the reference there. For BEV vs ICE most of the accuracy survives (73.0 / 88.8 / 89.8, -6.9 / -4.1 / -3.0): what is lost is BEV recall at the drive level (78.3 against 87.9, ICE unchanged at 97.1), the share of BEV drives whose regenerative deceleration is not visible without the pedal flags.
 * **V3 speed-only**: Speed and acceleration alone keep a weak but real size signal (40.7 / 45.3 / 45.7, chance 33; SMALL 72.7, MID 37.2, LARGE 25.5 drive-level recall), and for BEV vs ICE they keep nearly everything the longitudinal set keeps (73.8 / 88.1 / 91.0, -6.1 / -4.8 / -1.8; BEV recall 78.4, ICE 95.9): the lead group adds nothing to the powertrain decision, the loss against the full model is the missing pedal flags. Speed-only external sets (Yuan Tesla, VED, one-vehicle OpenACC) are therefore meaningful for the powertrain task and only indicative for size.
+* **V4 no pedal flags**: Masking only the two pedal flags leaves the size task unchanged (54.5 / 67.0 / 57.6 window / drive / vehicle against 53.2 / 67.1 / 60.0; the human-only window score rises from 47.8 to 51.2), so size does not rest on the pedals. For BEV vs ICE the 18-channel model falls to 62.2 / 65.0 / 67.2 (-17.7 / -28.0 / -25.6), far below the 3-channel speed-only variant V3 (73.8 / 88.1 / 91.0) although it sees a superset of V3's inputs. Its validation score stays at 74.7 (the validation split shares 53 of its 56 car models with training) while the window score on the held-out car models falls to 62.2, a gap that neither the full model (79.3 / 79.9) nor V3 (74.4 / 73.8) shows: without the pedal flags the network fits the training car models through the channels that identify them (steering geometry and torque scale, lead sensor, automation flag; see the last reading note) instead of the powertrain. The pedal flags therefore carry the powertrain cue that transfers to unseen car models (deceleration without a brake application, i.e. regenerative or one-pedal driving), the BEV vs ICE headline (93.0 drive-level) rests on them, and the motion-only reference for BEV vs ICE is V3 (88.1 drive, 91.0 vehicle), not V4.
 
 ## Reading external results with these numbers
 
