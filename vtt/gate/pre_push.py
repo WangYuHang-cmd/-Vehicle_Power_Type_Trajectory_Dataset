@@ -1,7 +1,8 @@
 """Pre-push gate for the public code repository (GitHub export).
 
 Checks on a git repository directory: forbidden file types among tracked files and in the whole object history
-(.ipynb .pyc .parquet .npz .npy .pt .csv .log, except sample/**, vtt/specs_data/*.csv and tests/fixtures/**), blobs
+(.ipynb .pyc .parquet .npz .npy .pt .csv .log, except sample/**, vtt/specs_data/*.csv, tests/fixtures/** and the CSV
+source data of the manuscript's figures, paper/figure_source/source_data/**/*.csv, whose text is scanned like any file), blobs
 over 2 MB, data directories (private / work / release / .cache) as path components, the text rules of
 vtt.gate.rules on every tracked text file and every text blob of every commit (`git rev-list --all --objects`),
 with NO allow-list for anything under tests/, author / committer e-mails against the private forbidden tokens,
@@ -13,6 +14,21 @@ and docs prose the coordinate words are not a leak and the rule is applied to na
 CSV headers and the column names of tracked parquet files (the synthetic sample). Every identifier rule (HEX16,
 HEX12, ROUTE_DATE, ROUTE_NUM, PATHS, VIN, ANON_AUTH, ACRONYM, FORBIDDEN, EXACT) and the soft rules (ISO_DATE, EMAIL)
 stay on all text, tests/ included. The release gate (vtt.gate.scan) is unchanged: COORD applies to all its text.
+
+PDF files (tracked and in history; recognised by the %PDF- header at the start of the file, or anywhere in the first
+KB of a file named *.pdf) are scanned through five views together: the page text (pdftotext), the document
+information including custom keys (pdfinfo -custom), the XMP metadata packet of the catalog (pdfinfo -meta), the raw
+file bytes with every stream body removed (uncompressed object dictionaries, trailers, bytes after %%EOF and incremental
+updates), and the inflated bodies of the streams that hold objects or metadata rather than drawings: object streams
+(/Type /ObjStm: link annotations and URIs, outlines, the info dictionaries pdfTeX copies from included figures),
+/Type /Metadata streams at any level and /Type /EmbeddedFile attachments. Page content and image streams are left
+out; their compressed bytes otherwise match the e-mail and VIN patterns at random. Fail closed: a PDF the tools cannot
+read, any PDF when poppler is missing, an encrypted PDF (/Encrypt), and one of those object or metadata streams that is
+not plain FlateDecode or does not inflate are findings (PDF_UNREADABLE, PDF_ENCRYPTED). A PDF without any page text
+is reported as a warning so a person looks at it. The CSV exemption under paper/figure_source/source_data/ requires valid UTF-8 text
+(anything else is an UNREADABLE finding). Geodata files (.geojson .gpx .kml) are forbidden types except the pinned
+Natural Earth outline of the manuscript's map figure. Suffix checks ignore case. The CSV exemption and the PDF views were
+approved by the repository owner on 16 Nov 2026.
 """
 from __future__ import annotations
 
@@ -20,6 +36,7 @@ import argparse
 import json
 import os
 import posixpath
+import re
 import subprocess
 import sys
 from pathlib import Path, PurePosixPath
@@ -32,9 +49,13 @@ from vtt.gate import rules as R
 from vtt.gate import scan as SC
 from vtt.gate.rules import Finding, Report, gate_mask
 
-FORBIDDEN_SUFFIXES = (".ipynb", ".pyc", ".parquet", ".npz", ".npy", ".pt", ".csv", ".log")
+FORBIDDEN_SUFFIXES = (".ipynb", ".pyc", ".parquet", ".npz", ".npy", ".pt", ".csv", ".log", ".geojson", ".gpx", ".kml")
 EXEMPT_PREFIXES = ("sample/", "tests/fixtures/")
 EXEMPT_CSV_DIR = "vtt/specs_data"
+EXEMPT_CSV_PREFIXES = ("paper/figure_source/source_data/",)    # the plotted data behind the manuscript's figures
+# the one geodata file: Natural Earth 1:110m admin-0 outlines (public domain) behind the map figure, pinned by content
+PINNED_FILES = {"paper/figure_source/source_data/teaser_C/ne_110m_admin0_countries.geojson":
+                "6866c877d39cba9c357620878839b336d569f8c662d3cfab4cb1dbe2d39c977f"}
 MAX_BLOB_BYTES = 2 * 1024 * 1024
 BAD_DIR_COMPONENTS = frozenset({"private", "work", "release", ".cache"})
 IDENTITY_CONST_NAMES = ("MISFILED_DONGLE_DIRS", "LAB_DONGLES", "T0_EXTRA_IDENTITIES", "CONFLICTING_DUPLICATE_CLIPS")
@@ -53,12 +74,25 @@ def tracked_files(repo: Path) -> list[str]:
     return sorted(p for p in out.split("\0") if p)
 
 
+def exempt_csv(path: str) -> bool:
+    """A figure-source CSV (exempt from the type rule, but it must be readable UTF-8 text)."""
+    return path.startswith(EXEMPT_CSV_PREFIXES) and path.lower().endswith(".csv")
+
+
 def is_exempt(path: str) -> bool:
-    return path.startswith(EXEMPT_PREFIXES) or (posixpath.dirname(path) == EXEMPT_CSV_DIR and path.endswith(".csv"))
+    low = path.lower()
+    return (path.startswith(EXEMPT_PREFIXES) or (posixpath.dirname(path) == EXEMPT_CSV_DIR and low.endswith(".csv"))
+            or exempt_csv(path) or path in PINNED_FILES)
 
 
 def forbidden_type(path: str) -> bool:
-    return path.endswith(FORBIDDEN_SUFFIXES) and not is_exempt(path)
+    return path.lower().endswith(FORBIDDEN_SUFFIXES) and not is_exempt(path)
+
+
+def pinned_mismatch(path: str, data: bytes) -> bool:
+    """A pinned file whose content is not the pinned content (the exemption covers exactly one version)."""
+    import hashlib
+    return path in PINNED_FILES and hashlib.sha256(data).hexdigest() != PINNED_FILES[path]
 
 
 def bad_dir(path: str) -> bool:
@@ -68,6 +102,112 @@ def bad_dir(path: str) -> bool:
 
 def is_text(data: bytes) -> bool:
     return b"\0" not in data[:TEXT_PROBE]
+
+
+UNREADABLE_PDF = "\x00PDF_UNREADABLE"          # sentinel returned by scan_text (never valid text)
+ENCRYPTED_PDF = "\x00PDF_ENCRYPTED"
+UNREADABLE_TEXT = "\x00UNREADABLE"
+STREAM_BODY = re.compile(rb"stream\r?\n.*?endstream", re.S)
+
+
+def is_pdf(data: bytes, path: str = "") -> bool:
+    """%PDF- at the start of the file (after optional whitespace / BOM); for *.pdf names anywhere in the first KB."""
+    head = data[:1024]
+    if head.lstrip(b"\xef\xbb\xbf \t\r\n").startswith(b"%PDF-"):
+        return True
+    return path.lower().endswith(".pdf") and b"%PDF-" in head
+
+
+STREAM_OBJ = re.compile(rb"<<(.{0,4000}?)>>\s*stream\r?\n", re.S)
+KEEP_STREAM = re.compile(rb"/Type\s*/(ObjStm|Metadata|EmbeddedFile)\b|/Subtype\s*/XML\b")
+
+
+def inflated_object_streams(data: bytes) -> str | None:
+    """Inflated bodies of the object / metadata / attachment streams, or None if one of them cannot be inflated."""
+    import zlib
+    out = []
+    for m in STREAM_OBJ.finditer(data):
+        head = m.group(1)
+        if not KEEP_STREAM.search(head):
+            continue
+        end = data.find(b"endstream", m.end())
+        if end < 0:
+            return None
+        body = data[m.end():end]
+        filt = re.findall(rb"/Filter\s*(\[[^\]]*\]|/[A-Za-z0-9]+)", head)
+        names = re.findall(rb"/([A-Za-z0-9]+)", filt[0]) if filt else []
+        if not names:
+            out.append(body)
+        elif names == [b"FlateDecode"] and b"/DecodeParms" not in head:
+            try:
+                out.append(zlib.decompressobj().decompress(body))
+            except zlib.error:
+                return None
+        else:
+            return None
+    return b"\n".join(out).decode(errors="replace")
+
+
+def pdf_text(data: bytes) -> str | None:
+    """Page text, document information (custom keys included), XMP packet and the raw bytes without stream bodies of a
+    PDF; None if poppler is missing or cannot read the file (the caller turns None into a finding)."""
+    import shutil
+    import tempfile
+    if not (shutil.which("pdftotext") and shutil.which("pdfinfo")):
+        return None
+    with tempfile.TemporaryDirectory(prefix="vtt_gate_pdf_", dir=os.environ.get("TMPDIR") or None) as d:
+        f = Path(d) / "doc.pdf"
+        f.write_bytes(data)
+        try:
+            body = subprocess.run(["pdftotext", "-q", "-enc", "UTF-8", str(f), "-"], capture_output=True, check=True,
+                                  timeout=300).stdout
+            info = subprocess.run(["pdfinfo", "-enc", "UTF-8", "-custom", str(f)], capture_output=True, check=True,
+                                  timeout=120).stdout
+            meta = subprocess.run(["pdfinfo", "-enc", "UTF-8", "-meta", str(f)], capture_output=True, check=True,
+                                  timeout=120).stdout
+        except (subprocess.SubprocessError, OSError):
+            return None
+    skeleton = STREAM_BODY.sub(b" ", data)
+    inner = inflated_object_streams(data)
+    if inner is None:
+        return None
+    return VIEW_SEP.join([*(x.decode(errors="replace") for x in (body, info, meta, skeleton)), inner])
+
+
+VIEW_SEP = "\n\x00VIEW\n"                       # separates the four PDF views (never matched by any rule)
+
+
+def pdf_has_page_text(text: str) -> bool:
+    return bool(text.split(VIEW_SEP, 1)[0].strip()) if text else False
+
+
+def scan_text(path: str, data: bytes) -> str | None:
+    """The text the rules see for one file / blob: the four PDF views of a PDF (UNREADABLE_PDF if they cannot be read),
+    else the text of a text file; a figure-source CSV that is not UTF-8 text gives UNREADABLE_TEXT; None for binaries."""
+    if is_pdf(data, path):
+        if re.search(rb"/Encrypt\b", data):
+            return ENCRYPTED_PDF
+        t = pdf_text(data)
+        return UNREADABLE_PDF if t is None else t
+    if exempt_csv(path):
+        try:
+            if not is_text(data):
+                raise UnicodeDecodeError("utf-8", b"", 0, 1, "NUL byte")
+            return data.decode("utf-8")
+        except UnicodeDecodeError:
+            return UNREADABLE_TEXT
+    return data.decode(errors="replace") if is_text(data) else None
+
+
+def scan_view(path: str, text: str, allow: dict, forbidden, private, prefix: str = "") -> list[Finding]:
+    """Rules on one scan_text view, with the unreadable sentinels turned into findings."""
+    if text == UNREADABLE_PDF:
+        return [Finding("PRE_PUSH", prefix + "PDF_UNREADABLE", gate_mask(path))]
+    if text == ENCRYPTED_PDF:
+        return [Finding("PRE_PUSH", prefix + "PDF_ENCRYPTED", gate_mask(path), detail="decrypt or rewrite the PDF before commit")]
+    if text == UNREADABLE_TEXT:
+        return [Finding("PRE_PUSH", prefix + "UNREADABLE", gate_mask(path), detail="figure-source CSV is not UTF-8 text")]
+    return scan_source(path, text, allow, forbidden, private)
 
 
 def csv_header(text: str) -> list[str]:
@@ -186,11 +326,14 @@ def check_history(repo: Path, allow: dict, forbidden, private) -> tuple[list[Fin
         if any(forbidden_type(p) for p in paths):
             findings.append(Finding("PRE_PUSH", "HISTORY_TYPE", shown))
     for sha, data in blob_contents(repo, shas):
-        if not is_text(data):
-            continue
         paths = sorted(blobs[sha])
         path = next((p for p in paths if p.startswith("tests/")), paths[0])   # strictest view of a shared blob
-        for f in scan_source(path, data.decode(errors="replace"), allow, forbidden, private):
+        text = scan_text(path, data)
+        if text is None:
+            continue
+        if pinned_mismatch(path, data):
+            findings.append(Finding("PRE_PUSH", "HISTORY_TYPE", gate_mask(path), detail="pinned file changed"))
+        for f in scan_view(path, text, allow, forbidden, private):
             reason = accepted.get((sha, f.rule))
             if reason is not None and not any(p.startswith("tests/") for p in paths):
                 warnings.append(f"accepted history finding {f.rule} in {gate_mask(path)} (blob {sha[:12]}): {reason}")
@@ -272,9 +415,14 @@ def run(repo: Path, private_root: Path | None = None, allow: dict | None = None,
         if size > MAX_BLOB_BYTES:
             rep.findings.append(Finding("PRE_PUSH", "FILE_SIZE", gate_mask(path), detail=f"{size} bytes"))
         data = p.read_bytes()
-        if is_text(data):
-            rep.findings += scan_source(path, data.decode(errors="replace"), allow, forbidden, private)
-        elif path.endswith(".parquet"):
+        if pinned_mismatch(path, data):
+            rep.findings.append(Finding("PRE_PUSH", "FILE_TYPE", gate_mask(path), detail="pinned file changed"))
+        text = scan_text(path, data)
+        if text is not None:
+            rep.findings += scan_view(path, text, allow, forbidden, private)
+            if is_pdf(data, path) and text not in (UNREADABLE_PDF, ENCRYPTED_PDF) and not pdf_has_page_text(text):
+                rep.warnings.append(f"PDF without page text (outlined or image-only), look at it: {gate_mask(path)}")
+        elif path.lower().endswith(".parquet"):
             rep.findings += scan_parquet_names(repo, path, forbidden, private)
         rep.n_files += 1
         rep.n_bytes += size

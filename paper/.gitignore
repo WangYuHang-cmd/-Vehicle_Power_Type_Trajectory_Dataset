@@ -6,3 +6,15 @@
 *.synctex.gz
 *.fdb_latexmk
 *.fls
+
+# figure source data of the submitted manuscript (small CSVs; the root .gitignore keeps data out of the code repo)
+!figure_source/source_data/**/*.csv
+
+# documented exclusions of the submitted package (see README.md): kept out even if copied here by hand
+IEEEtran.cls
+IEEEtran.bst
+PDF_CHECK.json
+figure_source/fonts/
+figure_source/source_data/code/
+figure_source/assets/**/car_*.png
+figure_source/assets/teaser_B_subfigures/frame3_*.png

@@ -1,14 +1,7 @@
-\section{Discussion and Limitations}\label{sec:discussion}
+\section{Discussion}\label{sec:discussion}
 
-\subsection{Label Resolution, Not Sensing}
-Under the fixed footprint cut, 90 drive-level macro-F1 needs each held-out model's footprint to within about $\pm$0.12~m$^2$ (Fig.~\ref{fig:ceiling}). The gap is set by label resolution and fleet composition, not by model capacity or evidence per drive: architectures stay within about 2 points (Table~\ref{tab:main}) and more windows per drive add little for size (Fig.~\ref{fig:evidence}).
+Size recognition is sensitive to small geometric errors near class boundaries. Similar scores across architectures and observation lengths suggest prioritising broader fleet coverage, continuous footprint estimation and wider class margins. For unseen drivers of known models, adapted methods reach 79.5--80.6 drive-level macro-F1.
 
-Two routes remain for size: seen car models (79.5--80.6 under held-out devices, Table~\ref{tab:device}) and labels whose margins exceed that resolution, such as cuts in wide gaps of the footprint distribution.
+DAS alters the motion--attribute relationship. Automated windows score higher for size (56.4 versus 50.2, baseline GRU) but lower for powertrain (79.8 versus 84.0, adapted ResNet) in individual runs. Model-specific controllers may contribute. Human-only results and DAS weighting examine this influence; model-disjoint folds better represent deployment on new models than shared-model validation.
 
-\subsection{Two Protocol Lessons}
-First, while a driving automation system (DAS) is engaged, a controller tuned per car model supplies part of the control action. Windows with automation activity are easier for size than windows without (56.4 against 50.2, one bi-GRU run) and harder for BEV vs ICE (79.8 against 84.0, one ResNet B5 run). Hence the headline drive-level results (Table~\ref{tab:main}) are paired with the human-only protocol, and the final BEV vs ICE recipe (B5) down-weights DAS windows. Second, the released validation split shares car models with training and rewards memorising them, a shortcut~\cite{geirhos2020shortcut} (Section~\ref{sec:methods}); we therefore fixed the training length from the folds, and a future release would carve the validation split model-disjoint.
-
-\subsection{Privacy and Limitations}
-Labels describe car models, not people: a rare model may be recognisable as a model, never as a person. Several limitations remain.
-All logs come from one logger ecosystem and its software eras~\cite{schafer2018comma2k19}, and the fleet is skewed by region and brand (83.8\% of the hours from North America, 4.8\% from Europe, 4.2\% from Asia).
-Labels are platform attributes: a misidentified platform mislabels every drive of that vehicle, and platforms of mixed or unknown powertrain carry no powertrain label (11.1\% of the drives).
+The fleet comes from one logging ecosystem and is regionally uneven (Fig.~\ref{fig:coverage}). Incorrect platform identification affects every associated drive; 11.1\% lack a resolved powertrain label. The main results use onboard pedal and steering signals. Roadside or lead-vehicle applications require models trained on the available channels and tested under the target sampling and noise conditions. Speed-only external results provide an initial check.

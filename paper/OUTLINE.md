@@ -47,7 +47,7 @@ the training fleet, not by model capacity or evidence per drive.
 | sections/06_discussion.tex | VI. Discussion and limitations: label resolution vs sensing; LARGE learned as truck-like; DAS controller signature (human-only protocol); shared-model validation lesson; what 90 needs (seen models, vehicle level; label margins > resolution); privacy / ethics; limitations (one logger ecosystem, region skew, label noise, MIXED powertrains excluded) | 500 | W5 |
 | sections/07_conclusion.tex | VII. Conclusion (120–160 words) | 150 | W5 |
 
-## Fixed numbers (verified against RESULTS.md, CAMPAIGN.md, ORACLES.md, AGGREGATION.md, RECIPE.md, INTERNAL_FOLDS.md, LLM_FEATURES.md, docs/SIZE_CLASSES.md, docs/PROTOCOLS.md, the dataset card, build/qc/AUDITS.md and paper/tables/ci.json on 7 Nov 2026; copy exactly; percent values are macro-F1 unless stated)
+## Fixed numbers (verified against RESULTS.md, CAMPAIGN.md, ORACLES.md, AGGREGATION.md, RECIPE.md, INTERNAL_FOLDS.md, LLM_FEATURES.md, docs/SIZE_CLASSES.md, docs/PROTOCOLS.md, the dataset card, build/qc/AUDITS.md and paper/tables/ci.json (now paper/supporting/ci.json) on 7 Nov 2026; copy exactly; percent values are macro-F1 unless stated)
 
 ### Dataset (release v1)
 - drives 9,062; hours 3,949.8 nominal (3,078.1 moving); pseudonymous vehicles 1,431 (device x platform); identity groups 1,157;
@@ -333,3 +333,6 @@ unfavourable ones stay in RESULTS.md, which the paper points to with one neutral
 - Bib entries added (refs.bib): commasteeringcontrol, commacarsegments, moretorque (Hugging Face URLs), oh2019ved (arXiv:1905.02081),
   makridis2021openacc (TR-C 125, 103047). Removed from the bibliography by the trims: breiman2001rf and tan2024llmts are no longer
   cited (entries kept in refs.bib).
+
+### Addendum (16 Nov 2026)
+- pedal-flag ablation (16 Nov 2026; experiments/transfer/VARIANTS.md, V4 = all inputs except gas_pressed and brake_pressed, final recipes, fixed epochs, 3 seeds, split_platform test; window / drive / vehicle macro-F1): size unchanged, 54.5 / 67.0 / 57.6 against 53.2 / 67.1 / 60.0; BEV vs ICE 62.2 / 65.0 / 67.2 against 79.9 / 93.0 / 92.8 (drive-level recall BEV 63.0, ICE 67.8). The validation score stays at 74.7 (validation shares car models with train) while the held-out window score falls to 62.2: without the pedal cue the network fits the training car models (steering geometry, torque scale, lead sensor, automation flag) instead of the powertrain. Speed-only V3 (speed, acceleration, standstill) keeps 73.8 / 88.1 / 91.0. Reading: the BEV vs ICE headline rests on the pedal flags (deceleration without a brake application, regenerative / one-pedal driving); motion alone gives 88.1 drive-level and 91.0 vehicle-level macro-F1.

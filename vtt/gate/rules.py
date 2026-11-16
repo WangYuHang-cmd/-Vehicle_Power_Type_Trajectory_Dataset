@@ -56,7 +56,12 @@ EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
 ANON_AUTH = re.compile(r"anonymous\s+authors?", re.I)
 _ACRONYM = "AD" + "AS"                                        # driver-assistance acronym (never written literally here)
 ACRONYM_WORD = re.compile(r"(?<![A-Za-z0-9_])" + _ACRONYM + r"(?![A-Za-z0-9_])", re.I)
-CITATION_TOKEN = re.compile(_ACRONYM + "-TO")                 # the only allowed use: the citation token
+CITATION_TOKEN = re.compile(_ACRONYM + r"-TO(?![A-Za-z0-9_])")  # the only allowed use: the citation token
+# ... and the cited paper's own title as it appears in a rendered reference list (PDF text layer; any line breaks or
+# spacing between the words): "... empirical characterization of human takeovers during <acronym> engagement"
+# (approved by the owner, 16 Nov 2026)
+CITATION_TITLE = re.compile(r"empirical\s+characterization\s+of\s+human\s+takeovers\s+during\s+" + _ACRONYM
+                            + r"\s+engagement", re.I)
 BIBTEX_FENCE = re.compile(r"```bibtex[ \t]*\n.*?\n```", re.S)
 MONO_COL = re.compile(r"mono|_ns$|timestamp", re.I)
 VIN_COL = re.compile(r"(^|_)vin($|_)", re.I)
@@ -249,8 +254,8 @@ def hits_anon_auth(text: str) -> int:
 
 
 def hits_acronym(text: str, readme: bool = False) -> int:
-    """The driver-assistance acronym outside the citation token; in a README the single bibtex fence is exempt
-    (a second bibtex fence counts as a hit)."""
+    """The driver-assistance acronym outside the citation token and the cited paper's exact title; in a README the
+    single bibtex fence is exempt (a second bibtex fence counts as a hit)."""
     t = text
     if readme:
         fences = BIBTEX_FENCE.findall(t)
@@ -258,6 +263,7 @@ def hits_acronym(text: str, readme: bool = False) -> int:
             return len(fences)
         t = BIBTEX_FENCE.sub(" ", t)
     t = CITATION_TOKEN.sub(" ", t)
+    t = CITATION_TITLE.sub(" ", t)
     return len(ACRONYM_WORD.findall(t))
 
 

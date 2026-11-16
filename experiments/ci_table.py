@@ -3,7 +3,7 @@
 
 Reads <data-root>/experiments/results/<tag>_probs.npz (window_id, probs, y) of the listed runs, scores drive_full,
 drive_human_only, vehicle_full and vehicle_full_multi with starter_kit.eval.evaluate_units (which carries the bootstrap of
-docs/PROTOCOLS.md: car models resampled with replacement, 1,000 draws, seed 0) and writes paper/tables/ci.json plus a
+docs/PROTOCOLS.md: car models resampled with replacement, 1,000 draws, seed 0) and writes paper/supporting/ci.json plus a
 markdown table on stdout. Per configuration the point estimate is the mean over seeds; the interval is reported per
 seed and summarised as the mean of the seeds' lower and upper bounds. CPU only; reads the public index tables.
 """
@@ -67,7 +67,7 @@ def score(win, drives, task, split_col, tag, n_boot, seed):
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--out", type=Path, default=REPO / "paper" / "tables" / "ci.json")
+    ap.add_argument("--out", type=Path, default=REPO / "paper" / "supporting" / "ci.json")
     ap.add_argument("--n-boot", type=int, default=1000)
     ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args(argv)

@@ -1,0 +1,33 @@
+\begin{table*}[t]
+\caption{Recognition on unseen car models: macro-F1 (\%).}
+\label{tab:main}
+\centering\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.13}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{110pt}*{10}{C}}
+\tabhead
+ & \multicolumn{5}{c}{\bfseries\color{sizeblue}Size (SMALL / MID / LARGE)} & \multicolumn{5}{c}{\bfseries\color{powerteal}BEV vs ICE} \\
+\cmidrule(lr){2-6} \cmidrule(lr){7-11}
+ & \multicolumn{2}{c}{window} & \multicolumn{2}{c}{drive} & vehicle & \multicolumn{2}{c}{window} & \multicolumn{2}{c}{drive} & vehicle \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-11}
+\tabhead\textbf{Model} & All & Human & All & Human & All & All & Human & All & Human & All \\
+\midrule
+Statistics + GBM & 49.7 & 46.3 & 54.7 & 50.5 & 51.5 & 69.5 & 73.5 & 73.2 & 74.3 & 76.0 \\
+\rowcolor{rowtint}LLM features + GBM & 40.5 & 47.3 & 63.2 & 58.9 & 58.6 & 69.6 & 84.2 & 89.4 & 89.1 & 90.1 \\
+LLM + statistics + GBM & 54.1 & 49.8 & 64.9 & 64.2 & 61.8 & 73.2 & 80.2 & 80.9 & 82.6 & 83.4 \\
+\midrule
+\rowcolor{rowtint}1-D ResNet & \res{53.6}{1.0} & 48.0 & \res{61.1}{1.3} & 60.3 & 56.4 & \res{78.4}{0.4} & 83.2 & \res{91.1}{0.8} & 89.5 & 90.3 \\
+bi-GRU & \res{54.7}{0.3} & 50.4 & \res{62.9}{0.8} & 63.3 & 57.2 & \res{79.2}{0.8} & 85.2 & \res{89.0}{0.1} & 90.8 & 88.6 \\
+\rowcolor{rowtint}Transformer & \res{52.5}{0.8} & 47.7 & \res{61.8}{0.9} & 61.3 & 55.3 & \res{77.0}{0.4} & 83.5 & \res{88.4}{0.6} & 90.1 & 89.0 \\
+Mamba (bidirectional) & \res{53.1}{0.4} & 49.8 & \res{61.2}{0.3} & 61.1 & 55.2 & \res{77.3}{0.7} & 84.0 & \res{89.4}{0.3} & 90.9 & 90.6 \\
+\midrule
+\rowcolor{sizeband}bi-GRU, size training & \res{53.2}{0.3} & 47.8 & \best{\res{67.1}{0.0}} & 61.7 & \res{60.0}{0.6} & -- & -- & -- & -- & -- \\
+\rowcolor{sizeband}ResNet, size training & \res{53.2}{0.8} & 49.5 & \res{66.8}{1.7} & 62.9 & \res{62.6}{1.4} & -- & -- & -- & -- & -- \\
+\rowcolor{powerband}bi-GRU, powertrain training & -- & -- & -- & -- & -- & \res{77.0}{0.3} & 83.7 & \res{92.6}{0.1} & 89.1 & \res{93.4}{0.4} \\
+\rowcolor{powerband}ResNet, powertrain training & -- & -- & -- & -- & -- & \res{79.9}{0.7} & 83.2 & \best{\res{93.0}{0.8}} & 88.7 & \res{92.8}{0.4} \\
+\rowcolor{eventband}Event MIL, window mean & \res{54.2}{0.3} & 50.0 & \res{64.6}{0.5} & 62.5 & \res{62.3}{0.9} & \res{78.8}{0.1} & 82.2 & \res{90.2}{0.2} & 89.9 & \res{90.4}{0.5} \\
+\rowcolor{eventband}Event MIL, bag prediction & -- & -- & 64.3 & 63.2 & 62.4 & -- & -- & \best{93.0} & 91.5 & 92.8 \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\tabnote{Size / BEV--ICE support: 41 / 39 car models, 1,141 / 836 drives (732 / 564 with human-only windows), and 329 / 244 vehicles. All: full evaluation set; Human: human-only subset. Sequence models use three seeds (standard deviations where available); gradient boosting (GBM) uses one. Chance is about 33 for size and 50 for powertrain. Coloured rows show task-specific training and event MIL; bold marks the best full-drive score for each task. Confidence intervals are reported in the text.}
+\end{table*}

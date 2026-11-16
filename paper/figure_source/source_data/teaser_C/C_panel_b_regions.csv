@@ -1,0 +1,5 @@
+region,drives,hours,share_of_hours_pct,share_of_drives_pct,definition
+asia,431,164.9,4.2,4.8,Asia
+europe,469,188.5,4.8,5.2,Europe
+north_america,7511,3310.4,83.8,82.9,US and Canada
+other_unknown,651,285.9,7.2,7.2,"any other region, or unknown"

@@ -1,0 +1,26 @@
+\begin{table}[t]
+\caption{External recognition without fine-tuning: accuracy (\%) and correctly classified car models.}
+\label{tab:external}
+\centering\footnotesize
+\setlength{\tabcolsep}{2.5pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}p{88pt}C>{\centering\arraybackslash}p{66pt}>{\centering\arraybackslash}p{27pt}}
+\tabhead\textbf{Dataset / cohort} & \textbf{Inputs} & \textbf{Correct units} & \textbf{Models} \\
+\rowcolor{powerband}\multicolumn{4}{l}{\bfseries\color{powerteal}BEV versus ICE} \\
+\makecell[l]{commaSteeringControl\\36 archives} & Speed & 35 / 36 (97.2) & 24 / 25 \\
+\rowcolor{rowtint}\makecell[l]{commaCarSegments\\2,512 labelled drivers} & All & 87.8 [86.6, 89.1] & 86 / 88 \\
+\makecell[l]{commaCarSegments\\labelled drivers} & Speed & 92.6 [91.5, 93.6] & 87 / 88 \\
+\rowcolor{rowtint}\makecell[l]{commaCarSegments\\463 drivers\\unseen models} & All & 94.2 [92.0, 96.2] & 27 / 27 \\
+\makecell[l]{commaCarSegments\\229 drivers\\9 Honda platforms} & All & 227 / 229 (99.1) & 4 / 4 \\
+\rowcolor{rowtint}MoreTorque, 11 ICE cars & All & 11 / 11 & -- \\
+VED, 264 ICE cars & Speed & 258 / 264 (97.7) & -- \\
+\rowcolor{rowtint}\makecell[l]{OpenACC, Fiat 500X\\429 trips} & Speed & 99.1 of trips & -- \\
+\rowcolor{sizeband}\multicolumn{4}{l}{\bfseries\color{sizeblue}Size (SMALL / MID / LARGE)} \\
+\makecell[l]{commaSteeringControl\\36 archives} & \makecell{Lateral\\+ speed} & 63.9 [50.0, 80.6] & 16 / 25 \\
+\rowcolor{rowtint}\makecell[l]{commaCarSegments\\all 4,061 drivers} & All & 63.2 & 72 / 113 \\
+\makecell[l]{commaCarSegments\\230 drivers\\9 Honda platforms} & All & 226 / 230 (98.3) & 5 / 5 \\
+\rowcolor{rowtint}MoreTorque, 8 SMALL cars & All & 8 / 8 & -- \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\tabnote{All: 20 channels; Speed: speed, acceleration and standstill; lateral + speed: ten channels. Counts refer to the drivers, vehicles, archives or trips indicated; intervals are 95\% bootstrap CIs over evaluation units. commaCarSegments drivers are absent from VTT. Its all-driver size row uses corrected yaw; other rows retain their reported decoding. Macro-F1 is given in the text.}
+\end{table}

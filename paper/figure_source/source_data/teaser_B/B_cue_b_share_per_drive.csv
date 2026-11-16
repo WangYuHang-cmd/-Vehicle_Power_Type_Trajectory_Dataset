@@ -1,0 +1,558 @@
+drive_id,model,powertrain,slowing_samples,share_slowing_without_brake
+drive_725136,Tesla Model Y,BEV,269,0.948
+drive_095824,Hyundai Santa Cruz,ICE,1109,0.0126
+drive_151281,Audi Q5,ICE,767,0.3781
+drive_500086,Audi Q5,ICE,396,0.0328
+drive_822343,Tesla Model Y,BEV,95,1
+drive_471642,Tesla Model Y,BEV,297,1
+drive_779104,Tesla Model Y,BEV,72,1
+drive_915107,Tesla Model Y,BEV,383,1
+drive_912404,Kia Carnival,ICE,546,0.0147
+drive_946606,Nissan Leaf,BEV,92,0.9239
+drive_214252,Ford Ranger,ICE,277,0
+drive_400618,Ford Ranger,ICE,199,0.0101
+drive_070188,Genesis GV70,ICE,286,0.0105
+drive_089086,Genesis GV70,ICE,562,0.073
+drive_701743,Genesis GV70,ICE,622,0.0273
+drive_742633,Genesis GV70,ICE,337,0.0237
+drive_966823,Genesis GV70,ICE,512,0.1758
+drive_015656,Hyundai Kona,ICE,148,0
+drive_084257,Hyundai Kona,ICE,156,0.0449
+drive_201800,Volkswagen Jetta,ICE,570,0.0228
+drive_177106,Toyota Corolla,ICE,521,0.0365
+drive_036795,Tesla Model Y,BEV,96,0.7708
+drive_097594,Nissan Leaf,BEV,289,1
+drive_125101,Tesla Model Y,BEV,54,0.9815
+drive_198550,Kia Carnival,ICE,57,0
+drive_174577,Kia EV9,BEV,198,0.7172
+drive_184804,Kia EV9,BEV,614,0.7769
+drive_259839,Kia EV9,BEV,152,0.7171
+drive_309659,Kia EV9,BEV,592,0.6216
+drive_616437,Kia EV9,BEV,873,0.7778
+drive_697241,Kia EV9,BEV,420,0.6048
+drive_724070,Kia EV9,BEV,640,0.6984
+drive_759801,Kia EV9,BEV,83,0.7952
+drive_810786,Kia EV9,BEV,559,0.6136
+drive_928529,Kia EV9,BEV,208,0.7644
+drive_959873,Kia EV9,BEV,53,1
+drive_412891,Tesla Model Y,BEV,229,0.8996
+drive_980279,Tesla Model Y,BEV,58,0.8276
+drive_531609,Tesla Model Y,BEV,565,0.8159
+drive_866959,Nissan Leaf,BEV,87,1
+drive_083249,Chevrolet Equinox,ICE,361,0.0083
+drive_127116,Chevrolet Equinox,ICE,216,0.0139
+drive_207609,Chevrolet Equinox,ICE,94,0.0106
+drive_220129,Chevrolet Equinox,ICE,94,0.0106
+drive_370570,Chevrolet Equinox,ICE,654,0.0443
+drive_384178,Chevrolet Equinox,ICE,830,0.0554
+drive_667158,Chevrolet Equinox,ICE,150,0
+drive_748546,Chevrolet Equinox,ICE,569,0.0299
+drive_777164,Chevrolet Equinox,ICE,335,0.006
+drive_820887,Chevrolet Equinox,ICE,341,0.0029
+drive_102553,Tesla Model S,BEV,465,0.9376
+drive_477460,Ford Ranger,ICE,124,0
+drive_366157,Toyota Corolla,ICE,323,0
+drive_608169,Toyota Corolla,ICE,58,0.069
+drive_646616,Toyota Corolla,ICE,81,0.1111
+drive_461975,Tesla Model Y,BEV,352,0.9545
+drive_827659,Toyota Corolla,ICE,79,0.0127
+drive_019011,Kia Carnival,ICE,774,0.0052
+drive_048227,Kia Carnival,ICE,81,0
+drive_234548,Kia Carnival,ICE,115,0.0174
+drive_403933,Kia Carnival,ICE,283,0.0071
+drive_508364,Kia Carnival,ICE,106,0
+drive_516958,Kia Carnival,ICE,207,0.0048
+drive_648108,Kia Carnival,ICE,391,0.0026
+drive_651652,Kia Carnival,ICE,239,0
+drive_667425,Kia Carnival,ICE,225,0
+drive_825674,Kia Carnival,ICE,409,0.0024
+drive_893413,Kia Carnival,ICE,68,0
+drive_956691,Kia Carnival,ICE,81,0
+drive_344094,Chevrolet Equinox,ICE,145,0
+drive_384286,Genesis G80,ICE,507,0.0059
+drive_397113,Genesis G80,ICE,349,0.0516
+drive_896011,Genesis G80,ICE,310,0.0129
+drive_456614,Nissan Leaf,BEV,129,0.2093
+drive_663620,Hyundai Ioniq,BEV,244,0.8525
+drive_933762,Hyundai Ioniq,BEV,274,0.8321
+drive_465842,Nissan Leaf,BEV,328,0.8049
+drive_655177,Genesis GV80,ICE,665,0.0211
+drive_949785,Genesis GV80,ICE,98,0.0102
+drive_856875,Toyota Corolla,ICE,243,0.0041
+drive_624252,Tesla Model Y,BEV,230,0.8957
+drive_229549,Hyundai Kona,BEV,397,0.6272
+drive_933846,Hyundai Kona,BEV,248,0.129
+drive_579154,Genesis G80,ICE,194,0.0619
+drive_679095,Toyota Corolla,ICE,319,0.0408
+drive_808331,Hyundai Azera,ICE,395,0.0127
+drive_132475,Honda HR-V,ICE,1644,0.0049
+drive_503120,Honda HR-V,ICE,145,0.0138
+drive_609259,Honda HR-V,ICE,1242,0.0056
+drive_087168,Volkswagen ID.4,BEV,167,0.3653
+drive_410951,Volkswagen ID.4,BEV,183,0.2623
+drive_585670,Volkswagen ID.4,BEV,325,0.6523
+drive_818360,Volkswagen ID.4,BEV,130,0.3385
+drive_809618,Volkswagen ID.4,BEV,650,0.4462
+drive_091562,Genesis GV60,BEV,60,0.2833
+drive_227301,Genesis GV60,BEV,291,0.5223
+drive_308648,Genesis GV60,BEV,55,0.8182
+drive_311286,Genesis GV60,BEV,137,0.7664
+drive_367526,Genesis GV60,BEV,102,0.4804
+drive_650361,Genesis GV60,BEV,98,0.9082
+drive_691360,Genesis GV60,BEV,451,0.5743
+drive_424391,Audi Q5,ICE,237,0
+drive_000614,GWM Haval H6,ICE,778,0.0951
+drive_229908,GWM Haval H6,ICE,430,0.0488
+drive_304113,GWM Haval H6,ICE,288,0.0521
+drive_595931,GWM Haval H6,ICE,251,0.1912
+drive_625657,GWM Haval H6,ICE,535,0.0991
+drive_709682,GWM Haval H6,ICE,399,0.0551
+drive_782347,GWM Haval H6,ICE,502,0.1016
+drive_801110,GWM Haval H6,ICE,127,0.1496
+drive_827552,GWM Haval H6,ICE,117,0.0855
+drive_171760,Genesis GV70,ICE,59,0
+drive_407275,Genesis GV70,ICE,78,0
+drive_410711,Genesis GV70,ICE,107,0.0093
+drive_424228,Genesis GV70,ICE,204,0.0245
+drive_489794,Volkswagen ID.4,BEV,556,0.5414
+drive_682104,Hyundai Kona,ICE,100,0.01
+drive_069850,Kia Carnival,ICE,746,0.0013
+drive_469166,Kia Carnival,ICE,163,0.0123
+drive_255777,Tesla Model Y,BEV,502,0.9203
+drive_855838,Jeep Grand Cherokee,ICE,70,0
+drive_119980,Nissan Leaf,BEV,715,0.007
+drive_115467,GMC Yukon,ICE,327,0.0398
+drive_648459,GMC Yukon,ICE,192,0.0156
+drive_710267,GMC Yukon,ICE,317,0.0063
+drive_955876,GMC Yukon,ICE,541,0.0314
+drive_989735,GMC Yukon,ICE,295,0.0712
+drive_480578,Hyundai Santa Fe,ICE,90,0
+drive_517812,Hyundai Santa Fe,ICE,346,0.0578
+drive_574865,Hyundai Santa Fe,ICE,314,0.0127
+drive_584759,Hyundai Santa Fe,ICE,163,0.1963
+drive_637168,Hyundai Santa Fe,ICE,94,0.0745
+drive_663057,Hyundai Santa Fe,ICE,279,0.0538
+drive_670208,Hyundai Santa Fe,ICE,252,0.0476
+drive_899618,Hyundai Santa Fe,ICE,219,0.0639
+drive_280325,Tesla Model Y,BEV,425,0.8588
+drive_317926,Tesla Model Y,BEV,189,0.7989
+drive_502235,Tesla Model Y,BEV,174,1
+drive_633161,Tesla Model Y,BEV,782,0.9527
+drive_746374,Tesla Model Y,BEV,166,0.8675
+drive_466019,Kia Carnival,ICE,368,0
+drive_199463,Genesis GV70,ICE,2323,0.0095
+drive_519809,Genesis GV70,ICE,593,0.0219
+drive_144586,Tesla Model Y,BEV,301,1
+drive_359335,Tesla Model Y,BEV,74,1
+drive_004639,Kia Carnival,ICE,247,0.004
+drive_263690,Kia Carnival,ICE,126,0
+drive_273406,Kia Carnival,ICE,208,0
+drive_356801,Kia Carnival,ICE,247,0.0121
+drive_449373,Kia Carnival,ICE,654,0.0153
+drive_820476,Kia Carnival,ICE,120,0
+drive_991319,Kia Carnival,ICE,140,0
+drive_935125,Volkswagen ID.3,BEV,455,0.0044
+drive_928081,Hyundai Kona,ICE,957,0.069
+drive_257363,Genesis GV70,ICE,411,0.0122
+drive_518387,Genesis GV70,ICE,101,0.0198
+drive_575565,Genesis GV70,ICE,58,0
+drive_059610,Hyundai Kona,BEV,228,0.1272
+drive_071836,Hyundai Kona,BEV,599,0.01
+drive_407112,Hyundai Kona,BEV,327,0.0245
+drive_329216,Tesla Model Y,BEV,556,0.8687
+drive_129523,Kia Stinger,ICE,1032,0.0126
+drive_010360,Hyundai Santa Fe,ICE,155,0.0452
+drive_704637,Volkswagen Jetta,ICE,555,0.0036
+drive_637167,Tesla Model Y,BEV,730,0.9712
+drive_800629,Tesla Model Y,BEV,700,0.9971
+drive_444663,Jeep Grand Cherokee,ICE,161,0.0186
+drive_771552,Ford Ranger,ICE,152,0.0066
+drive_100583,Hyundai Ioniq,BEV,186,0.8011
+drive_412430,Hyundai Ioniq,BEV,209,0.8947
+drive_098232,Volkswagen ID.3,BEV,232,0.7759
+drive_517112,Volkswagen ID.3,BEV,191,0.8586
+drive_040512,Genesis GV80,ICE,155,0.0258
+drive_601180,Genesis GV80,ICE,71,0.0141
+drive_723916,Genesis GV80,ICE,140,0.0357
+drive_138490,Toyota Corolla,ICE,491,0.0183
+drive_259693,Toyota Corolla,ICE,173,0.0867
+drive_053163,Genesis GV80,ICE,184,0
+drive_946406,Toyota Corolla,ICE,86,0
+drive_049670,Genesis GV60,BEV,56,1
+drive_120984,Genesis GV60,BEV,204,0.6667
+drive_152571,Genesis GV60,BEV,186,0.8441
+drive_157160,Genesis GV60,BEV,125,0.896
+drive_173034,Genesis GV60,BEV,253,0.8379
+drive_180377,Genesis GV60,BEV,113,0.8761
+drive_188656,Genesis GV60,BEV,50,1
+drive_291268,Genesis GV60,BEV,101,1
+drive_298597,Genesis GV60,BEV,212,0
+drive_350437,Genesis GV60,BEV,155,1
+drive_381291,Genesis GV60,BEV,498,0.9217
+drive_381650,Genesis GV60,BEV,272,0.9449
+drive_436113,Genesis GV60,BEV,190,0.9684
+drive_453639,Genesis GV60,BEV,108,1
+drive_457139,Genesis GV60,BEV,286,0.9545
+drive_461906,Genesis GV60,BEV,125,0.92
+drive_553974,Genesis GV60,BEV,119,0.9832
+drive_640885,Genesis GV60,BEV,188,1
+drive_641344,Genesis GV60,BEV,234,0.8632
+drive_642815,Genesis GV60,BEV,229,0.9913
+drive_675430,Genesis GV60,BEV,144,0.875
+drive_782422,Genesis GV60,BEV,150,1
+drive_791500,Genesis GV60,BEV,90,0.9889
+drive_802290,Genesis GV60,BEV,106,1
+drive_816194,Genesis GV60,BEV,102,1
+drive_921492,Genesis GV60,BEV,54,1
+drive_935704,Genesis GV60,BEV,327,0.8073
+drive_967381,Genesis GV60,BEV,376,0.9149
+drive_975617,Genesis GV60,BEV,109,0.9174
+drive_992463,Genesis GV60,BEV,52,0.9423
+drive_219324,Tesla Model Y,BEV,266,0.8872
+drive_246011,Hyundai Kona,BEV,331,0
+drive_833363,Hyundai Kona,BEV,183,0.0492
+drive_988610,Hyundai Kona,BEV,114,0.2368
+drive_036962,Volkswagen Passat,ICE,105,0.419
+drive_304613,Volkswagen Passat,ICE,174,0.0172
+drive_350171,Volkswagen Passat,ICE,94,0.0319
+drive_622134,Volkswagen Passat,ICE,278,0.0252
+drive_671888,Volkswagen Passat,ICE,178,0.0506
+drive_006214,Kia Ceed,ICE,283,0.0071
+drive_763155,Kia Ceed,ICE,334,0.015
+drive_456698,Chevrolet Trailblazer,ICE,132,0.1136
+drive_582659,Chevrolet Trailblazer,ICE,215,0.1581
+drive_133010,Volkswagen Atlas,ICE,560,0.0071
+drive_155734,Hyundai Kona,BEV,60,0.95
+drive_085301,Genesis GV70,ICE,620,0.0177
+drive_855808,GMC Yukon,ICE,92,0.0109
+drive_607878,Jeep Grand Cherokee,ICE,85,0
+drive_769738,Nissan Leaf,BEV,391,0.867
+drive_084066,Nissan Leaf,BEV,308,0
+drive_168167,Nissan Leaf,BEV,333,0.003
+drive_239993,Nissan Leaf,BEV,190,0.0105
+drive_284614,Nissan Leaf,BEV,481,0.183
+drive_359690,Nissan Leaf,BEV,1223,0.0057
+drive_402377,Nissan Leaf,BEV,984,0.0132
+drive_175665,Tesla Model S,BEV,607,0.7727
+drive_904762,Tesla Model S,BEV,791,0
+drive_930029,Hyundai Santa Fe,ICE,215,0.0186
+drive_824851,Jeep Grand Cherokee,ICE,197,0
+drive_312244,GMC Yukon,ICE,413,0.0097
+drive_470932,GMC Yukon,ICE,1612,0.0074
+drive_555629,GMC Yukon,ICE,680,0.0191
+drive_748530,GMC Yukon,ICE,520,0.0308
+drive_177992,Volkswagen Atlas,ICE,761,0.0066
+drive_129245,Hyundai Kona,ICE,139,0
+drive_096703,Toyota Sienna,ICE,102,0
+drive_146780,Hyundai Ioniq,BEV,502,0.6335
+drive_090549,Kia Optima,ICE,403,0
+drive_267365,Kia K5,ICE,960,0.0042
+drive_227772,Genesis GV80,ICE,161,0.118
+drive_597527,Genesis GV80,ICE,104,0.0096
+drive_059771,Kia EV9,BEV,303,0.8779
+drive_186763,Kia EV9,BEV,547,0.8812
+drive_402054,Kia EV9,BEV,131,0.8397
+drive_419343,Kia EV9,BEV,455,0.9934
+drive_592863,Kia EV9,BEV,513,0.9513
+drive_630578,Kia EV9,BEV,1510,0.9013
+drive_876080,Kia EV9,BEV,219,0.8037
+drive_240850,Honda HR-V,ICE,455,0.1231
+drive_792062,Honda HR-V,ICE,279,0.0896
+drive_931246,Honda HR-V,ICE,523,0.0593
+drive_601460,Hyundai Santa Fe,ICE,79,0
+drive_507129,Kia Carnival,ICE,215,0.0047
+drive_685639,Kia Carnival,ICE,264,0
+drive_772259,Kia EV9,BEV,284,0.9155
+drive_946944,Kia EV9,BEV,285,0.5649
+drive_919542,Volkswagen Passat,ICE,211,0
+drive_637998,Kia Ceed,ICE,185,0.0054
+drive_535008,Kia Carnival,ICE,364,0
+drive_779123,Kia Carnival,ICE,1133,0.0009
+drive_705861,GMC Yukon,ICE,763,0.0026
+drive_237225,Nissan Altima,ICE,476,0.021
+drive_360759,Nissan Altima,ICE,1196,0.0151
+drive_427848,Nissan Altima,ICE,871,0.0069
+drive_528524,Nissan Altima,ICE,1102,0.0082
+drive_303205,Kia Optima,ICE,517,0.0019
+drive_140385,Kia Carnival,ICE,264,0.0152
+drive_155469,Kia Stinger,ICE,418,0.0383
+drive_220135,Kia Stinger,ICE,667,0.009
+drive_078712,Tesla Model Y,BEV,829,1
+drive_123309,Tesla Model Y,BEV,722,0.9515
+drive_017840,Hyundai Kona,BEV,112,1
+drive_318845,Hyundai Kona,BEV,187,1
+drive_599224,Hyundai Kona,BEV,122,0.8115
+drive_853967,Hyundai Kona,BEV,122,1
+drive_994275,Hyundai Kona,BEV,204,0.9265
+drive_959202,Genesis GV60,BEV,121,0.2645
+drive_018833,Volkswagen Passat,ICE,590,0.0051
+drive_275057,Volkswagen Passat,ICE,935,0.0096
+drive_389125,Volkswagen Passat,ICE,124,0
+drive_439720,Volkswagen Passat,ICE,749,0.0013
+drive_452169,Volkswagen Passat,ICE,72,0
+drive_530371,Volkswagen Passat,ICE,1164,0.0017
+drive_715731,Volkswagen Passat,ICE,736,0
+drive_936848,Volkswagen Passat,ICE,659,0.0091
+drive_961224,Volkswagen Passat,ICE,548,0.0128
+drive_996679,Volkswagen Passat,ICE,615,0.0683
+drive_516114,Tesla Model Y,BEV,149,0.7047
+drive_127279,Nissan Leaf,BEV,83,0.0361
+drive_391675,Nissan Leaf,BEV,426,0.108
+drive_566615,Nissan Leaf,BEV,201,0.1244
+drive_223230,Genesis GV80,ICE,91,0.044
+drive_291149,Genesis GV80,ICE,670,0.009
+drive_400898,Genesis GV80,ICE,90,0
+drive_735562,Genesis GV80,ICE,82,0
+drive_697158,Kia Sorento,ICE,415,0
+drive_121491,GWM Haval H6,ICE,413,0.1356
+drive_300019,GWM Haval H6,ICE,1007,0.292
+drive_381161,GWM Haval H6,ICE,926,0.1069
+drive_759055,GWM Haval H6,ICE,293,0.1229
+drive_913749,GWM Haval H6,ICE,316,0.1582
+drive_241092,Ford F-150 Lightning,BEV,809,0.7689
+drive_531837,Ford F-150 Lightning,BEV,562,0.8665
+drive_947641,Ford F-150 Lightning,BEV,535,0.714
+drive_042633,Nissan Leaf,BEV,84,0.869
+drive_813595,Nissan Leaf,BEV,928,0.4709
+drive_517644,Jeep Grand Cherokee,ICE,180,0.1167
+drive_728870,Jeep Grand Cherokee,ICE,379,0
+drive_030027,Lexus RX,ICE,526,0.0057
+drive_239650,Toyota Sienna,ICE,493,0
+drive_336431,Toyota Sienna,ICE,597,0
+drive_895009,Toyota Sienna,ICE,660,0.0076
+drive_993552,Toyota Sienna,ICE,736,0.0027
+drive_995431,Toyota Sienna,ICE,423,0.0047
+drive_060265,Honda HR-V,ICE,158,0
+drive_470593,Honda HR-V,ICE,278,0
+drive_310855,Jeep Grand Cherokee,ICE,826,0.0121
+drive_819907,Jeep Grand Cherokee,ICE,118,0.0085
+drive_977503,Jeep Grand Cherokee,ICE,548,0
+drive_038624,Toyota Corolla,ICE,796,0.0126
+drive_623375,Toyota Corolla,ICE,285,0
+drive_739450,Toyota Corolla,ICE,176,0
+drive_815235,Toyota Corolla,ICE,277,0.0072
+drive_920812,Toyota Corolla,ICE,605,0.0033
+drive_941757,Toyota Corolla,ICE,240,0.0042
+drive_211356,Jeep Grand Cherokee,ICE,140,0.1
+drive_474023,Jeep Grand Cherokee,ICE,102,0.0294
+drive_678009,Jeep Grand Cherokee,ICE,56,0
+drive_152479,Hyundai Kona,BEV,212,0.25
+drive_578139,Hyundai Kona,BEV,567,0.4832
+drive_873213,Hyundai Kona,BEV,1095,0.3388
+drive_066324,Hyundai Kona,ICE,80,0
+drive_100567,Hyundai Kona,ICE,95,0.0316
+drive_197830,Hyundai Kona,ICE,128,0.0156
+drive_256916,Hyundai Kona,ICE,117,0
+drive_297007,Hyundai Kona,ICE,281,0.0036
+drive_325532,Hyundai Kona,ICE,65,0
+drive_383424,Hyundai Kona,ICE,74,0
+drive_392579,Hyundai Kona,ICE,234,0.0085
+drive_406308,Hyundai Kona,ICE,185,0
+drive_552034,Hyundai Kona,ICE,68,0
+drive_584215,Hyundai Kona,ICE,264,0.0076
+drive_612302,Hyundai Kona,ICE,303,0
+drive_674350,Hyundai Kona,ICE,1013,0.0247
+drive_731548,Hyundai Kona,ICE,69,0.0145
+drive_832267,Hyundai Kona,ICE,92,0.0217
+drive_853720,Hyundai Kona,ICE,106,0.0377
+drive_425471,Tesla Model Y,BEV,391,0.8235
+drive_531753,Honda HR-V,ICE,383,0.0444
+drive_356218,Ford F-150 Lightning,BEV,165,0.9879
+drive_690393,Toyota Corolla,ICE,204,0
+drive_982806,Tesla Model Y,BEV,82,1
+drive_115650,Genesis GV70,ICE,616,0.0065
+drive_673987,Genesis GV70,ICE,873,0.0172
+drive_153758,Kia EV9,BEV,104,0.875
+drive_141860,Toyota Corolla,ICE,108,0
+drive_186828,Hyundai Santa Cruz,ICE,233,0.0172
+drive_283401,Hyundai Santa Cruz,ICE,228,0.0219
+drive_319828,Hyundai Santa Cruz,ICE,424,0.0024
+drive_122251,Audi Q5,ICE,377,0.0159
+drive_163916,Audi Q5,ICE,318,0.0063
+drive_248029,Audi Q5,ICE,178,0.0056
+drive_362885,Audi Q5,ICE,354,0.0056
+drive_593691,Audi Q5,ICE,269,0.0037
+drive_948694,GMC Yukon,ICE,153,0
+drive_983276,GMC Yukon,ICE,295,0.0203
+drive_174278,Tesla Model Y,BEV,51,0.8235
+drive_189970,Tesla Model Y,BEV,106,0.9717
+drive_309083,Tesla Model Y,BEV,344,0.9709
+drive_343466,Tesla Model Y,BEV,562,0.9626
+drive_362608,Tesla Model Y,BEV,432,0.919
+drive_556392,Tesla Model Y,BEV,587,0.9421
+drive_589381,Tesla Model Y,BEV,599,1
+drive_009806,Toyota Sienna,ICE,714,0.0252
+drive_391059,Toyota Sienna,ICE,876,0.0308
+drive_926897,Tesla Model S,BEV,237,0.8481
+drive_654700,Chevrolet Trailblazer,ICE,165,0
+drive_411991,Tesla Model Y,BEV,561,0.4955
+drive_432464,Tesla Model Y,BEV,437,0.5904
+drive_773739,Tesla Model Y,BEV,316,0.3449
+drive_152467,Genesis GV80,ICE,388,0.0026
+drive_797033,Hyundai Azera,ICE,52,0
+drive_054647,Hyundai Kona,BEV,253,0.3794
+drive_513552,Hyundai Kona,BEV,793,0.8764
+drive_700029,Hyundai Kona,BEV,165,0.7576
+drive_761736,Hyundai Kona,BEV,683,0.366
+drive_793729,Hyundai Kona,BEV,294,0.415
+drive_532046,Hyundai Ioniq,BEV,608,0.4951
+drive_019050,Tesla Model S,BEV,511,0.8434
+drive_051483,Tesla Model S,BEV,420,0.85
+drive_495488,Tesla Model S,BEV,662,0.7613
+drive_528548,Tesla Model S,BEV,498,0.8394
+drive_826575,Tesla Model S,BEV,201,0.7065
+drive_962581,Tesla Model S,BEV,174,0.7184
+drive_892326,Hyundai Ioniq,BEV,672,0.881
+drive_908667,Hyundai Ioniq,BEV,221,0.7195
+drive_912303,Hyundai Ioniq,BEV,149,0.2953
+drive_243958,Hyundai Kona,BEV,819,0.9658
+drive_900444,Hyundai Kona,BEV,922,0.8991
+drive_926514,Hyundai Kona,BEV,164,1
+drive_064336,Kia Carnival,ICE,81,0
+drive_045075,Volkswagen Jetta,ICE,1226,0.0008
+drive_047078,Volkswagen Jetta,ICE,104,0
+drive_138987,Volkswagen Jetta,ICE,146,0.0137
+drive_175719,Volkswagen Jetta,ICE,539,0.0111
+drive_272904,Volkswagen Jetta,ICE,90,0.0111
+drive_291568,Volkswagen Jetta,ICE,51,0.0392
+drive_296663,Volkswagen Jetta,ICE,392,0.0026
+drive_317781,Volkswagen Jetta,ICE,250,0.004
+drive_434972,Volkswagen Jetta,ICE,145,0
+drive_496762,Volkswagen Jetta,ICE,888,0.009
+drive_679705,Volkswagen Jetta,ICE,245,0
+drive_747122,Volkswagen Jetta,ICE,286,0
+drive_755582,Volkswagen Jetta,ICE,396,0.0076
+drive_758171,Volkswagen Jetta,ICE,341,0.0029
+drive_769677,Volkswagen Jetta,ICE,187,0
+drive_859770,Volkswagen Jetta,ICE,103,0.0097
+drive_934918,Volkswagen Jetta,ICE,415,0
+drive_112156,Kia Carnival,ICE,72,0
+drive_206581,Kia Carnival,ICE,90,0
+drive_052970,Honda HR-V,ICE,226,0.1062
+drive_262871,Hyundai Kona,BEV,305,0.718
+drive_156266,Tesla Model Y,BEV,795,0.7258
+drive_468669,Tesla Model Y,BEV,756,0.7698
+drive_256438,Toyota Avalon,ICE,157,0
+drive_784516,Toyota Avalon,ICE,144,0.0347
+drive_363209,Genesis G90,ICE,144,0
+drive_728036,Genesis G90,ICE,140,0
+drive_028009,Volkswagen Atlas,ICE,550,0
+drive_264772,Volkswagen Atlas,ICE,441,0
+drive_445887,Volkswagen Atlas,ICE,87,0
+drive_588806,Volkswagen Atlas,ICE,522,0
+drive_636889,Volkswagen Atlas,ICE,719,0
+drive_642003,Volkswagen Atlas,ICE,453,0.0044
+drive_642457,Volkswagen Atlas,ICE,360,0
+drive_698688,Volkswagen Atlas,ICE,644,0.0031
+drive_712289,Volkswagen Atlas,ICE,960,0
+drive_801666,Volkswagen Atlas,ICE,239,0
+drive_845642,Volkswagen Atlas,ICE,4242,0.0014
+drive_937922,Volkswagen Atlas,ICE,397,0.0076
+drive_942150,Volkswagen Atlas,ICE,790,0.0013
+drive_503819,Tesla Model Y,BEV,221,0.8597
+drive_768428,Tesla Model Y,BEV,77,0.4805
+drive_815940,Tesla Model Y,BEV,348,1
+drive_894956,Tesla Model Y,BEV,132,0.9394
+drive_032720,Toyota Corolla,ICE,767,0.0952
+drive_351637,Toyota Corolla,ICE,335,0.1075
+drive_375710,Toyota Corolla,ICE,473,0.1607
+drive_516541,Toyota Corolla,ICE,621,0.0354
+drive_702718,Toyota Corolla,ICE,526,0.2072
+drive_956338,Toyota Corolla,ICE,674,0.0816
+drive_526928,Jeep Grand Cherokee,ICE,209,0.0287
+drive_732032,Jeep Grand Cherokee,ICE,339,0.0324
+drive_348053,Tesla Model Y,BEV,436,0.844
+drive_059474,Kia EV9,BEV,142,0.0986
+drive_348964,Nissan Leaf,BEV,304,0.9671
+drive_477535,Nissan Leaf,BEV,928,0.6713
+drive_518709,Nissan Leaf,BEV,208,0.7019
+drive_534725,Nissan Leaf,BEV,699,0.8813
+drive_597366,Nissan Leaf,BEV,108,0
+drive_872848,Nissan Leaf,BEV,207,0.9324
+drive_275257,Toyota Corolla,ICE,263,0.0266
+drive_675795,Toyota Corolla,ICE,297,0.0168
+drive_123697,Volkswagen ID.4,BEV,2622,0.7532
+drive_145894,Volkswagen ID.4,BEV,87,0.069
+drive_548390,Volkswagen ID.4,BEV,160,0.2375
+drive_346390,Hyundai Santa Fe,ICE,119,0.0084
+drive_907905,Hyundai Santa Fe,ICE,223,0.0135
+drive_862891,Jeep Grand Cherokee,ICE,1227,0.0163
+drive_246118,Kia Carnival,ICE,671,0.0179
+drive_274466,Genesis GV80,ICE,561,0.0392
+drive_023710,Volkswagen Jetta,ICE,82,0.0122
+drive_114765,Volkswagen Jetta,ICE,59,0.1695
+drive_512545,Volkswagen Jetta,ICE,127,0.0157
+drive_721387,Volkswagen Jetta,ICE,326,0.0675
+drive_074800,Chevrolet Equinox,ICE,136,0
+drive_149961,Chevrolet Equinox,ICE,190,0
+drive_317243,Hyundai Kona,ICE,1708,0.0076
+drive_798213,Hyundai Kona,ICE,1514,0.0106
+drive_926852,Hyundai Kona,ICE,370,0.0135
+drive_958182,Hyundai Kona,ICE,387,0.0103
+drive_976012,Hyundai Kona,ICE,162,0.0494
+drive_346789,Volkswagen ID.3,BEV,110,0.8636
+drive_561312,Ford Ranger,ICE,54,0
+drive_176123,Hyundai Kona,BEV,117,0.6068
+drive_956554,Hyundai Kona,BEV,86,0.9186
+drive_083163,Ford F-150 Lightning,BEV,572,0.7745
+drive_158922,Ford F-150 Lightning,BEV,81,1
+drive_184714,Ford F-150 Lightning,BEV,192,0.9427
+drive_233429,Ford F-150 Lightning,BEV,99,0.7172
+drive_323817,Ford F-150 Lightning,BEV,192,1
+drive_325202,Ford F-150 Lightning,BEV,234,0.8291
+drive_387801,Ford F-150 Lightning,BEV,528,1
+drive_390236,Ford F-150 Lightning,BEV,382,0.7435
+drive_481392,Ford F-150 Lightning,BEV,242,1
+drive_489685,Ford F-150 Lightning,BEV,85,1
+drive_693880,Ford F-150 Lightning,BEV,101,1
+drive_799478,Ford F-150 Lightning,BEV,62,1
+drive_887390,Ford F-150 Lightning,BEV,155,0.7806
+drive_004806,Kia Stinger,ICE,460,0.0261
+drive_010082,Kia Stinger,ICE,280,0.0679
+drive_346069,Kia Stinger,ICE,360,0.0056
+drive_419193,Kia Stinger,ICE,2662,0.2863
+drive_436591,Kia Stinger,ICE,471,0.0255
+drive_621843,Kia Stinger,ICE,163,0.0061
+drive_735434,Kia Stinger,ICE,602,0.0266
+drive_878942,Kia Stinger,ICE,1604,0.1428
+drive_253595,Tesla Model Y,BEV,714,0.7577
+drive_795131,Kia Carnival,ICE,250,0
+drive_366259,Volkswagen Atlas,ICE,283,0.0071
+drive_895292,Volkswagen Atlas,ICE,515,0.0233
+drive_059049,Nissan Leaf,BEV,664,0.9548
+drive_316524,Hyundai Santa Fe,ICE,904,0.0133
+drive_119923,Hyundai Santa Fe,ICE,158,0.0127
+drive_864273,Hyundai Santa Fe,ICE,239,0
+drive_912484,Hyundai Santa Fe,ICE,1922,0.012
+drive_982946,Hyundai Santa Fe,ICE,634,0.0047
+drive_304767,GWM Haval H6,ICE,133,0.0075
+drive_503515,GWM Haval H6,ICE,61,0
+drive_523189,GWM Haval H6,ICE,515,0.0621
+drive_873565,Genesis GV70,ICE,407,0.1155
+drive_619913,Toyota Corolla,ICE,136,0.1765
+drive_423441,Ford Ranger,ICE,143,0.042
+drive_033122,Kia EV9,BEV,98,1
+drive_490227,Kia EV9,BEV,660,0.95
+drive_544628,Kia EV9,BEV,57,1
+drive_861570,Kia EV9,BEV,67,1
+drive_898324,Kia EV9,BEV,512,0.8574
+drive_167575,Toyota Corolla,ICE,233,0.0043
+drive_422668,Toyota Corolla,ICE,319,0.0157
+drive_965823,Volkswagen Atlas,ICE,130,0
+drive_782230,Nissan Altima,ICE,493,0.0832
+drive_498238,Genesis GV80,ICE,404,0.0025
+drive_194858,Nissan Leaf,BEV,277,0.0072
+drive_276325,Nissan Leaf,BEV,211,0.0474
+drive_846225,Nissan Leaf,BEV,79,0.0127
+drive_024232,Nissan Leaf,BEV,62,0.8065
+drive_316970,Nissan Leaf,BEV,247,0.0769
+drive_583190,Nissan Leaf,BEV,118,0.9492
+drive_630890,Nissan Leaf,BEV,71,1
+drive_636458,Nissan Leaf,BEV,71,1
+drive_730173,Nissan Leaf,BEV,300,0.9733
+drive_936756,Nissan Leaf,BEV,162,0.8457
+drive_966351,Nissan Leaf,BEV,175,0.9371
+drive_017429,Tesla Model S,BEV,1120,0.8116
+drive_467878,Genesis G90,ICE,117,0
+drive_705064,Genesis G90,ICE,419,0
+drive_983331,Genesis G90,ICE,117,0.0171

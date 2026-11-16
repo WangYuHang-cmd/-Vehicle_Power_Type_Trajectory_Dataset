@@ -1,0 +1,4 @@
+cell,size_class,powertrain,car_model,platform,vehicle_id,drive_id,window_index,wheelbase_mm,track_front_mm,track_rear_mm,footprint_m2,curb_mass_kg,hero_still_t_window_s,scene,car_picture,car_body_width_in,car_picture_width_in,scale_in_per_m_wheelbase
+SMALL-BEV,SMALL,BEV,Hyundai Ioniq,HYUNDAI_IONIQ_EV_2020,vehicle_3780,drive_412430,27,2700,1555,1564,4.211,1490,41,city,cars/Ioniq2017.webp,0.54,0.54,0.2
+MID-ICE,MID,ICE,Genesis GV70,GENESIS_GV70_1ST_GEN,vehicle_3293,drive_199463,12,2870,1641,1657,4.733,1950,25,suburban arterial,cars/GV70.webp,0.574,0.575,0.2
+LARGE-BEV,LARGE,BEV,Ford F-150 Lightning,FORD_F_150_LIGHTNING_MK1,vehicle_5723,drive_947641,4,3700,1730,1735,6.41,2948,9,suburban arterial,cars/Ford_F150.webp,0.74,0.741,0.2

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Paper figures from the oracle tables (CPU, matplotlib): evidence-sufficiency subsampling curves and the
-footprint-noise ceiling. Reads <data-root>/experiments/oracles/*.csv, writes PDF + PNG under <repo>/paper/figures (local
-folder, not part of the public repository). Numbers are macro-F1 in percent on the held-out car models (split_platform).
+footprint-noise ceiling. Reads <data-root>/experiments/oracles/*.csv, writes PDF + PNG under <data-root>/experiments/paper_out by
+default (paper/figures holds the submitted, outlined versions; pass --out-dir to write elsewhere). Numbers are macro-F1 in percent on the held-out car models (split_platform).
 """
 from __future__ import annotations
 
@@ -96,7 +96,7 @@ def fig_footprint_noise(out: Path, achieved: float | None = None, ceiling: float
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--out-dir", type=Path, default=REPO / "paper" / "figures")
+    ap.add_argument("--out-dir", type=Path, default=Path(C.DATA_ROOT) / "experiments" / "paper_out")
     ap.add_argument("--achieved-size", type=float, default=None, help="achieved drive-level size macro-F1 (%%) to mark")
     ap.add_argument("--ceiling-size", type=float, default=None,
                     help="per-car-model majority-oracle macro-F1 (%%) to mark (default: mean over the reference runs)")

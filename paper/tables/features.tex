@@ -1,0 +1,19 @@
+\begin{table}[t]
+\caption{Physical features with gradient boosting: macro-F1 (\%).}
+\label{tab:llm}
+\centering\footnotesize
+\setlength{\tabcolsep}{2pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}p{67pt}*{6}{C}}
+\tabhead
+ & \multicolumn{3}{c}{\bfseries\color{sizeblue}Size} & \multicolumn{3}{c}{\bfseries\color{powerteal}BEV vs ICE} \\
+\cmidrule(lr){2-4} \cmidrule(lr){5-7}
+\tabhead\textbf{Features} & All & Human & Drive & All & Human & Drive \\
+\midrule
+Statistics & 49.7 & 46.3 & 54.7 & 69.5 & 73.5 & 73.2 \\
+\rowcolor{powerband}LLM physical & 40.5 & 47.3 & 63.2 & 69.6 & 84.2 & 89.4 \\
+\rowcolor{rowtint}LLM + statistics & 54.1 & 49.8 & 64.9 & 73.2 & 80.2 & 80.9 \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\tabnote{Unseen car models, one seed. All and Human report window-level scores; Drive uses all windows. LLM physical: the 34 retained LLM-proposed features.}
+\end{table}

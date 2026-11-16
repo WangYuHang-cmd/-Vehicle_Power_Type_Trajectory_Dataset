@@ -53,7 +53,10 @@ def test_rendered_card_passes_text_rules_and_fence_rule(numbers):
     rendered = RM.render(RM.template_text(), render_numbers(numbers))
     assert R.scan_text(rendered, readme=True, allowed_email=R.load_allow()["email"]) == {}
     assert R.hits_acronym(rendered, readme=True) == 0
-    assert R.hits_acronym(rendered, readme=False) > 0                        # the word lives inside the bibtex fence only
+    # the word lives inside the bibtex fence only (the cited title, which hits_acronym also allows outside a fence)
+    fence = R.BIBTEX_FENCE.findall(rendered)
+    assert len(fence) == 1 and R.ACRONYM_WORD.search(fence[0])
+    assert not R.ACRONYM_WORD.search(R.CITATION_TOKEN.sub(" ", R.BIBTEX_FENCE.sub(" ", rendered)))
     assert "driving automation system (DAS)" in rendered and "arXiv:2603.06986" in rendered
 
 

@@ -147,7 +147,8 @@ Not model inputs: {{nuisance_columns}}, and every column of the index tables.
 Classifiers that use the official channels only (hand-crafted window statistics with logistic regression and gradient
 boosting; a one-dimensional ResNet, a bidirectional GRU, a Transformer encoder and Mamba state-space models) are reported with
 their code in `experiments/RESULTS.md` of the code repository, under exactly these protocols and split schemes. They
-are reference points for the two tasks, not a leaderboard.
+are reference points for the two tasks, not a leaderboard. Reduced-input variants of the recipe-trained bi-GRU (size)
+and one-dimensional ResNet (BEV vs ICE), including a pedal-flag ablation, are in `experiments/transfer/VARIANTS.md`.
 
 ## Files
 
@@ -226,6 +227,12 @@ A window is `eligible` when it has {{n_samples}} consecutive samples, no gap, an
   `steer_torque_norm` divides by the drive's {{torque_q_pct}}th percentile of |torque| while moving and steering.
 * **Dead channels.** The pedal magnitudes are not populated on every vehicle: `gas` is NaN on {{gas_dead_pct}} % and
   `brake` on {{brake_dead_pct}} % of the drives (`gas_alive`, `brake_alive`); the `*_pressed` flags are always valid.
+* **Pedal flags as a powertrain cue.** On car models held out from training, the reference BEV vs ICE model leans
+  heavily on `gas_pressed` and `brake_pressed`: battery-electric drivers mostly slow down without a brake application
+  (regenerative or one-pedal driving). Re-trained with only the two flags masked, the same recipe loses most of its
+  margin over chance and fits the training car models instead, while speed, acceleration and the standstill flag alone
+  keep most of it (`experiments/transfer/VARIANTS.md` of the code repository). When a BEV vs ICE claim rests on
+  vehicle motion alone, report results without the pedal flags, with the speed-only variant as the reference.
 * **Quantization and sampling.** Signal resolution and the exact sample clock differ by make; tables are indexed by
   sample, not by a fixed clock, and `t_s` is nominal.
 * **Region and software confounds.** `region`, `software_era`, `device_type`, `pose_source` and the lead source are

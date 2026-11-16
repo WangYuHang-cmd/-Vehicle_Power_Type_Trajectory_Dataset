@@ -4,8 +4,8 @@
 Reads <data-root>/experiments/results/*.json (written by train.py / features_baseline.py) and writes
 <out-dir>/results_<split_col>.tex (one table per split scheme: rows = models, column groups = task x protocol) and
 <out-dir>/results_summary.tex (headline table: both tasks on split_platform, window and drive level). Numbers are macro-F1
-in percent, mean (and std when several seeds ran). The output folder defaults to <repo>/paper/tables, which is not
-part of the public repository.
+in percent, mean (and std when several seeds ran). The output folder defaults to <data-root>/experiments/paper_out
+(paper/tables holds the submitted tables; pass --out-dir to write elsewhere).
 """
 from __future__ import annotations
 
@@ -22,6 +22,8 @@ from experiments.run_all import NAMES, ORDER, load_results  # noqa: E402
 from experiments.train import EXP_ROOT  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO))
+from vtt import config as C  # noqa: E402
 TEX_NAMES = {"feat_logreg": "Statistics + logistic regression", "feat_hgb": "Statistics + gradient boosting",
              "feat_llm_logreg": "LLM physical features + logistic regression", "feat_llm_hgb": "LLM physical features + gradient boosting",
              "feat_llmstats_hgb": "LLM physical + statistics + gradient boosting",
@@ -114,7 +116,7 @@ def summary_table(results: list[dict]) -> str:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--results-dir", type=Path, default=EXP_ROOT / "results")
-    ap.add_argument("--out-dir", type=Path, default=REPO / "paper" / "tables")
+    ap.add_argument("--out-dir", type=Path, default=Path(C.DATA_ROOT) / "experiments" / "paper_out")
     a = ap.parse_args(argv)
     results = load_results(a.results_dir)
     if not results:

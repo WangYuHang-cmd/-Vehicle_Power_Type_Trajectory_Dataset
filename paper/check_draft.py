@@ -5,6 +5,8 @@ import re, sys, pathlib
 
 P = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else pathlib.Path(__file__).parent)
 tex = sorted((P / "sections").glob("*.tex")) + [P / "main.tex"]
+# table and figure inputs (tables/*.tex, figures/*.tex) carry labels and captions in the submitted layout
+tex += sorted((P / "tables").glob("*.tex")) + sorted((P / "figures").glob("*.tex"))
 bib = (P / "refs.bib").read_text()
 keys = set(re.findall(r"@\w+\{([^,\s]+),", bib)) - {"IEEEexample:BSTcontrol"}
 hard, soft = [], []

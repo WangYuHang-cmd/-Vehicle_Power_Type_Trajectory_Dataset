@@ -1,0 +1,30 @@
+name                                 type              encoding         emb sub uni object ID
+------------------------------------ ----------------- ---------------- --- --- --- ---------
+BPCWQW+NimbusRomNo9L-Regu            Type 1            Custom           yes yes yes    113  0
+QVCFWU+NimbusRomNo9L-MediItal        Type 1            Custom           yes yes yes    116  0
+JYGUXF+NimbusRomNo9L-Medi            Type 1            Custom           yes yes yes    117  0
+RNOBWR+NimbusRomNo9L-ReguItal        Type 1            Custom           yes yes yes    118  0
+RBVSJJ+CMSY10                        Type 1            Builtin          yes yes yes    119  0
+AAAAAA+LiberationSans-Bold           TrueType          WinAnsi          yes yes yes    125  0
+AAAAAA+LiberationSans                TrueType          WinAnsi          yes yes yes    126  0
+GTVIBK+CMMI10                        Type 1            Builtin          yes yes yes    166  0
+IOOTPC+CMR10                         Type 1            Builtin          yes yes yes    167  0
+IBEFDQ+CMR7                          Type 1            Builtin          yes yes yes    168  0
+IHOMVC+CMMI7                         Type 1            Builtin          yes yes yes    204  0
+AAAAAA+LiberationSans-Bold           TrueType          WinAnsi          yes yes yes    206  0
+AAAAAA+LiberationSans                TrueType          WinAnsi          yes yes yes    207  0
+DCGEID+CMR8                          Type 1            Builtin          yes yes yes    257  0
+EBZDDK+CMMI8                         Type 1            Builtin          yes yes yes    258  0
+KSWBXC+CMSY5                         Type 1            Builtin          yes yes yes    259  0
+RKGDEA+CMR5                          Type 1            Builtin          yes yes yes    260  0
+HINFRP+CMMI5                         Type 1            Builtin          yes yes yes    261  0
+MOYAQU+CMBX8                         Type 1            Builtin          yes yes yes    262  0
+ZMNLOH+CMMIB8                        Type 1            Builtin          yes yes yes    263  0
+KWTZUF+CMBSY5                        Type 1            Builtin          yes yes yes    264  0
+JUSQSH+CMBX5                         Type 1            Builtin          yes yes yes    265  0
+YUPEFD+CMMIB5                        Type 1            Builtin          yes yes yes    266  0
+NOKHLJ+CMSY7                         Type 1            Builtin          yes yes yes    267  0
+PJZRLC+CMR6                          Type 1            Builtin          yes yes yes    282  0
+TMCDBM+CMSY8                         Type 1            Builtin          yes yes yes    307  0
+AAAAAA+LiberationSans-Bold           TrueType          WinAnsi          yes yes yes    310  0
+AAAAAA+LiberationSans                TrueType          WinAnsi          yes yes yes    311  0

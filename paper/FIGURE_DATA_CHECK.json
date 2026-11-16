@@ -1,0 +1,46 @@
+{
+  "source": "user-provided source_data.zip",
+  "raw_csv_files_unchanged": true,
+  "figure_2a": {
+    "rows_plotted": 202,
+    "unique_car_models": 167,
+    "size_thresholds_m2": [
+      4.43,
+      4.88
+    ]
+  },
+  "figure_5a": "Original acceleration samples within the selected episodes, aligned at episode onset; 0% and 85% brake use from the supplied episode summary.",
+  "figure_5b": {
+    "BEV": {
+      "drives": 226,
+      "q25": 0.623,
+      "median": 0.8469,
+      "q75": 0.9545
+    },
+    "ICE": {
+      "drives": 331,
+      "q25": 0.0,
+      "median": 0.0095,
+      "q75": 0.02905
+    }
+  },
+  "percentage_rounding": "Decimal half-up to one decimal place; ICE 0.95% is displayed as 1.0%.",
+  "figure_5c": {
+    "source_samples": 2665,
+    "plotted_samples": 1775,
+    "slope_ratio": 1.80499,
+    "fit_parameters": [
+      {
+        "car_model": "Hyundai Ioniq",
+        "slope_curvature_per_deg": 0.00043864,
+        "line_half_range_deg": 242.8
+      },
+      {
+        "car_model": "Ford F-150 Lightning",
+        "slope_curvature_per_deg": 0.000243016,
+        "line_half_range_deg": 422.9
+      }
+    ]
+  },
+  "icons": "Illustrative vector shapes; not quantitative vehicle-dimension measurements."
+}

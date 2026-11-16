@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
+import json
 import os
 import shutil
 import tempfile
@@ -56,14 +58,19 @@ def root():
         shutil.rmtree(d, ignore_errors=True)
 
 
+def mark_gate(rel: Path) -> None:
+    """A gate marker bound to the current CHECKSUMS.sha256, as the pre-upload gate writes it."""
+    digest = hashlib.sha256((rel / "CHECKSUMS.sha256").read_bytes()).hexdigest()
+    (rel / ".gate_ok").write_text(json.dumps({"checksums_sha256": digest, "n_files": 0, "utc": "test"}))
+
+
 def make_release(data_root: Path, n_drives: int = 3) -> Path:
     """A tiny release tree with every file class `check` looks at."""
     rel = data_root / "release" / C.RELEASE_VERSION
     (rel / "index").mkdir(parents=True); (rel / "splits").mkdir(); (rel / ".cache").mkdir(); (rel / "windows" / "test").mkdir(parents=True)
     (rel / "README.md").write_text(GOOD_CARD)
     (rel / "LICENSE").write_text("CC BY 4.0\n")
-    (rel / "CHECKSUMS.sha256").write_text("")
-    (rel / ".gate_ok").write_text("ok\n")
+    (rel / "CHECKSUMS.sha256").write_text(f"{hashlib.sha256(GOOD_CARD.encode()).hexdigest()}  README.md\n")
     (rel / ".cache" / "vtt_checksums.json").write_text("{}")
     pd.DataFrame({"vehicle_id": ["vehicle_0001"], "drive_id": ["drive_000001"]}).to_parquet(rel / "index" / "drives.parquet", index=False)
     pd.DataFrame({"window_id": ["drive_000001_w0"]}).to_parquet(rel / "splits" / "eval_balanced_size_test.parquet", index=False)
@@ -71,6 +78,7 @@ def make_release(data_root: Path, n_drives: int = 3) -> Path:
         df = pd.DataFrame({"t_s": np.arange(20) / 10.0, "v_mps": np.linspace(0, 5, 20) + k})
         S.write_public_parquet(df, rel / "data" / "vehicle_0001" / f"drive_{k + 1:06d}.parquet", S.DRIVE_COLUMNS, "drive")
     pd.DataFrame({"window_id": ["drive_000001_w0"]}).to_parquet(rel / "windows" / "test" / "shard_000.parquet", index=False)
+    mark_gate(rel)                                   # the gate runs last, on the finished tree
     return rel
 
 
@@ -132,7 +140,7 @@ def test_upload_refuses_without_gate_ok(root):
     args = S10.build_parser().parse_args(["upload-data", "--data-root", str(root)])
     (rel / ".gate_ok").unlink()
     assert S10.cmd_upload_data(args, api) == 2 and api.calls == []
-    (rel / ".gate_ok").write_text("ok\n")
+    mark_gate(rel)
     args_dry = S10.build_parser().parse_args(["upload-data", "--data-root", str(root), "--dry-run"])
     assert S10.cmd_upload_data(args_dry, api) == 0 and api.calls == []
     assert S10.cmd_upload_data(args, api) == 0
@@ -204,3 +212,32 @@ def test_never_prints_token(root, monkeypatch, capsys):
     assert S10.main(["settings", "--data-root", str(root)]) == 2
     out = capsys.readouterr().out
     assert token not in out and hex16 not in out and "<token>" in out and "<hex16>" in out
+
+
+def test_upload_refuses_stale_gate_marker(root):
+    rel = make_release(root)
+    api = FakeApi(rel)
+    args = S10.build_parser().parse_args(["upload-data", "--data-root", str(root)])
+    (rel / "README.md").write_text(GOOD_CARD + "\nEdited after the gate.\n")           # card changed, not re-checksummed
+    assert S10.cmd_readme(args, api) == 2 and S10.cmd_upload_data(args, api) == 2 and api.calls == []
+    digest = hashlib.sha256((rel / "README.md").read_bytes()).hexdigest()
+    (rel / "CHECKSUMS.sha256").write_text(f"{digest}  README.md\n")                       # re-checksummed, gate not re-run
+    assert S10.cmd_readme(args, api) == 2 and S10.cmd_upload_data(args, api) == 2 and api.calls == []
+    mark_gate(rel)                                                                          # gate re-run on this tree
+    assert S10.cmd_upload_data(args, api) == 0 and S10.cmd_readme(args, api) == 0
+
+
+def test_upload_refuses_files_newer_than_gate_marker(root):
+    rel = make_release(root)
+    api = FakeApi(rel)
+    args = S10.build_parser().parse_args(["upload-data", "--data-root", str(root)])
+    assert S10.gate_marker_problem(rel) is None
+    marker = rel / ".gate_ok"
+    old = marker.stat().st_mtime_ns - 10**9
+    os.utime(marker, ns=(old, old))                                                         # a data file written after the gate
+    assert "modified after" in S10.gate_marker_problem(rel)
+    assert S10.cmd_upload_data(args, api) == 2 and S10.cmd_readme(args, api) == 2 and api.calls == []
+    os.utime(rel / ".cache" / "vtt_checksums.json")                                         # .cache/ never counts
+    mark_gate(rel)
+    os.utime(rel / ".cache" / "vtt_checksums.json", ns=(old + 3 * 10**9, old + 3 * 10**9))
+    assert S10.gate_marker_problem(rel) is None and S10.cmd_upload_data(args, api) == 0

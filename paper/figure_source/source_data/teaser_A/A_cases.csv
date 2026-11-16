@@ -1,0 +1,7 @@
+cell,size_class,powertrain,car_model,platform,vehicle_id,drive_id,window_index,wheelbase_mm,track_front_mm,track_rear_mm,footprint_m2,curb_mass_kg,hero_still_t_window_s,scene,car_picture,car_body_width_in,car_picture_width_in,scale_in_per_m_wheelbase
+SMALL-BEV,SMALL,BEV,Hyundai Ioniq,HYUNDAI_IONIQ_EV_2020,vehicle_3780,drive_412430,27,2700,1555,1564,4.211,1490,41,city,cars/Ioniq2017.webp,0.324,0.324,0.12
+MID-BEV,MID,BEV,Genesis GV60,GENESIS_GV60_EV_1ST_GEN,vehicle_3925,drive_381291,14,2900,1628,1637,4.734,2205,37,suburban arterial,cars/Genesis_GV60.avif,0.348,0.349,0.12
+LARGE-BEV,LARGE,BEV,Ford F-150 Lightning,FORD_F_150_LIGHTNING_MK1,vehicle_5723,drive_947641,4,3700,1730,1735,6.41,2948,9,suburban arterial,cars/Ford_F150.webp,0.444,0.445,0.12
+SMALL-ICE,SMALL,ICE,Toyota Corolla,TOYOTA_COROLLA_TSS2,vehicle_8070,drive_275257,6,2670,1532,1534,4.093,1388,30,city to coastal arterial,cars/Toyota_Corolla.webp,0.32,0.321,0.12
+MID-ICE,MID,ICE,Genesis GV70,GENESIS_GV70_1ST_GEN,vehicle_3293,drive_199463,12,2870,1641,1657,4.733,1950,25,suburban arterial,cars/GV70.webp,0.344,0.345,0.12
+LARGE-ICE,LARGE,ICE,Kia Carnival,KIA_CARNIVAL_2025,vehicle_1084,drive_019011,19,3091,1716,1716,5.304,1985,29,city arterial,cars/KIA_Carnival.png,0.371,0.374,0.12

@@ -5,7 +5,8 @@ Subcommands, in the order they are meant to run:
   readme-validate  local checks of release/<version>/README.md (front matter parses, license, configs, DAS wording)
                    and, unless --offline, the Hub's card validation (DatasetCard.validate posts the card text only)
   upload-data      upload_large_folder of the release tree (data/, index/, splits/, schema/, CHECKSUMS, LICENSE),
-                   skipping README.md, .cache/** and .gate_ok; refuses to run when .gate_ok is missing
+                   skipping README.md, .cache/** and .gate_ok; refuses to run when .gate_ok is missing, refers to
+                   another CHECKSUMS.sha256, or is older than any release file
   readme           upload README.md last (so a card problem never stalls the bulk upload)
   check            repository file set == local set + .gitattributes; sizes from dataset_info(files_metadata=True);
                    sha256 of README, CHECKSUMS, every index/ and splits/ file and N random data files downloaded
@@ -147,10 +148,33 @@ def set_commit_scale() -> list[int] | None:
     return None
 
 
+def gate_marker_problem(rel: Path) -> str | None:
+    """None when .gate_ok binds this tree: its checksums_sha256 equals the sha256 of CHECKSUMS.sha256, CHECKSUMS lists the
+    current README.md, and no release file (outside .cache/) was modified after the marker was written. Otherwise the
+    reason to refuse (re-render, re-checksum and re-run the pre-upload gate)."""
+    marker, ck, readme = rel / ".gate_ok", rel / "CHECKSUMS.sha256", rel / "README.md"
+    if not marker.exists():
+        return ".gate_ok missing (run the pre-upload gate first)"
+    try:
+        bound = json.loads(marker.read_text()).get("checksums_sha256")
+    except Exception:                                 # noqa: BLE001
+        return ".gate_ok unreadable"
+    if not ck.exists() or hashlib.sha256(ck.read_bytes()).hexdigest() != bound:
+        return ".gate_ok refers to another CHECKSUMS.sha256 (re-run the pre-upload gate)"
+    if readme.exists() and f"{hashlib.sha256(readme.read_bytes()).hexdigest()}  README.md" not in ck.read_text():
+        return "CHECKSUMS.sha256 does not list the current README.md (re-checksum and re-run the pre-upload gate)"
+    stamp = marker.stat().st_mtime_ns
+    newer = [r for r in local_files(rel) if (rel / r).stat().st_mtime_ns > stamp]
+    if newer:
+        return f"{len(newer)} release file(s) modified after the pre-upload gate ran (re-checksum and re-run the gate)"
+    return None
+
+
 def cmd_upload_data(a, api=None) -> int:
     rel = release_root(a.data_root, a.release_root)
-    if not (rel / ".gate_ok").exists():
-        print("refusing to upload: .gate_ok missing (run the pre-upload gate first)")
+    problem = gate_marker_problem(rel)
+    if problem:
+        print(f"refusing to upload: {problem}")
         return 2
     files = local_files(rel, include_readme=False)
     print(f"upload-data: {len(files)} files, {sum(files.values()) / 1e9:.2f} GB, workers={a.workers}, ignore={IGNORE_PATTERNS}")
@@ -167,9 +191,14 @@ def cmd_upload_data(a, api=None) -> int:
 
 
 def cmd_readme(a, api=None) -> int:
-    readme = release_root(a.data_root, a.release_root) / "README.md"
+    rel = release_root(a.data_root, a.release_root)
+    readme = rel / "README.md"
     if not readme.exists():
         print("README.md missing in the release tree")
+        return 2
+    problem = gate_marker_problem(rel)
+    if problem:
+        print(f"refusing to upload the card: {problem}")
         return 2
     if a.dry_run:
         print("readme: would upload README.md")

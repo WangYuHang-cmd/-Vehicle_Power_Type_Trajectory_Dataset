@@ -1,0 +1,22 @@
+\begin{table}[t]
+\caption{Recognition on unseen drivers of known models: macro-F1 (\%).}
+\label{tab:drivers}
+\centering\footnotesize
+\setlength{\tabcolsep}{2.3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}p{83pt}*{4}{C}}
+\tabhead
+ & \multicolumn{2}{c}{\bfseries\color{sizeblue}Size} & \multicolumn{2}{c}{\bfseries\color{powerteal}BEV vs ICE} \\
+\cmidrule(lr){2-3} \cmidrule(lr){4-5}
+\tabhead\textbf{Model} & Window & Drive & Window & Drive \\
+\midrule
+\makecell[l]{LLM + statistics\\+ GBM} & 72.4 & 80.6 & 84.4 & 94.1 \\
+\rowcolor{rowtint}1-D ResNet & \res{68.4}{3.0} & \res{77.4}{2.2} & \res{82.4}{0.7} & \res{96.2}{0.5} \\
+bi-GRU & \res{70.2}{0.9} & \res{78.1}{1.4} & \res{87.4}{0.4} & \res{96.5}{0.1} \\
+\rowcolor{powerband}ResNet, adapted & \res{64.8}{0.3} & \res{80.6}{0.1} & \res{83.1}{0.2} & \res{97.2}{0.3} \\
+\rowcolor{powerband}bi-GRU, adapted & \res{62.9}{1.0} & \res{79.5}{0.7} & \res{78.8}{0.4} & \res{95.1}{0.3} \\
+\rowcolor{eventband}Event MIL & 68.4 & 78.8 & 86.5 & 96.1 \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\tabnote{Size: 1,218 drives, 219 vehicles, 81 car models; BEV--ICE: 922 drives, 143 vehicles, 63 models. Full evaluation set. Mean $\pm$ standard deviation over three seeds; one seed for GBM and MIL. Adapted: task-specific training.}
+\end{table}

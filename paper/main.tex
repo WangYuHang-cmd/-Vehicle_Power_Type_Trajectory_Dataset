@@ -2,8 +2,12 @@
 % Built from ITSS_Template/root.tex (IEEEtran conference class). Compile from this folder:
 %   pdflatex main && bibtex main && pdflatex main && pdflatex main
 % Sections live in sections/*.tex, figures in figures/, generated tables in tables/.
-\documentclass[conference]{IEEEtran}
+\documentclass[conference,letterpaper,10pt]{IEEEtran}
 \IEEEoverridecommandlockouts
+% Keep visible first-line glyphs inside the supplied PaperCept 54-pt top border.
+% Shorten the text area by the same amount to retain the 72-pt bottom margin.
+\addtolength{\topmargin}{4pt}
+\addtolength{\textheight}{-4pt}
 
 \usepackage{multirow}
 \usepackage{amsmath}
@@ -11,34 +15,52 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{array}
+\usepackage[table]{xcolor}
+\usepackage{tabularx}
+\usepackage{makecell}
+\usepackage[protrusion=false]{microtype}
+\let\labelindent\relax
+\usepackage{enumitem}
 \usepackage{url}
 \usepackage[hidelinks]{hyperref}
 \graphicspath{{./figures/}}
 
-\title{\LARGE \bf Reading Vehicle Size and Powertrain from Motion: A Trajectory--CAN Benchmark with Held-Out Car Models, Pre-Registered Methods and Label Ceilings}
+% Shared palette: blue (size), teal (powertrain), slate (reference methods).
+\definecolor{ink}{HTML}{253858}
+\definecolor{sizeblue}{HTML}{1F5FBF}
+\definecolor{powerteal}{HTML}{00857D}
+\definecolor{eventpurple}{HTML}{7655B5}
+\definecolor{warmaccent}{HTML}{C2410C}
+\definecolor{tablehead}{HTML}{ECF2FA}
+\definecolor{sizeband}{HTML}{DCE9FA}
+\definecolor{powerband}{HTML}{DCEFEB}
+\definecolor{eventband}{HTML}{EAE3F5}
+\definecolor{neutralband}{HTML}{E7EBF0}
+\definecolor{rowtint}{HTML}{F6F8FA}
+\newcommand{\tabhead}{\rowcolor{tablehead}}
+\newcommand{\tabnote}[1]{\par\vspace{2pt}\begin{minipage}{\linewidth}\scriptsize #1\end{minipage}}
+\newcommand{\res}[2]{\ensuremath{#1{\scriptscriptstyle\,\pm\,#2}}}
+\newcommand{\best}[1]{{\bfseries\boldmath #1}}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\renewcommand{\theadfont}{\bfseries\color{ink}}
+\setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\floatsep}{7pt plus 2pt minus 2pt}
+\setlist[enumerate]{leftmargin=*,nosep,topsep=3pt}
 
-% Anonymity switch: \anonymoustrue hides the author block and the repository links (double-blind submission);
-% \anonymousfalse prints them (camera-ready). Author list given by the authors on 8 Nov 2026.
+\title{VTT: Reading Vehicle Size and Powertrain Type\\from Motion Across Unseen Car Models}
+
+% Anonymous review source. Add author information only after acceptance.
 \newif\ifanonymous
-% default: anonymous (target venue IEEE IV: double-blind review); build the author version with
-%   pdflatex -jobname=main_authors "\def\withauthors{1}\input{main}"
-\ifdefined\withauthors\anonymousfalse\else\anonymoustrue\fi
-
-\ifanonymous
+\anonymoustrue
 \author{\parbox{\textwidth}{\centering Author names withheld for review}}
-\else
-\author{%
-	\parbox{\textwidth}{%
-		\centering
-		Yuhang Wang, Yuechen Guo, Jingxin Yang, Chuheng Wei, Suyang Chen,\\
-		Abdulaziz Alhuraish, Yiyi Wang, Jingran Sun and Hao Zhou%
-	}%
-	% TODO (authors): affiliations and contact e-mails, e.g.
-	% \thanks{$^{1}$Affiliation 1, City, Country {\tt\small contact address}}
-}
-\fi
+\hypersetup{pdfauthor={},pdfsubject={},pdfkeywords={}}
+
+\IEEEaftertitletext{\input{figures/teaser_layout}}
 
 \begin{document}
+\bstctlcite{IEEEexample:BSTcontrol}
 \maketitle
 \thispagestyle{empty}
 \pagestyle{empty}
@@ -52,12 +74,9 @@
 \input{sections/06_discussion}
 \input{sections/07_conclusion}
 
-\ifanonymous\else
-\section*{Acknowledgments}
-% TODO (authors): funding and acknowledgments, or remove.
-\fi
-
 \bibliographystyle{IEEEtran}
+% Balance the final reference page without changing the IEEE text area.
+% Keep bibliography flow automatic while figures occupy the final pages.
 \bibliography{refs}
 
 \end{document}

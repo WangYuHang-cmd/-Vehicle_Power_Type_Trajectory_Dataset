@@ -1,0 +1,3 @@
+badge,shown,definition,source,source_text
+held-out car models,41,car models held out as the test split (split_platform),paper/OUTLINE.md line 79,41 car models held out as the test split (about 15 % of the hours of each cell; brands contribute both powertrain classes where
+BEV vs ICE macro-F1,93.0 %,"drive-level macro-F1 (percent) of the final powertrain model (1-D ResNet B5, 3 seeds, drive_full, split_platform test); OUTLINE.md gives macro-F1, not accuracy, for the final models; the abstract range is 92.6-93.0 over the GRU / ResNet final models",paper/OUTLINE.md line 158,"- BEV vs ICE: GRU B5 77.0+-0.3 / 92.6+-0.1 [87.1, 96.2] / 93.4+-0.4 [87.9, 97.2]; ResNet B5 79.9+-0.7 / 93.0+-0.8 [87.2, 96.6] / 92.8+-0.4"

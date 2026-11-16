@@ -1,85 +1,35 @@
-\section{Dataset and Protocols}
-\label{sec:dataset}
+\section{Dataset and Evaluation}\label{sec:dataset}
 
-\subsection{Source and Extraction}
-The drives are open logs of vehicles running an open-source driving automation system (DAS), the ecosystem behind comma2k19~\cite{schafer2018comma2k19} and the take-over dataset of~\cite{wang2026adasto}. Drive tables are indexed by the 10~Hz vehicle-state sample (row $k$ at nominal time $k/10$~s). Lower-rate radar, pose and controller topics are zero-order held causally onto these sample times, with stale samples set to missing, and a flag marks rows preceded by a gap longer than 0.3~s. DAS-engaged periods are kept and flagged, so the same vehicles appear under human and automated driving.
-
-\subsection{Channels}
-Of the 44 columns of a drive table, 20 are the official model inputs: speed and longitudinal acceleration; steering-wheel angle, rate and normalised torque; yaw rate, curvature and lateral acceleration; the flags accelerator pressed, brake pressed, steering pressed, standstill and DAS engaged; and lead-vehicle validity, distance, relative speed, speed, acceleration (a causal slope of its speed), time headway and time to collision. Steering torque is normalised per drive by the 95th percentile of its magnitude while moving and steering. Pedal magnitudes are missing on 63.9\% (accelerator) and 49.4\% (brake) of the drives, so only the always-valid pressed flags are inputs; on 56.2\% of the drives the lead comes from a camera model rather than a radar.
-
-\subsection{Labels}
-Both labels are attributes of the platform identified from the bus, not of a drive. Size is the footprint, wheelbase $\times$ mean track: SMALL below 4.43~m$^2$, MID from 4.43 up to 4.88~m$^2$, LARGE from 4.88~m$^2$. The thresholds were locked on the label inventory before any classifier was trained: every size $\times$ \{BEV, ICE\} cell had to hold at least 100~h, 3 car models and 5 identity groups (same device, same vehicle identity or shared drive names); the admissible pairs maximising the smallest cell (309~h) were kept, each cut placed in a gap between platform footprints. Examples are the Civic and Bolt (SMALL), Camry and Model~3 (MID), Palisade and Model~X (LARGE); in that inventory the BEV hours of SMALL, MID and LARGE came from only 15, 10 and 8 car models, against 55, 42 and 28 for ICE. Powertrain is ICE, hybrid (HEV), plug-in hybrid (PHEV) or BEV, with BEV vs ICE the main task; platforms sold with several powertrains that the logs cannot separate (MIXED) or of unknown powertrain carry a null label (11.1\% of the drives). Table~\ref{tab:dataset} summarises the release.
-
-\begin{table}[t]
-\caption{Release summary. Vehicles are device $\times$ platform pairs; class support counts eligible 60-s windows; the test-split block counts eligible windows and the units they cover.}
-\label{tab:dataset}
+\begin{figure*}[t]
 \centering
-\footnotesize
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lr@{}}
-\toprule
-Drives (one ignition cycle each) & 9,062 \\
-Hours, nominal & 3,949.8 \\
-Hours moving & 3,078.1 \\
-Pseudonymous vehicles & 1,431 \\
-Identity groups (unit of the splits) & 1,157 \\
-Platforms / brands / car models & 360 / 38 / 174 \\
-Samples with DAS engaged & 47.9\% \\
-Samples with any automation activity & 62.6\% \\
-\midrule
-Windows listed & 241,476 \\
-Windows eligible & 201,390 \\
-Windows human-only (strict) & 37,942 \\
-Eligible windows, size & 201,169 \\
-Eligible windows, BEV vs ICE & 144,534 \\
-Eligible windows, four-class powertrain & 178,827 \\
-\bottomrule
-\end{tabular}
+\includegraphics[width=\textwidth]{vtt_dataset_coverage.pdf}
+\caption{VTT coverage. (a) Median footprints of 202 car-model--powertrain groups (167 models); dashed lines mark the size thresholds. Other includes hybrid, mixed and unresolved powertrains. Vehicle icons illustrate size classes. (b) Regional shares of driving hours; only coarse regions are retained.}
+\label{fig:coverage}
+\end{figure*}
 
-\vspace{0.5ex}
+\subsection{Source and Signals}
+VTT uses public driving-automation logs from the ecosystem described in Section~\ref{sec:related}. Each drive spans one ignition cycle. Signals are aligned to the 10-Hz vehicle-state stream, with sample $k$ at nominal time $k/10$ s. Lower-rate radar, pose and controller signals use causal zero-order holding; stale values become missing, and gaps longer than 0.3 s are flagged. DAS periods are retained and marked.
 
-\begin{tabular}{@{}lrrrr@{}}
-\toprule
-Class & Windows & Hours & Vehicles & Platforms \\
-\midrule
-SMALL & 91,369 & 1,522.8 & 673 & 169 \\
-MID & 56,059 & 934.3 & 392 & 104 \\
-LARGE & 53,741 & 895.7 & 295 & 76 \\
-\addlinespace
-ICE & 79,566 & 1,326.1 & 598 & 200 \\
-HEV & 23,708 & 395.1 & 197 & 57 \\
-PHEV & 10,585 & 176.4 & 68 & 21 \\
-BEV & 64,968 & 1,082.8 & 366 & 71 \\
-Powertrain null & 22,563 & 376.1 & 156 & 34 \\
-\bottomrule
-\end{tabular}
+Of 44 table columns, 20 are model inputs: speed and longitudinal acceleration; steering-wheel angle, rate and normalised torque; yaw rate, curvature and lateral acceleration; accelerator-pressed, brake-pressed, steering-pressed, standstill and DAS-engaged flags; and lead validity, distance, relative speed, speed, acceleration, time headway and time to collision. Lead acceleration is a causal slope of lead speed. Steering torque is divided by its drive-level 95th-percentile magnitude while moving and steering. Only pedal flags are used because accelerator and brake magnitudes are missing on 63.9\% and 49.4\% of drives. Lead estimates come from a camera model on 56.2\% of drives and from radar otherwise.
 
-\vspace{0.5ex}
+\subsection{Labels and Coverage}
+Labels are assigned to the vehicle platform identified from CAN. A vehicle is a driver--platform pair. Size is footprint, defined as wheelbase $\times$ mean track width: SMALL below 4.43 m$^2$, MID from 4.43 to below 4.88 m$^2$, and LARGE at or above 4.88 m$^2$. The thresholds were chosen before classifier training. Each size $\times$ \{BEV, ICE\} cell required at least 100 h, three car models and five identity groups, linked by driver, vehicle identity or shared drive names. Among feasible threshold pairs, we maximised the smallest cell (309 h), placing cuts in gaps between platform footprints. BEV support across these classes comes from 15, 10 and 8 car models, compared with 55, 42 and 28 for ICE.
 
-\begin{tabular}{@{}lrr@{}}
-\toprule
-Test split, held-out car models & Size & BEV vs ICE \\
-\midrule
-Eligible windows & 26,144 & 18,295 \\
-Hours & 435.7 & 304.9 \\
-Drives & 1,141 & 836 \\
-Vehicles & 329 & 244 \\
-Car models & 41 & 39 \\
-\bottomrule
-\end{tabular}
-\end{table}
+Powertrain labels are ICE, hybrid (HEV), plug-in hybrid (PHEV) and BEV; the main task is BEV versus ICE. Platforms with unresolved multiple powertrains or unknown powertrain have no powertrain label (11.1\% of drives). Table~\ref{tab:dataset} and Fig.~\ref{fig:coverage} summarise coverage.
 
-\subsection{Splits}
-Both schemes split by identity group, since drives of one device are correlated. The headline scheme, \texttt{split\_platform}, holds out whole car models, about 15\% of the hours of each size $\times$ powertrain cell, as the test split (last block of Table~\ref{tab:dataset}); drives of a group that also drove a held-out model are excluded from every split. The validation split is carved group-disjoint from the remaining pool and shares 53 of its 56 car models with train, so only the test split is model-disjoint and a validation score rewards recognising a known car model (Section~\ref{sec:methods}). The secondary scheme, \texttt{split\_device}, assigns groups at random inside each cell (70 / 15 / 15\% of the hours) and shares car models across splits, so its test measures generalisation to unseen devices of known models; lab-owned devices are always in train.
+\input{tables/dataset}
 
-\subsection{Protocols}
-A 60-s window is eligible when it has 600 consecutive samples, no gap and at least 20\% of its samples moving. Window-level protocols score each eligible test window on its own: \texttt{test\_full} takes all of them (headline), \texttt{test\_balanced} a published class-balanced list, and \texttt{test\_human\_only} the windows with no automation activity inside or in the 10~s before them.
+\subsection{Unseen-Model and Unseen-Driver Splits}
+Both splits use identity groups to keep correlated drives together. The main split reserves unseen car models covering about 15\% of each size--powertrain cell's hours for testing. Groups that also drove a test model are excluded from the other splits. Validation groups are separate from training groups, but 53 of the 56 validation car models also occur in training. Model selection therefore uses the internal model-disjoint folds described in Section~\ref{sec:methods}.
 
-Unit-level protocols pool the same per-window probabilities: \texttt{drive\_full} averages the probability vectors of a drive's \texttt{test\_full} windows and takes the arg-max, \texttt{drive\_human\_only} does so over human-only windows, and \texttt{vehicle\_full} pools every window of all test drives of a vehicle; units without a selected window are excluded. The metric is macro-F1 over the classes present. Held-out car models are the replication unit, so 95\% intervals come from a cluster bootstrap over car models (1,000 resamples, seed 0): each resample draws car models with replacement and keeps every unit of a drawn model once.
+The second split assigns groups within each cell to training, validation and testing in a 70/15/15 ratio by hours. Car models are shared, so it measures recognition for unseen drivers of known models. Research-fleet drivers remain in training.
 
-\subsection{Shortcut Audits}
-Two group-disjoint audits with simple classifiers look for shortcuts~\cite{geirhos2020shortcut}: nuisance metadata columns predict powertrain at 0.32 macro-F1 (chance 0.25) and size at 0.40 (chance 0.33), so they stay out of the inputs; window statistics of the official inputs predict brand at 0.02 (chance 0.03 over 38 brands) and platform at 0.00 but powertrain at 0.31 and size at 0.34: no detectable brand fingerprint and little class information under this audit.
+\subsection{Prediction Units and Metrics}
+An eligible 60-s window has 600 consecutive samples, no gap and at least 20\% moving samples. We evaluate all eligible windows, a published class-balanced subset, and a human-only subset with no automation activity during the window or the preceding 10 s. Drive predictions average window probability vectors before taking the most probable class; human-only drive predictions use only human-only windows. Vehicle predictions average all eligible windows across that vehicle's test drives. Units without a selected window are excluded.
 
-\subsection{Privacy and Availability}
-Vehicles, drives and groups carry random, independent pseudonyms drawn for this release only. The release holds no positions, absolute times or dates, video, images or driver-monitoring signals; region is a continent-level bucket and time is relative to the start of each drive. Access is gated to research on vehicle dynamics and driving behaviour and prohibits re-identification of vehicles or drivers and linkage with other datasets. The data, indexes, split lists, schema and checksums are public under CC BY 4.0 and the build, evaluation and experiment code under the MIT License\ifanonymous; the repository links are withheld for review.\else: \url{https://huggingface.co/datasets/HenryYHW/Vehicle_Power_Type_Trajectory_Dataset} and \url{https://github.com/WangYuHang-cmd/-Vehicle_Power_Type_Trajectory_Dataset}.\fi
-% source: the access conditions, the continent-level region bucket, the absence of driver-monitoring signals and the licence names come from the dataset card, not from OUTLINE.md
+We report macro-F1 over the classes present. Confidence intervals use 1,000 car-model cluster-bootstrap resamples (seed 0), keeping the observations of each sampled car model together.
+
+\subsection{Metadata Checks and Data Access}
+Group-disjoint checks with simple classifiers assess identity shortcuts~\cite{geirhos2020shortcut}. Nuisance metadata predict four-class powertrain at 0.32 macro-F1 and size at 0.40 (chance 0.25 and 0.33), so these columns are excluded. Statistics of the input signals yield brand 0.02 (chance 0.03 across 38 brands), platform 0.00, powertrain 0.31 and size 0.34, showing little identity or class information in this check.
+
+Vehicles, drives and groups receive independent random pseudonyms. The release excludes positions, absolute times, dates, images, video and driver-monitoring signals; region is continent-level and time is relative to drive start. Access supports vehicle-dynamics and driving-behaviour research, with re-identification and linkage to other datasets prohibited. Data, indexes, split lists, schema and checksums use the \href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons Attribution license}; build and evaluation code use the MIT License. Repository links are withheld for review.

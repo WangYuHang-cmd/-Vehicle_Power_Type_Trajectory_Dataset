@@ -1,0 +1,2666 @@
+car_model,steering_wheel_angle_deg,curvature_1pm,plotted
+Hyundai Ioniq,0.7,0.000567,1
+Hyundai Ioniq,0.6,0.000573,0
+Hyundai Ioniq,0.6,0.000584,1
+Hyundai Ioniq,0.7,0.00059,0
+Hyundai Ioniq,0.6,0.000608,1
+Hyundai Ioniq,0.6,0.000614,1
+Hyundai Ioniq,0.6,0.00062,0
+Hyundai Ioniq,0.6,0.000556,1
+Hyundai Ioniq,0.6,0.000562,1
+Hyundai Ioniq,0.6,0.000745,1
+Hyundai Ioniq,2.7,0.000751,0
+Hyundai Ioniq,8.5,0.000758,1
+Hyundai Ioniq,15.5,0.001957,0
+Hyundai Ioniq,22.4,0.001975,1
+Hyundai Ioniq,26.8,0.010542,1
+Hyundai Ioniq,26.9,0.01063,1
+Hyundai Ioniq,24.5,0.010699,0
+Hyundai Ioniq,22.3,0.012252,1
+Hyundai Ioniq,21,0.012365,0
+Hyundai Ioniq,20.2,0.00922,1
+Hyundai Ioniq,19.4,0.009289,1
+Hyundai Ioniq,15.9,0.009353,1
+Hyundai Ioniq,10,0.008142,1
+Hyundai Ioniq,2.3,0.008187,0
+Hyundai Ioniq,-5.1,0.000674,0
+Hyundai Ioniq,-8.2,0.000679,0
+Hyundai Ioniq,-8,0.000682,1
+Hyundai Ioniq,-8.1,-0.003175,0
+Hyundai Ioniq,-8.2,-0.003189,0
+Hyundai Ioniq,-7.9,-0.003009,1
+Hyundai Ioniq,-7.9,-0.003019,1
+Hyundai Ioniq,-7.9,-0.00303,1
+Hyundai Ioniq,-5.6,-0.003242,0
+Hyundai Ioniq,-2.3,-0.003244,1
+Hyundai Ioniq,-1.4,-0.000502,0
+Hyundai Ioniq,-1.3,-0.000501,0
+Hyundai Ioniq,-1.5,-0.0005,1
+Hyundai Ioniq,-1.5,-0.000983,1
+Hyundai Ioniq,-1.4,-0.000979,0
+Hyundai Ioniq,-1.4,-0.000917,0
+Hyundai Ioniq,-1.5,-0.000916,0
+Hyundai Ioniq,-1.5,-0.000915,0
+Hyundai Ioniq,-1.4,-0.000727,0
+Hyundai Ioniq,-1.5,-0.000725,0
+Hyundai Ioniq,-1.4,-0.000665,1
+Hyundai Ioniq,-1.7,-0.000663,1
+Hyundai Ioniq,-1.5,-0.000662,0
+Hyundai Ioniq,-1.3,-0.000258,1
+Hyundai Ioniq,-1.5,-0.000257,0
+Hyundai Ioniq,-1.5,-0.000839,1
+Hyundai Ioniq,-1.4,-0.000835,1
+Hyundai Ioniq,-1.5,-0.00083,1
+Hyundai Ioniq,-1.5,-0.000619,1
+Hyundai Ioniq,-1.4,-0.000614,1
+Hyundai Ioniq,-1.4,-0.000329,0
+Hyundai Ioniq,-1.5,-0.000325,0
+Hyundai Ioniq,-1.5,-0.00032,0
+Hyundai Ioniq,-1.5,-0.000303,0
+Hyundai Ioniq,-1.5,-0.000299,1
+Hyundai Ioniq,-1.4,-0.000431,1
+Hyundai Ioniq,-1.5,-0.000425,1
+Hyundai Ioniq,-1.4,-0.000418,0
+Hyundai Ioniq,-1.3,1.8e-05,0
+Hyundai Ioniq,-1.5,1.8e-05,0
+Hyundai Ioniq,-1.5,-0.001038,0
+Hyundai Ioniq,-1.4,-0.001022,0
+Hyundai Ioniq,-1.4,-0.001009,0
+Hyundai Ioniq,-1.5,-0.000404,1
+Hyundai Ioniq,-1.4,-0.000398,1
+Hyundai Ioniq,-1.4,-0.000937,0
+Hyundai Ioniq,-1.5,-0.000925,1
+Hyundai Ioniq,-1.5,-0.000917,1
+Hyundai Ioniq,-1.4,6e-05,0
+Hyundai Ioniq,-1.5,6e-05,0
+Hyundai Ioniq,-1.4,4.3e-05,1
+Hyundai Ioniq,-1.5,4.2e-05,1
+Hyundai Ioniq,-1.4,4.2e-05,1
+Hyundai Ioniq,-1.5,-0.000271,0
+Hyundai Ioniq,-1.4,-0.000269,0
+Hyundai Ioniq,-1.4,-0.000582,1
+Hyundai Ioniq,-1.5,-0.000577,1
+Hyundai Ioniq,-1.5,-0.000572,1
+Hyundai Ioniq,-1.4,-0.000292,1
+Hyundai Ioniq,-1.5,-0.000288,1
+Hyundai Ioniq,-1.4,-0.00047,0
+Hyundai Ioniq,-1.4,-0.000461,0
+Hyundai Ioniq,-1.4,-0.000452,0
+Hyundai Ioniq,-1.5,-0.000114,1
+Hyundai Ioniq,-1.5,-0.000112,1
+Hyundai Ioniq,-1.5,-0.000596,0
+Hyundai Ioniq,-1.4,-0.000585,1
+Hyundai Ioniq,-1.5,-0.000574,0
+Hyundai Ioniq,-0.5,-0.000495,1
+Hyundai Ioniq,1.3,-0.000486,0
+Hyundai Ioniq,2.5,0.000908,1
+Hyundai Ioniq,2.7,0.000893,0
+Hyundai Ioniq,2.8,0.000878,1
+Hyundai Ioniq,3,0.001323,1
+Hyundai Ioniq,3.5,0.001302,1
+Hyundai Ioniq,5.8,0.001608,1
+Hyundai Ioniq,9.1,0.001587,0
+Hyundai Ioniq,10.9,0.001568,0
+Hyundai Ioniq,12.9,0.004593,1
+Hyundai Ioniq,15.1,0.004546,0
+Hyundai Ioniq,17.7,0.006861,0
+Hyundai Ioniq,19.4,0.006808,0
+Hyundai Ioniq,19.4,0.006768,0
+Hyundai Ioniq,19.4,0.008695,0
+Hyundai Ioniq,19.4,0.008693,1
+Hyundai Ioniq,19.4,0.008977,0
+Hyundai Ioniq,19.4,0.008979,0
+Hyundai Ioniq,19.4,0.008978,0
+Hyundai Ioniq,19.4,0.008882,0
+Hyundai Ioniq,18.5,0.008899,1
+Hyundai Ioniq,17.2,0.008409,1
+Hyundai Ioniq,15.6,0.008441,1
+Hyundai Ioniq,13.2,0.008476,1
+Hyundai Ioniq,11.3,0.006489,1
+Hyundai Ioniq,9.7,0.006514,0
+Hyundai Ioniq,7.6,0.00416,0
+Hyundai Ioniq,6.2,0.004179,0
+Hyundai Ioniq,5.7,0.004198,1
+Hyundai Ioniq,4.2,0.002384,1
+Hyundai Ioniq,2.5,0.002392,0
+Hyundai Ioniq,2,0.001359,1
+Hyundai Ioniq,1.7,0.001358,0
+Hyundai Ioniq,1.7,0.001356,1
+Hyundai Ioniq,1.2,0.000865,0
+Hyundai Ioniq,1,0.000864,1
+Hyundai Ioniq,0.6,0.000346,1
+Hyundai Ioniq,-0.9,0.000346,0
+Hyundai Ioniq,-2,0.000347,1
+Hyundai Ioniq,-3.3,-0.000379,1
+Hyundai Ioniq,-4.1,-0.000382,1
+Hyundai Ioniq,-5.2,-0.001775,0
+Hyundai Ioniq,-6,-0.001781,1
+Hyundai Ioniq,-7.1,-0.001786,1
+Hyundai Ioniq,-7.6,-0.002779,1
+Hyundai Ioniq,-8.2,-0.002788,0
+Hyundai Ioniq,-8.7,-0.0037,0
+Hyundai Ioniq,-8.7,-0.003714,0
+Hyundai Ioniq,-9,-0.003723,1
+Hyundai Ioniq,-8.7,-0.003757,1
+Hyundai Ioniq,-8.7,-0.00377,1
+Hyundai Ioniq,-8.7,-0.004059,1
+Hyundai Ioniq,-8.7,-0.004068,0
+Hyundai Ioniq,-8.8,-0.004078,1
+Hyundai Ioniq,-8.7,-0.003791,0
+Hyundai Ioniq,-8.7,-0.003798,0
+Hyundai Ioniq,-9,-0.003821,0
+Hyundai Ioniq,-8.7,-0.003826,1
+Hyundai Ioniq,-8.7,-0.003825,1
+Hyundai Ioniq,-8.8,-0.004152,1
+Hyundai Ioniq,-8.7,-0.004137,1
+Hyundai Ioniq,-8.7,-0.003706,1
+Hyundai Ioniq,-8.7,-0.003687,0
+Hyundai Ioniq,-8.7,-0.003669,0
+Hyundai Ioniq,-8.7,-0.003681,1
+Hyundai Ioniq,-8.9,-0.003659,0
+Hyundai Ioniq,-9,-0.003936,0
+Hyundai Ioniq,-8.7,-0.003915,1
+Hyundai Ioniq,-9,-0.003899,1
+Hyundai Ioniq,-8.7,-0.003454,0
+Hyundai Ioniq,-8.7,-0.003437,1
+Hyundai Ioniq,-9,-0.003557,1
+Hyundai Ioniq,-8.7,-0.003537,1
+Hyundai Ioniq,-8.7,-0.003517,0
+Hyundai Ioniq,-8.7,-0.004031,1
+Hyundai Ioniq,-8.5,-0.004007,0
+Hyundai Ioniq,-8.4,-0.003463,1
+Hyundai Ioniq,-8.4,-0.00345,0
+Hyundai Ioniq,-8.4,-0.003435,1
+Hyundai Ioniq,-8.4,-0.003406,1
+Hyundai Ioniq,-8.4,-0.00339,1
+Hyundai Ioniq,-8.4,-0.003328,1
+Hyundai Ioniq,-8.4,-0.003306,1
+Hyundai Ioniq,-8.4,-0.003288,0
+Hyundai Ioniq,-8.4,-0.003365,1
+Hyundai Ioniq,-8.4,-0.003345,0
+Hyundai Ioniq,-8.4,-0.003555,1
+Hyundai Ioniq,-8.2,-0.003539,1
+Hyundai Ioniq,-8.2,-0.003518,0
+Hyundai Ioniq,-8.4,-0.003401,1
+Hyundai Ioniq,-8.2,-0.003402,0
+Hyundai Ioniq,-8.3,-0.003569,0
+Hyundai Ioniq,-8.1,-0.003563,0
+Hyundai Ioniq,-7.9,-0.00356,0
+Hyundai Ioniq,-7.6,-0.003015,0
+Hyundai Ioniq,-7.6,-0.003018,0
+Hyundai Ioniq,-7.6,-0.003056,0
+Hyundai Ioniq,-7.4,-0.003056,0
+Hyundai Ioniq,-7.1,-0.003057,1
+Hyundai Ioniq,-4.2,-0.003075,1
+Hyundai Ioniq,-1.7,-0.003077,1
+Hyundai Ioniq,-1.7,-0.000325,1
+Hyundai Ioniq,-1.5,-0.000326,0
+Hyundai Ioniq,-1.5,-0.000326,0
+Hyundai Ioniq,-1.5,-0.001177,1
+Hyundai Ioniq,-1.6,-0.001174,0
+Hyundai Ioniq,0,-0.000885,1
+Hyundai Ioniq,0.6,-0.000882,1
+Hyundai Ioniq,0.5,-0.000879,1
+Hyundai Ioniq,0.6,0.000413,1
+Hyundai Ioniq,0.6,0.000411,1
+Hyundai Ioniq,0.4,0.00025,1
+Hyundai Ioniq,0.3,0.000247,0
+Hyundai Ioniq,0.6,0.000244,0
+Hyundai Ioniq,0.3,4.2e-05,0
+Hyundai Ioniq,0.6,4.1e-05,0
+Hyundai Ioniq,0.5,-0.000412,0
+Hyundai Ioniq,0.5,-0.000404,1
+Hyundai Ioniq,0.5,-0.000396,1
+Hyundai Ioniq,0.3,-2.2e-05,0
+Hyundai Ioniq,0.3,-2.1e-05,0
+Hyundai Ioniq,0.3,0.0001,1
+Hyundai Ioniq,0.3,9.9e-05,0
+Hyundai Ioniq,0.5,9.7e-05,0
+Hyundai Ioniq,0.3,-0.000145,0
+Hyundai Ioniq,0.3,-0.000143,1
+Hyundai Ioniq,0.3,0.000133,0
+Hyundai Ioniq,0.3,0.00013,1
+Hyundai Ioniq,0.3,0.000129,0
+Hyundai Ioniq,0.3,0.000136,0
+Hyundai Ioniq,0.3,0.000134,1
+Hyundai Ioniq,0.3,1.8e-05,1
+Hyundai Ioniq,0.3,1.8e-05,0
+Hyundai Ioniq,0.3,1.7e-05,1
+Hyundai Ioniq,0.3,2.2e-05,0
+Hyundai Ioniq,1.9,2.1e-05,0
+Hyundai Ioniq,2,0.000666,0
+Hyundai Ioniq,1.3,0.000659,0
+Hyundai Ioniq,0.4,0.000651,0
+Hyundai Ioniq,0.6,0.000143,1
+Hyundai Ioniq,0.6,0.000142,0
+Hyundai Ioniq,0.4,0.000151,0
+Hyundai Ioniq,1.1,0.00015,0
+Hyundai Ioniq,2.7,0.000148,1
+Hyundai Ioniq,5.4,0.000759,1
+Hyundai Ioniq,9.1,0.000751,1
+Hyundai Ioniq,11.1,0.003298,1
+Hyundai Ioniq,11.8,0.003267,0
+Hyundai Ioniq,11.5,0.003238,1
+Hyundai Ioniq,11.6,0.004633,1
+Hyundai Ioniq,11.6,0.004589,1
+Hyundai Ioniq,10.5,0.004445,1
+Hyundai Ioniq,7.9,0.004407,0
+Hyundai Ioniq,4.1,0.004375,1
+Hyundai Ioniq,1.9,0.002565,1
+Hyundai Ioniq,1.6,0.002546,0
+Hyundai Ioniq,0.6,0.000238,0
+Hyundai Ioniq,-1.7,0.000236,1
+Hyundai Ioniq,1.1,0.000554,0
+Hyundai Ioniq,1.1,0.000561,1
+Hyundai Ioniq,1.1,0.000562,1
+Hyundai Ioniq,1.7,0.00061,1
+Hyundai Ioniq,3,0.000611,0
+Hyundai Ioniq,3.3,0.000611,1
+Hyundai Ioniq,3.4,0.00166,0
+Hyundai Ioniq,3.3,0.001662,1
+Hyundai Ioniq,3.3,0.001796,1
+Hyundai Ioniq,3.3,0.001801,0
+Hyundai Ioniq,3.3,0.001806,0
+Hyundai Ioniq,3.3,0.001755,0
+Hyundai Ioniq,3.3,0.001758,0
+Hyundai Ioniq,3.3,0.001735,1
+Hyundai Ioniq,3.3,0.001737,0
+Hyundai Ioniq,3.3,0.001738,1
+Hyundai Ioniq,3,0.001548,0
+Hyundai Ioniq,2.9,0.001547,1
+Hyundai Ioniq,2.7,0.001517,1
+Hyundai Ioniq,2.7,0.001514,1
+Hyundai Ioniq,2.7,0.001513,1
+Hyundai Ioniq,2.7,0.00133,0
+Hyundai Ioniq,2.7,0.001328,0
+Hyundai Ioniq,3.3,0.001347,1
+Hyundai Ioniq,5.2,0.001344,1
+Hyundai Ioniq,5.3,0.001342,1
+Hyundai Ioniq,5.4,0.002562,0
+Hyundai Ioniq,5.4,0.002556,1
+Hyundai Ioniq,5.4,0.002647,1
+Hyundai Ioniq,5.2,0.002643,0
+Hyundai Ioniq,5.2,0.002637,0
+Hyundai Ioniq,5.2,0.002616,1
+Hyundai Ioniq,7.6,0.003687,0
+Hyundai Ioniq,7.6,0.003716,0
+Hyundai Ioniq,7.8,0.00373,0
+Hyundai Ioniq,7.6,0.003749,1
+Hyundai Ioniq,7.6,0.003752,0
+Hyundai Ioniq,7.8,0.003769,1
+Hyundai Ioniq,7.6,0.003782,0
+Hyundai Ioniq,7.7,0.003776,0
+Hyundai Ioniq,7.6,0.0038,1
+Hyundai Ioniq,7.6,0.003785,1
+Hyundai Ioniq,7.6,0.003803,1
+Hyundai Ioniq,7.8,0.003822,0
+Hyundai Ioniq,7.6,0.003753,1
+Hyundai Ioniq,7.6,0.003774,0
+Hyundai Ioniq,7.7,0.003731,1
+Hyundai Ioniq,7.6,0.003743,1
+Hyundai Ioniq,7.6,0.003753,1
+Hyundai Ioniq,7.6,0.003826,0
+Hyundai Ioniq,7.6,0.003828,1
+Hyundai Ioniq,7.6,0.003734,1
+Hyundai Ioniq,7.6,0.003727,0
+Hyundai Ioniq,7.8,0.003721,1
+Hyundai Ioniq,7.6,0.003657,1
+Hyundai Ioniq,7.6,0.00365,1
+Hyundai Ioniq,7.6,0.003626,1
+Hyundai Ioniq,7.8,0.003618,0
+Hyundai Ioniq,7.6,0.003613,1
+Hyundai Ioniq,7.7,0.003668,1
+Hyundai Ioniq,7.6,0.003665,1
+Hyundai Ioniq,7.6,0.00366,0
+Hyundai Ioniq,7.1,0.003651,1
+Hyundai Ioniq,5.4,0.003647,1
+Hyundai Ioniq,5.2,0.00322,0
+Hyundai Ioniq,5.2,0.003218,0
+Hyundai Ioniq,5.2,0.002673,1
+Hyundai Ioniq,5.2,0.00267,0
+Hyundai Ioniq,5.1,0.002669,1
+Hyundai Ioniq,5.1,0.002568,1
+Hyundai Ioniq,4.9,0.002566,1
+Hyundai Ioniq,4.1,0.002664,0
+Hyundai Ioniq,4,0.002659,0
+Hyundai Ioniq,3.8,0.002662,0
+Hyundai Ioniq,3.8,0.002008,1
+Hyundai Ioniq,3.8,0.00201,0
+Hyundai Ioniq,3.5,0.00219,1
+Hyundai Ioniq,3.6,0.002195,1
+Hyundai Ioniq,3.6,0.002205,0
+Hyundai Ioniq,3,0.002121,1
+Hyundai Ioniq,3,0.00213,1
+Hyundai Ioniq,3,0.001896,0
+Hyundai Ioniq,2.9,0.001906,0
+Hyundai Ioniq,3,0.00192,1
+Hyundai Ioniq,3,0.001821,1
+Hyundai Ioniq,3,0.001838,1
+Hyundai Ioniq,3,0.00178,1
+Hyundai Ioniq,3,0.001795,1
+Hyundai Ioniq,3,0.001811,1
+Hyundai Ioniq,5.1,0.001933,1
+Hyundai Ioniq,6.5,0.001943,0
+Hyundai Ioniq,6.8,0.00339,1
+Hyundai Ioniq,6.8,0.003413,1
+Hyundai Ioniq,7,0.003435,0
+Hyundai Ioniq,7,0.00355,0
+Hyundai Ioniq,7,0.00357,1
+Hyundai Ioniq,7.3,0.003589,1
+Hyundai Ioniq,7,0.0036,1
+Hyundai Ioniq,7.2,0.003616,1
+Hyundai Ioniq,7.3,0.003775,1
+Hyundai Ioniq,6.5,0.003788,1
+Hyundai Ioniq,6.5,0.003398,1
+Hyundai Ioniq,6.5,0.003412,1
+Hyundai Ioniq,6.5,0.003417,0
+Hyundai Ioniq,6.5,0.003272,0
+Hyundai Ioniq,5.2,0.003282,0
+Hyundai Ioniq,4.6,0.002804,1
+Hyundai Ioniq,4.9,0.002822,0
+Hyundai Ioniq,4.9,0.002837,1
+Hyundai Ioniq,4.8,0.002237,1
+Hyundai Ioniq,5.8,0.002242,1
+Hyundai Ioniq,8,0.002944,0
+Hyundai Ioniq,8.1,0.002946,0
+Hyundai Ioniq,8.1,0.002938,0
+Hyundai Ioniq,8.1,0.004086,1
+Hyundai Ioniq,8.1,0.004073,0
+Hyundai Ioniq,8.1,0.004055,0
+Hyundai Ioniq,8.1,0.004041,0
+Hyundai Ioniq,8.1,0.004023,1
+Hyundai Ioniq,8.1,0.003974,0
+Hyundai Ioniq,8.1,0.003948,1
+Hyundai Ioniq,8.1,0.003763,1
+Hyundai Ioniq,8.1,0.003739,0
+Hyundai Ioniq,8.3,0.003712,0
+Hyundai Ioniq,8.1,0.003772,1
+Hyundai Ioniq,8.1,0.003737,0
+Hyundai Ioniq,8.1,0.003717,1
+Hyundai Ioniq,8.3,0.003683,0
+Hyundai Ioniq,8.1,0.003654,0
+Hyundai Ioniq,8.1,0.003828,1
+Hyundai Ioniq,8.1,0.003801,1
+Hyundai Ioniq,8.1,0.003821,1
+Hyundai Ioniq,8.1,0.003791,1
+Hyundai Ioniq,8.3,0.003764,1
+Hyundai Ioniq,8.1,0.003854,0
+Hyundai Ioniq,7.3,0.00383,0
+Hyundai Ioniq,7.3,0.003341,0
+Hyundai Ioniq,7,0.003328,0
+Hyundai Ioniq,7.3,0.003315,1
+Hyundai Ioniq,7,0.003395,1
+Hyundai Ioniq,7.3,0.003394,1
+Hyundai Ioniq,7.1,0.003435,1
+Hyundai Ioniq,7.1,0.003429,1
+Hyundai Ioniq,7.3,0.003415,0
+Hyundai Ioniq,7,0.003313,1
+Hyundai Ioniq,7,0.00331,0
+Hyundai Ioniq,7.2,0.003287,1
+Hyundai Ioniq,7.3,0.003283,1
+Hyundai Ioniq,7,0.003274,1
+Hyundai Ioniq,7,0.003336,0
+Hyundai Ioniq,7,0.003329,1
+Hyundai Ioniq,7.1,0.003247,1
+Hyundai Ioniq,7.2,0.00324,0
+Hyundai Ioniq,6.2,0.003239,0
+Hyundai Ioniq,6,0.003538,1
+Hyundai Ioniq,6.4,0.003532,0
+Hyundai Ioniq,6.5,0.003063,1
+Hyundai Ioniq,6.5,0.003064,0
+Hyundai Ioniq,6.5,0.003065,1
+Hyundai Ioniq,6.5,0.003378,0
+Hyundai Ioniq,6.5,0.003391,0
+Hyundai Ioniq,6.7,0.003322,0
+Hyundai Ioniq,6.5,0.00334,1
+Hyundai Ioniq,6.5,0.003351,1
+Hyundai Ioniq,6.5,0.003287,0
+Hyundai Ioniq,6.5,0.003294,0
+Hyundai Ioniq,5.4,0.003215,1
+Hyundai Ioniq,5.2,0.003223,0
+Hyundai Ioniq,5.2,0.003232,0
+Hyundai Ioniq,5.1,0.00256,1
+Hyundai Ioniq,5.2,0.002565,0
+Hyundai Ioniq,6,0.00274,0
+Hyundai Ioniq,6,0.002745,1
+Hyundai Ioniq,6.1,0.002762,1
+Hyundai Ioniq,6,0.003269,1
+Hyundai Ioniq,6.2,0.003281,0
+Hyundai Ioniq,6,0.003193,1
+Hyundai Ioniq,5.7,0.003198,0
+Hyundai Ioniq,5.4,0.003198,1
+Hyundai Ioniq,5.2,0.002844,1
+Hyundai Ioniq,5.2,0.00285,1
+Hyundai Ioniq,5.2,0.002644,1
+Hyundai Ioniq,4.6,0.002646,0
+Hyundai Ioniq,4.5,0.002643,1
+Hyundai Ioniq,4.6,0.002199,1
+Hyundai Ioniq,4.6,0.0022,0
+Hyundai Ioniq,4.4,0.002404,0
+Hyundai Ioniq,4.3,0.002409,0
+Hyundai Ioniq,4.1,0.002409,1
+Hyundai Ioniq,3.3,0.002092,1
+Hyundai Ioniq,3.2,0.002094,0
+Hyundai Ioniq,3.3,0.001808,0
+Hyundai Ioniq,3.3,0.00181,1
+Hyundai Ioniq,3.3,0.001813,1
+Hyundai Ioniq,2.8,0.002068,0
+Hyundai Ioniq,2.4,0.002071,1
+Hyundai Ioniq,2.2,0.001348,1
+Hyundai Ioniq,1.9,0.001349,0
+Hyundai Ioniq,1.7,0.001351,0
+Hyundai Ioniq,1.7,0.001319,0
+Hyundai Ioniq,1.7,0.001321,1
+Hyundai Ioniq,1.7,0.001031,1
+Hyundai Ioniq,1.7,0.001033,1
+Hyundai Ioniq,1.4,0.001031,1
+Hyundai Ioniq,1.4,0.001025,1
+Hyundai Ioniq,1.1,0.001027,1
+Hyundai Ioniq,0.9,0.000857,0
+Hyundai Ioniq,0.9,0.000859,0
+Hyundai Ioniq,0.9,0.000859,0
+Hyundai Ioniq,0.9,0.000672,0
+Hyundai Ioniq,0.8,0.000673,1
+Hyundai Ioniq,0.9,0.00082,1
+Hyundai Ioniq,0.9,0.00082,1
+Hyundai Ioniq,0.8,0.000822,0
+Hyundai Ioniq,1,0.000494,0
+Hyundai Ioniq,0.9,0.000495,1
+Hyundai Ioniq,0.8,0.000788,0
+Hyundai Ioniq,0.9,0.000788,1
+Hyundai Ioniq,0.8,0.000789,1
+Hyundai Ioniq,0.8,0.000553,0
+Hyundai Ioniq,0.8,0.000554,0
+Hyundai Ioniq,0.4,0.000517,0
+Hyundai Ioniq,0.6,0.000518,0
+Hyundai Ioniq,0.1,0.000518,1
+Hyundai Ioniq,-0.4,0.000395,0
+Hyundai Ioniq,-0.2,0.000395,1
+Hyundai Ioniq,-0.4,0.000114,1
+Hyundai Ioniq,-0.4,0.000114,1
+Hyundai Ioniq,-0.4,0.000114,1
+Hyundai Ioniq,-0.4,0.000172,1
+Hyundai Ioniq,-0.4,0.000172,1
+Hyundai Ioniq,-0.1,7.4e-05,0
+Hyundai Ioniq,-0.2,7.4e-05,1
+Hyundai Ioniq,-0.1,7.4e-05,1
+Hyundai Ioniq,-0.2,0.00025,1
+Hyundai Ioniq,0.9,0.000249,1
+Hyundai Ioniq,2.2,0.000622,1
+Hyundai Ioniq,2.4,0.000621,1
+Hyundai Ioniq,2.2,0.00062,0
+Hyundai Ioniq,2.4,0.001369,0
+Hyundai Ioniq,2.2,0.001367,1
+Hyundai Ioniq,1.1,0.001153,1
+Hyundai Ioniq,1.4,0.00115,1
+Hyundai Ioniq,1.1,0.001146,0
+Hyundai Ioniq,1.1,0.000549,1
+Hyundai Ioniq,0.9,0.000548,1
+Hyundai Ioniq,1.1,0.000477,1
+Hyundai Ioniq,0.8,0.000477,0
+Hyundai Ioniq,0.3,0.000477,1
+Hyundai Ioniq,0.1,0.000258,1
+Hyundai Ioniq,-0.4,0.000259,1
+Hyundai Ioniq,-1,-3.6e-05,0
+Hyundai Ioniq,-0.9,-3.6e-05,0
+Hyundai Ioniq,-1,-3.6e-05,1
+Hyundai Ioniq,-1,-0.000499,1
+Hyundai Ioniq,-1.2,-0.000502,1
+Hyundai Ioniq,-1.2,-0.000407,0
+Hyundai Ioniq,-1,-0.000409,1
+Hyundai Ioniq,-1,-0.000409,1
+Hyundai Ioniq,-1.2,-0.000345,0
+Hyundai Ioniq,-0.9,-0.000345,1
+Hyundai Ioniq,-0.9,-0.000231,1
+Hyundai Ioniq,-1.2,-0.00023,0
+Hyundai Ioniq,-1,-0.000229,1
+Hyundai Ioniq,-1.1,-0.00019,1
+Hyundai Ioniq,-1.2,-0.000189,0
+Hyundai Ioniq,-1,-0.000209,0
+Hyundai Ioniq,-1.1,-0.000208,0
+Hyundai Ioniq,-0.9,-0.000206,1
+Hyundai Ioniq,-0.9,-0.000284,0
+Hyundai Ioniq,-0.6,-0.000283,1
+Hyundai Ioniq,-0.1,-9.8e-05,1
+Hyundai Ioniq,0.2,-9.8e-05,1
+Hyundai Ioniq,0.6,-9.7e-05,1
+Hyundai Ioniq,0.6,0.000401,1
+Hyundai Ioniq,0.5,0.000398,1
+Hyundai Ioniq,0.6,0.000394,0
+Hyundai Ioniq,0.6,0.000392,0
+Hyundai Ioniq,0.5,0.000389,1
+Hyundai Ioniq,0.4,0.000342,1
+Hyundai Ioniq,0.2,0.00034,1
+Hyundai Ioniq,0.3,3.3e-05,0
+Hyundai Ioniq,0.3,3.3e-05,0
+Hyundai Ioniq,0,3.2e-05,0
+Hyundai Ioniq,0.1,-2e-05,0
+Hyundai Ioniq,0.1,-2e-05,0
+Hyundai Ioniq,0.1,-2e-05,1
+Hyundai Ioniq,0.1,-2e-05,0
+Hyundai Ioniq,0,-2e-05,0
+Hyundai Ioniq,-0.1,-5e-06,0
+Hyundai Ioniq,0.1,-5e-06,0
+Hyundai Ioniq,0.1,-5.8e-05,1
+Hyundai Ioniq,0.1,-5.7e-05,1
+Hyundai Ioniq,3.8,0.001696,0
+Hyundai Ioniq,3.3,0.001389,0
+Hyundai Ioniq,1.9,0.001391,0
+Hyundai Ioniq,1.9,0.00078,1
+Hyundai Ioniq,1.7,0.000782,1
+Hyundai Ioniq,1.9,0.000784,1
+Hyundai Ioniq,1.7,0.000787,0
+Hyundai Ioniq,1.7,0.000792,0
+Hyundai Ioniq,1.7,0.000344,0
+Hyundai Ioniq,1.7,0.000344,0
+Hyundai Ioniq,1.7,0.000346,1
+Hyundai Ioniq,1.7,0.001019,1
+Hyundai Ioniq,1.4,0.00102,0
+Hyundai Ioniq,1,0.00044,1
+Hyundai Ioniq,0.9,0.000446,1
+Hyundai Ioniq,0.9,0.00045,0
+Hyundai Ioniq,1.1,0.0002,1
+Hyundai Ioniq,0.9,0.000201,1
+Hyundai Ioniq,1.1,0.000286,1
+Hyundai Ioniq,1.1,0.000287,1
+Hyundai Ioniq,1,0.000288,0
+Hyundai Ioniq,0.9,0.00044,0
+Hyundai Ioniq,1,0.000441,0
+Hyundai Ioniq,0.9,0.000468,1
+Hyundai Ioniq,1.1,0.000468,1
+Hyundai Ioniq,1.1,0.00047,1
+Hyundai Ioniq,1.1,0.000219,0
+Hyundai Ioniq,1.1,0.000219,1
+Hyundai Ioniq,0.9,0.000659,0
+Hyundai Ioniq,0.9,0.000657,1
+Hyundai Ioniq,0.9,0.000656,1
+Hyundai Ioniq,0.9,0.000338,1
+Hyundai Ioniq,0.9,0.000337,1
+Hyundai Ioniq,0.9,0.000348,1
+Hyundai Ioniq,0.9,0.000348,1
+Hyundai Ioniq,0.9,0.000347,0
+Hyundai Ioniq,0.8,0.000315,1
+Hyundai Ioniq,0.9,0.000315,1
+Hyundai Ioniq,0.6,7.3e-05,1
+Hyundai Ioniq,0.8,7.3e-05,0
+Hyundai Ioniq,0.6,7.3e-05,1
+Hyundai Ioniq,0.9,0.000114,1
+Hyundai Ioniq,0.3,0.000114,0
+Hyundai Ioniq,-1.4,0.000108,1
+Hyundai Ioniq,-3.1,0.000109,0
+Hyundai Ioniq,-3.1,0.000109,0
+Hyundai Ioniq,-3.3,-0.001335,1
+Hyundai Ioniq,-3.3,-0.001339,0
+Hyundai Ioniq,-3.9,-0.001184,1
+Hyundai Ioniq,-3.9,-0.001188,1
+Hyundai Ioniq,-4.1,-0.001191,1
+Hyundai Ioniq,-4.1,-0.001563,0
+Hyundai Ioniq,-4,-0.001568,1
+Hyundai Ioniq,-4.1,-0.00158,0
+Hyundai Ioniq,-4.2,-0.001582,1
+Hyundai Ioniq,-4.4,-0.001585,0
+Hyundai Ioniq,-4.2,-0.001628,0
+Hyundai Ioniq,-4.1,-0.001632,1
+Hyundai Ioniq,-4.4,-0.001618,0
+Hyundai Ioniq,-4.1,-0.001624,0
+Hyundai Ioniq,-4.1,-0.001634,0
+Hyundai Ioniq,-4.4,-0.001627,0
+Hyundai Ioniq,-4.1,-0.001631,0
+Hyundai Ioniq,-4.1,-0.001619,1
+Hyundai Ioniq,-4.1,-0.001626,0
+Hyundai Ioniq,-4.1,-0.001634,1
+Hyundai Ioniq,-4.1,-0.001441,0
+Hyundai Ioniq,-4.1,-0.001446,1
+Hyundai Ioniq,-3.9,-0.001144,1
+Hyundai Ioniq,-3.1,-0.001147,1
+Hyundai Ioniq,-3.1,-0.001153,1
+Hyundai Ioniq,-2.6,-0.001179,0
+Hyundai Ioniq,-2.5,-0.001186,1
+Hyundai Ioniq,-2.3,-0.000658,1
+Hyundai Ioniq,-2.3,-0.000661,0
+Hyundai Ioniq,-2.3,-0.000663,0
+Hyundai Ioniq,-2.5,-0.000687,0
+Hyundai Ioniq,-2.3,-0.000691,1
+Hyundai Ioniq,-2.5,-0.000817,1
+Hyundai Ioniq,-2.3,-0.00082,1
+Hyundai Ioniq,-2.5,-0.000823,1
+Hyundai Ioniq,-2.3,-0.000909,1
+Hyundai Ioniq,-2.3,-0.000913,1
+Hyundai Ioniq,-2.3,-0.000751,1
+Hyundai Ioniq,-2.5,-0.000755,1
+Hyundai Ioniq,-2.4,-0.000759,0
+Hyundai Ioniq,-3.1,-0.000627,1
+Hyundai Ioniq,-3.3,-0.000637,0
+Hyundai Ioniq,-3.3,-0.000646,1
+Hyundai Ioniq,-3.4,-0.001292,1
+Hyundai Ioniq,-3.9,-0.001324,0
+Hyundai Ioniq,-4.4,-0.002049,0
+Hyundai Ioniq,-4.7,-0.002084,1
+Hyundai Ioniq,-4.7,-0.002124,1
+Hyundai Ioniq,-4.5,-0.001899,0
+Hyundai Ioniq,-4.1,-0.001969,1
+Hyundai Ioniq,-4.1,-0.002495,1
+Hyundai Ioniq,-4.1,-0.002561,0
+Hyundai Ioniq,-3.9,-0.002616,0
+Hyundai Ioniq,-2,-0.001377,0
+Hyundai Ioniq,-0.1,-0.001414,1
+Hyundai Ioniq,0.6,0.000324,0
+Hyundai Ioniq,1.1,0.000332,0
+Hyundai Ioniq,1.7,0.00034,1
+Hyundai Ioniq,3,0.000822,0
+Hyundai Ioniq,3,0.000839,1
+Hyundai Ioniq,3,0.001068,0
+Hyundai Ioniq,3,0.001097,1
+Hyundai Ioniq,3,0.001123,0
+Hyundai Ioniq,3,0.001868,1
+Hyundai Ioniq,2.9,0.001917,1
+Hyundai Ioniq,2,0.001573,1
+Hyundai Ioniq,0.3,0.001605,1
+Hyundai Ioniq,0,0.001632,0
+Hyundai Ioniq,0.1,0.00094,0
+Hyundai Ioniq,0,0.000964,0
+Hyundai Ioniq,-0.1,-0.000799,1
+Hyundai Ioniq,-0.1,-0.000816,1
+Hyundai Ioniq,-0.1,-0.000831,0
+Hyundai Ioniq,0,-0.000315,1
+Hyundai Ioniq,0.8,-0.000323,0
+Hyundai Ioniq,2.7,-1.6e-05,1
+Hyundai Ioniq,3.3,-1.6e-05,1
+Hyundai Ioniq,3.3,-1.6e-05,1
+Hyundai Ioniq,2.7,0.002304,1
+Hyundai Ioniq,2.7,0.002342,0
+Hyundai Ioniq,2.5,0.001642,1
+Hyundai Ioniq,2.5,0.001673,1
+Hyundai Ioniq,2.5,0.001699,1
+Hyundai Ioniq,2.6,0.001047,0
+Hyundai Ioniq,2.6,0.001062,0
+Hyundai Ioniq,2.6,0.001468,1
+Hyundai Ioniq,2.7,0.001469,0
+Hyundai Ioniq,2.7,0.001469,1
+Hyundai Ioniq,2.5,0.000461,0
+Hyundai Ioniq,2.7,0.000455,1
+Hyundai Ioniq,2.5,0.001283,0
+Hyundai Ioniq,2.5,0.001259,1
+Hyundai Ioniq,2.7,0.001226,0
+Hyundai Ioniq,2.6,0.000511,1
+Hyundai Ioniq,2.5,0.000496,0
+Hyundai Ioniq,2.5,0.001352,0
+Hyundai Ioniq,2.7,0.001318,1
+Hyundai Ioniq,2.5,0.001284,0
+Hyundai Ioniq,2.5,0.00039,1
+Hyundai Ioniq,2.5,0.00038,0
+Hyundai Ioniq,1.9,0.001139,1
+Hyundai Ioniq,0.3,0.001114,1
+Hyundai Ioniq,-0.9,0.001087,0
+Hyundai Ioniq,-1.4,3.1e-05,1
+Hyundai Ioniq,-1.4,3e-05,1
+Hyundai Ioniq,-1.2,-0.000297,0
+Hyundai Ioniq,-1.3,-0.000287,0
+Hyundai Ioniq,-1.4,-0.000278,1
+Hyundai Ioniq,-1.2,-0.000517,1
+Hyundai Ioniq,-1.2,-0.000504,0
+Hyundai Ioniq,-1.4,-0.000593,1
+Hyundai Ioniq,-2.3,-0.000577,1
+Hyundai Ioniq,-3.3,-0.000567,1
+Hyundai Ioniq,-3.3,-0.001028,1
+Hyundai Ioniq,-3.3,-0.001007,1
+Hyundai Ioniq,-3.3,-0.00159,1
+Hyundai Ioniq,-3.3,-0.00156,1
+Hyundai Ioniq,-3.3,-0.001531,1
+Hyundai Ioniq,-3.3,-0.001317,1
+Hyundai Ioniq,-3.3,-0.001297,0
+Hyundai Ioniq,-3.3,-0.001217,1
+Hyundai Ioniq,-3.3,-0.001199,1
+Hyundai Ioniq,-3.3,-0.001184,0
+Hyundai Ioniq,-3.1,-0.000708,0
+Hyundai Ioniq,-3.3,-0.0007,0
+Hyundai Ioniq,-4.4,-0.001368,1
+Hyundai Ioniq,-5.2,-0.001352,1
+Hyundai Ioniq,-5.5,-0.001335,1
+Hyundai Ioniq,-5.9,-0.002094,1
+Hyundai Ioniq,-6.3,-0.00207,0
+Hyundai Ioniq,-6.7,-0.002299,1
+Hyundai Ioniq,-7.1,-0.002273,0
+Hyundai Ioniq,-7.9,-0.002244,1
+Hyundai Ioniq,-8.1,-0.002791,0
+Hyundai Ioniq,-8.2,-0.002763,1
+Hyundai Ioniq,-8.2,-0.002855,1
+Hyundai Ioniq,-8.2,-0.002835,1
+Hyundai Ioniq,-8.4,-0.002814,0
+Hyundai Ioniq,-9,-0.003716,1
+Hyundai Ioniq,-10.5,-0.003681,1
+Hyundai Ioniq,-13,-0.004003,1
+Hyundai Ioniq,-15.7,-0.003974,1
+Hyundai Ioniq,-17.5,-0.003936,1
+Hyundai Ioniq,-19,-0.006635,0
+Hyundai Ioniq,-20.4,-0.006615,1
+Hyundai Ioniq,-20.8,-0.008029,1
+Hyundai Ioniq,-21,-0.008009,0
+Hyundai Ioniq,-21,-0.007997,1
+Hyundai Ioniq,-21.3,-0.008149,0
+Hyundai Ioniq,-21.3,-0.008141,0
+Hyundai Ioniq,-21.3,-0.008177,1
+Hyundai Ioniq,-22.1,-0.008138,0
+Hyundai Ioniq,-22.7,-0.008108,0
+Hyundai Ioniq,-22.9,-0.009535,1
+Hyundai Ioniq,-23.2,-0.009489,1
+Hyundai Ioniq,-23.4,-0.00909,0
+Hyundai Ioniq,-23.7,-0.009047,0
+Hyundai Ioniq,-24,-0.009046,0
+Hyundai Ioniq,-24,-0.009871,1
+Hyundai Ioniq,-23.8,-0.009802,0
+Hyundai Ioniq,-24,-0.009905,1
+Hyundai Ioniq,-23.7,-0.009902,1
+Hyundai Ioniq,-24,-0.009873,0
+Hyundai Ioniq,-23.8,-0.009445,0
+Hyundai Ioniq,-23.8,-0.009373,0
+Hyundai Ioniq,-24.2,-0.010208,0
+Hyundai Ioniq,-24.5,-0.010212,1
+Hyundai Ioniq,-24.3,-0.010189,1
+Hyundai Ioniq,-24.5,-0.009498,0
+Hyundai Ioniq,-24.5,-0.009517,1
+Hyundai Ioniq,-24.5,-0.010075,1
+Hyundai Ioniq,-24.3,-0.010112,1
+Hyundai Ioniq,-24.5,-0.010004,0
+Hyundai Ioniq,-24.5,-0.011161,1
+Hyundai Ioniq,-24.3,-0.01115,0
+Hyundai Ioniq,-24.3,-0.009462,0
+Hyundai Ioniq,-24.3,-0.009498,1
+Hyundai Ioniq,-24.3,-0.009506,0
+Hyundai Ioniq,-24.1,-0.00996,0
+Hyundai Ioniq,-24.3,-0.010011,0
+Hyundai Ioniq,-23.5,-0.009498,1
+Hyundai Ioniq,-21.1,-0.009511,0
+Hyundai Ioniq,-18.7,-0.009566,0
+Hyundai Ioniq,-14.1,-0.007998,1
+Hyundai Ioniq,-9.8,-0.008051,0
+Hyundai Ioniq,-5.9,-0.003289,0
+Hyundai Ioniq,-0.3,-0.003311,1
+Hyundai Ioniq,5.8,-0.003341,1
+Hyundai Ioniq,12.2,0.001368,0
+Hyundai Ioniq,19,0.001375,1
+Hyundai Ioniq,23.5,0.008797,1
+Hyundai Ioniq,27.1,0.008875,1
+Hyundai Ioniq,31.6,0.008924,1
+Hyundai Ioniq,37.2,0.013329,1
+Hyundai Ioniq,41.2,0.013431,1
+Hyundai Ioniq,46.4,0.018815,1
+Hyundai Ioniq,49.4,0.019042,1
+Hyundai Ioniq,50.4,0.019137,1
+Hyundai Ioniq,50.8,0.022288,1
+Hyundai Ioniq,52.1,0.022484,1
+Hyundai Ioniq,53.4,0.024031,1
+Hyundai Ioniq,53.7,0.024286,0
+Hyundai Ioniq,54.1,0.024481,1
+Hyundai Ioniq,53.9,0.023855,1
+Hyundai Ioniq,54.2,0.024132,0
+Hyundai Ioniq,54.2,0.024183,0
+Hyundai Ioniq,54.2,0.024447,1
+Hyundai Ioniq,54.3,0.024715,1
+Hyundai Ioniq,54.3,0.024112,1
+Hyundai Ioniq,54,0.024398,1
+Hyundai Ioniq,53.5,0.023711,1
+Hyundai Ioniq,52.6,0.023973,1
+Hyundai Ioniq,52.4,0.024218,1
+Hyundai Ioniq,52.4,0.02338,0
+Hyundai Ioniq,51.8,0.023681,0
+Hyundai Ioniq,51,0.02274,0
+Hyundai Ioniq,49.7,0.022942,0
+Hyundai Ioniq,49.7,0.023101,0
+Hyundai Ioniq,49.2,0.02157,1
+Hyundai Ioniq,49.2,0.021769,0
+Hyundai Ioniq,47,0.020309,1
+Hyundai Ioniq,46.9,0.020654,0
+Hyundai Ioniq,47.5,0.021021,1
+Hyundai Ioniq,47.3,0.02303,1
+Hyundai Ioniq,50.6,0.023424,0
+Hyundai Ioniq,51.6,0.017878,0
+Hyundai Ioniq,51.6,0.018349,1
+Hyundai Ioniq,51.8,0.018866,0
+Hyundai Ioniq,50.8,0.024019,0
+Hyundai Ioniq,50.8,0.02425,0
+Hyundai Ioniq,50.1,0.023347,1
+Hyundai Ioniq,48.4,0.0239,0
+Hyundai Ioniq,48.8,0.024319,0
+Hyundai Ioniq,49.2,0.02086,1
+Hyundai Ioniq,49.2,0.020992,1
+Hyundai Ioniq,49.1,0.024712,1
+Hyundai Ioniq,49.2,0.024915,0
+Hyundai Ioniq,48.1,0.024729,0
+Hyundai Ioniq,47.5,0.020533,1
+Hyundai Ioniq,47.5,0.020891,0
+Hyundai Ioniq,47.5,0.020429,1
+Hyundai Ioniq,47.7,0.020601,1
+Hyundai Ioniq,47.7,0.020789,0
+Hyundai Ioniq,48.2,0.021888,1
+Hyundai Ioniq,49.4,0.022198,1
+Hyundai Ioniq,52.9,0.022713,1
+Hyundai Ioniq,56.9,0.022914,0
+Hyundai Ioniq,61.1,0.023169,1
+Hyundai Ioniq,68.1,0.025987,0
+Hyundai Ioniq,74.2,0.026313,1
+Hyundai Ioniq,79.3,0.033597,0
+Hyundai Ioniq,84.6,0.033944,1
+Hyundai Ioniq,88.6,0.034295,1
+Hyundai Ioniq,93.5,0.038829,0
+Hyundai Ioniq,98.3,0.039316,1
+Hyundai Ioniq,103.1,0.044653,1
+Hyundai Ioniq,107.3,0.045035,0
+Hyundai Ioniq,110.9,0.045571,1
+Hyundai Ioniq,113.8,0.047222,1
+Hyundai Ioniq,114.9,0.047698,0
+Hyundai Ioniq,114.9,0.050237,1
+Hyundai Ioniq,114.7,0.050777,0
+Hyundai Ioniq,114.9,0.0513,0
+Hyundai Ioniq,114.9,0.050834,1
+Hyundai Ioniq,114.7,0.051368,0
+Hyundai Ioniq,114.9,0.050345,0
+Hyundai Ioniq,114.9,0.050676,1
+Hyundai Ioniq,114.9,0.051168,0
+Hyundai Ioniq,114.9,0.05069,1
+Hyundai Ioniq,115.7,0.051143,1
+Hyundai Ioniq,117.1,0.051599,0
+Hyundai Ioniq,117.3,0.053036,0
+Hyundai Ioniq,117.4,0.054997,1
+Hyundai Ioniq,117.4,0.052796,1
+Hyundai Ioniq,117.4,0.054647,1
+Hyundai Ioniq,117.6,0.052302,1
+Hyundai Ioniq,117.6,0.053777,0
+Hyundai Ioniq,117.9,0.054909,1
+Hyundai Ioniq,118.1,0.053538,1
+Hyundai Ioniq,118.4,0.054136,0
+Hyundai Ioniq,118.8,0.053553,0
+Hyundai Ioniq,120.3,0.053761,1
+Hyundai Ioniq,122.2,0.054032,1
+Hyundai Ioniq,123.5,0.05318,0
+Hyundai Ioniq,124.1,0.053342,1
+Hyundai Ioniq,124.2,0.054532,1
+Hyundai Ioniq,124.1,0.054708,1
+Hyundai Ioniq,124.3,0.054862,1
+Hyundai Ioniq,124.3,0.053917,1
+Hyundai Ioniq,124.3,0.053962,0
+Hyundai Ioniq,124.3,0.055077,0
+Hyundai Ioniq,124.2,0.055342,0
+Hyundai Ioniq,124.9,0.055474,1
+Hyundai Ioniq,127.7,0.056077,0
+Hyundai Ioniq,131.3,0.056036,0
+Hyundai Ioniq,135.8,0.059346,0
+Hyundai Ioniq,138.3,0.05952,0
+Hyundai Ioniq,138.8,0.059669,0
+Hyundai Ioniq,139,0.061393,0
+Hyundai Ioniq,138.8,0.061201,0
+Hyundai Ioniq,139,0.060809,0
+Hyundai Ioniq,138.8,0.060283,1
+Hyundai Ioniq,138.8,0.059693,1
+Hyundai Ioniq,138.8,0.060144,0
+Hyundai Ioniq,138.8,0.058116,1
+Hyundai Ioniq,138.8,0.061177,1
+Hyundai Ioniq,138.7,0.05822,1
+Hyundai Ioniq,138.7,0.055471,0
+Hyundai Ioniq,138.5,0.057965,0
+Hyundai Ioniq,137.5,0.05482,1
+Hyundai Ioniq,136.2,0.059031,1
+Hyundai Ioniq,134.6,0.05584,1
+Hyundai Ioniq,132.6,0.052852,1
+Hyundai Ioniq,130.8,0.055746,1
+Hyundai Ioniq,129.2,0.052935,1
+Hyundai Ioniq,127.3,0.054768,0
+Hyundai Ioniq,125.4,0.052321,1
+Hyundai Ioniq,121.5,0.050012,0
+Hyundai Ioniq,117.2,0.050475,1
+Hyundai Ioniq,112,0.048577,1
+Hyundai Ioniq,107.2,0.046988,1
+Hyundai Ioniq,102.2,0.045308,0
+Hyundai Ioniq,96.2,0.043781,0
+Hyundai Ioniq,90.3,0.041882,0
+Hyundai Ioniq,84,0.040486,1
+Hyundai Ioniq,78,0.035307,0
+Hyundai Ioniq,69.2,0.034321,1
+Hyundai Ioniq,59.2,0.033363,1
+Hyundai Ioniq,49.6,0.026684,1
+Hyundai Ioniq,38.8,0.026026,1
+Hyundai Ioniq,30.5,0.017559,0
+Hyundai Ioniq,23.2,0.017137,1
+Hyundai Ioniq,18.1,0.01671,0
+Hyundai Ioniq,14.3,0.008903,1
+Hyundai Ioniq,11.9,0.008713,1
+Hyundai Ioniq,11.1,0.005104,0
+Hyundai Ioniq,10.3,0.005006,0
+Hyundai Ioniq,9.7,0.004913,1
+Hyundai Ioniq,9.6,0.004158,0
+Hyundai Ioniq,9.7,0.004093,0
+Hyundai Ioniq,9.7,0.004275,0
+Hyundai Ioniq,9.7,0.00422,1
+Hyundai Ioniq,9.7,0.004179,1
+Hyundai Ioniq,10,0.003769,1
+Hyundai Ioniq,10,0.003733,1
+Hyundai Ioniq,10,0.004384,1
+Hyundai Ioniq,9.5,0.004353,1
+Hyundai Ioniq,9.4,0.004326,1
+Hyundai Ioniq,9.2,0.003881,1
+Hyundai Ioniq,9.2,0.003876,0
+Hyundai Ioniq,8.7,0.004257,0
+Hyundai Ioniq,8.4,0.004254,1
+Hyundai Ioniq,8,0.004246,0
+Hyundai Ioniq,8,0.003907,0
+Hyundai Ioniq,8.1,0.003899,1
+Hyundai Ioniq,8.4,0.003879,1
+Hyundai Ioniq,10.9,0.00388,1
+Hyundai Ioniq,12.4,0.003865,1
+Hyundai Ioniq,12.4,0.005273,1
+Hyundai Ioniq,12.4,0.005263,1
+Hyundai Ioniq,12.4,0.005814,0
+Hyundai Ioniq,12.4,0.005813,1
+Hyundai Ioniq,12.6,0.005781,1
+Hyundai Ioniq,12.6,0.005838,1
+Hyundai Ioniq,12.4,0.005833,1
+Hyundai Ioniq,12.1,0.005784,1
+Hyundai Ioniq,12.1,0.005742,1
+Hyundai Ioniq,12.1,0.005716,1
+Hyundai Ioniq,12.1,0.005627,1
+Hyundai Ioniq,12.3,0.005618,1
+Hyundai Ioniq,12.1,0.005507,1
+Hyundai Ioniq,12.1,0.005536,1
+Hyundai Ioniq,10.8,0.005526,1
+Hyundai Ioniq,8.4,0.005334,0
+Hyundai Ioniq,8.4,0.005305,1
+Hyundai Ioniq,9.1,0.003989,1
+Hyundai Ioniq,9.2,0.003978,1
+Hyundai Ioniq,9.2,0.00398,0
+Hyundai Ioniq,9.4,0.004696,1
+Hyundai Ioniq,9.2,0.00469,0
+Hyundai Ioniq,9.4,0.004746,1
+Hyundai Ioniq,9.4,0.004735,0
+Hyundai Ioniq,9.4,0.004727,0
+Hyundai Ioniq,9.5,0.004613,0
+Hyundai Ioniq,9.5,0.004605,1
+Hyundai Ioniq,9.4,0.004556,1
+Hyundai Ioniq,9.2,0.004542,1
+Hyundai Ioniq,9.2,0.004527,1
+Hyundai Ioniq,8.6,0.004286,1
+Hyundai Ioniq,5.7,0.004274,1
+Hyundai Ioniq,3.3,0.003328,1
+Hyundai Ioniq,3.3,0.003327,0
+Hyundai Ioniq,3.3,0.003328,0
+Hyundai Ioniq,3.2,0.001711,1
+Hyundai Ioniq,3,0.001708,1
+Hyundai Ioniq,3.3,0.001882,1
+Hyundai Ioniq,3,0.001881,1
+Hyundai Ioniq,2.5,0.001876,1
+Hyundai Ioniq,2.7,0.001638,0
+Hyundai Ioniq,2.2,0.001636,1
+Hyundai Ioniq,0.6,0.001375,1
+Hyundai Ioniq,0.5,0.001371,1
+Hyundai Ioniq,1.1,0.00137,0
+Hyundai Ioniq,1.4,0.000776,1
+Hyundai Ioniq,1.4,0.000776,1
+Hyundai Ioniq,1.4,0.001216,1
+Hyundai Ioniq,1.4,0.001216,0
+Hyundai Ioniq,1.6,0.001214,1
+Hyundai Ioniq,1.4,0.001145,1
+Hyundai Ioniq,1.4,0.001142,0
+Hyundai Ioniq,1.4,0.001067,1
+Hyundai Ioniq,1.4,0.001067,0
+Hyundai Ioniq,1.4,0.001069,1
+Hyundai Ioniq,1.4,0.001326,1
+Hyundai Ioniq,1.6,0.001337,1
+Hyundai Ioniq,1.6,0.001206,0
+Hyundai Ioniq,1.6,0.001218,1
+Hyundai Ioniq,1.4,0.001226,0
+Hyundai Ioniq,1.4,0.001147,1
+Hyundai Ioniq,1.4,0.001159,1
+Hyundai Ioniq,1.4,0.00107,1
+Hyundai Ioniq,1.6,0.001084,1
+Hyundai Ioniq,1.4,0.001102,1
+Hyundai Ioniq,1,0.001146,0
+Hyundai Ioniq,1.1,0.001167,1
+Hyundai Ioniq,1.1,0.000886,1
+Hyundai Ioniq,0.9,0.000902,1
+Hyundai Ioniq,0.9,0.000917,1
+Hyundai Ioniq,0.6,0.000696,1
+Hyundai Ioniq,0.6,0.000708,1
+Hyundai Ioniq,0.3,0.000751,0
+Hyundai Ioniq,0.3,0.000765,1
+Hyundai Ioniq,0.1,0.000779,1
+Hyundai Ioniq,-0.1,0.000721,1
+Hyundai Ioniq,-0.1,0.000735,1
+Hyundai Ioniq,0.6,0.000679,1
+Hyundai Ioniq,1.4,0.000691,0
+Hyundai Ioniq,1.8,0.000705,1
+Hyundai Ioniq,1.7,0.001203,0
+Hyundai Ioniq,1.7,0.001228,1
+Hyundai Ioniq,1.9,0.001385,0
+Hyundai Ioniq,1.9,0.00141,1
+Hyundai Ioniq,1.7,0.001437,1
+Hyundai Ioniq,1.7,0.001046,0
+Hyundai Ioniq,1.8,0.001066,1
+Hyundai Ioniq,1.7,0.001268,1
+Hyundai Ioniq,1.9,0.00129,1
+Hyundai Ioniq,1.7,0.00131,0
+Hyundai Ioniq,1.7,0.001254,0
+Hyundai Ioniq,1.7,0.001276,1
+Hyundai Ioniq,1.7,0.00118,1
+Hyundai Ioniq,1.9,0.001198,0
+Hyundai Ioniq,0.9,0.001216,0
+Hyundai Ioniq,-0.2,0.001239,1
+Hyundai Ioniq,-0.4,0.001256,1
+Hyundai Ioniq,-0.4,0.000112,1
+Hyundai Ioniq,-0.4,0.000114,1
+Hyundai Ioniq,0.2,0.000115,1
+Hyundai Ioniq,3.2,0.000314,0
+Hyundai Ioniq,3.6,0.000318,0
+Hyundai Ioniq,2.7,0.00241,0
+Hyundai Ioniq,2.2,0.002441,1
+Hyundai Ioniq,1.9,0.002475,1
+Hyundai Ioniq,1.9,0.001311,0
+Hyundai Ioniq,1.8,0.001337,1
+Hyundai Ioniq,1.9,0.001,1
+Hyundai Ioniq,1.9,0.001018,1
+Hyundai Ioniq,1.7,0.001037,0
+Hyundai Ioniq,1.9,0.001021,1
+Hyundai Ioniq,1.7,0.001039,1
+Hyundai Ioniq,1.7,0.001147,0
+Hyundai Ioniq,1.9,0.001168,1
+Hyundai Ioniq,1.7,0.001186,0
+Hyundai Ioniq,1.9,0.001555,0
+Hyundai Ioniq,1.9,0.001582,0
+Hyundai Ioniq,1.7,0.001237,1
+Hyundai Ioniq,0.9,0.001255,0
+Hyundai Ioniq,0.6,0.001274,1
+Hyundai Ioniq,0.6,0.000737,0
+Hyundai Ioniq,0.6,0.000748,1
+Hyundai Ioniq,0.6,0.000437,0
+Hyundai Ioniq,0.6,0.000442,1
+Hyundai Ioniq,0.6,0.000448,1
+Hyundai Ioniq,0.6,0.000987,1
+Hyundai Ioniq,0.6,0.000999,0
+Hyundai Ioniq,0.6,0.000703,1
+Hyundai Ioniq,0.6,0.000711,0
+Hyundai Ioniq,0.6,0.000718,1
+Hyundai Ioniq,0.6,0.000834,0
+Hyundai Ioniq,0.6,0.000844,0
+Hyundai Ioniq,0.6,0.0006,0
+Hyundai Ioniq,0.6,0.000606,1
+Hyundai Ioniq,0.6,0.000611,1
+Hyundai Ioniq,0.6,0.000458,1
+Hyundai Ioniq,0.6,0.000461,0
+Hyundai Ioniq,0.6,0.000997,0
+Hyundai Ioniq,0.6,0.001006,0
+Hyundai Ioniq,0.6,0.001015,0
+Hyundai Ioniq,0.5,0.000617,0
+Hyundai Ioniq,0.6,0.000621,0
+Hyundai Ioniq,0.6,0.000359,0
+Hyundai Ioniq,0.6,0.000363,1
+Hyundai Ioniq,0.5,0.000364,1
+Hyundai Ioniq,0.6,0.000485,1
+Hyundai Ioniq,0.6,0.000494,0
+Hyundai Ioniq,0.6,0.001179,1
+Hyundai Ioniq,0.6,0.001218,0
+Hyundai Ioniq,0.6,0.001262,1
+Hyundai Ioniq,0.5,0.000724,0
+Hyundai Ioniq,0.6,0.000752,0
+Hyundai Ioniq,0.6,0.000524,1
+Hyundai Ioniq,0.6,0.000545,0
+Hyundai Ioniq,-6.9,-0.002263,1
+Hyundai Ioniq,-6.3,-0.001503,1
+Hyundai Ioniq,-5,-0.001369,0
+Hyundai Ioniq,-3.9,-0.001263,1
+Hyundai Ioniq,-3.6,-0.001228,1
+Hyundai Ioniq,-3.6,-0.00114,0
+Hyundai Ioniq,-3.4,-0.000726,0
+Hyundai Ioniq,-3.6,-0.000685,0
+Hyundai Ioniq,-3.4,-0.00065,1
+Hyundai Ioniq,-3.6,-0.000435,1
+Hyundai Ioniq,-3.3,-0.000414,1
+Hyundai Ioniq,-3.6,-0.000319,1
+Hyundai Ioniq,-3.6,-0.000308,1
+Hyundai Ioniq,-3.6,-0.000297,0
+Hyundai Ioniq,-2.1,-0.000736,0
+Hyundai Ioniq,2.8,-0.000713,1
+Hyundai Ioniq,9.4,0.001798,0
+Hyundai Ioniq,13.4,0.001742,0
+Hyundai Ioniq,14,0.001692,1
+Hyundai Ioniq,14,0.006374,1
+Hyundai Ioniq,14,0.006208,1
+Hyundai Ioniq,12.7,0.005907,0
+Hyundai Ioniq,10.3,0.005781,0
+Hyundai Ioniq,7.6,0.00565,1
+Hyundai Ioniq,5.2,0.004038,0
+Hyundai Ioniq,3.6,0.003968,0
+Hyundai Ioniq,3.3,0.002122,1
+Hyundai Ioniq,3,0.002084,1
+Hyundai Ioniq,2.7,0.002045,1
+Hyundai Ioniq,2.2,0.000801,0
+Hyundai Ioniq,2.2,0.000788,1
+Hyundai Ioniq,1.9,0.001216,0
+Hyundai Ioniq,1.7,0.001203,0
+Hyundai Ioniq,1.6,0.001192,1
+Hyundai Ioniq,1.1,0.000814,1
+Hyundai Ioniq,0.4,0.000809,0
+Hyundai Ioniq,-1.2,0.000631,1
+Hyundai Ioniq,-2.3,0.000627,0
+Hyundai Ioniq,-2.5,0.000624,1
+Hyundai Ioniq,-3.1,-0.000755,1
+Hyundai Ioniq,-4.9,-0.00075,1
+Hyundai Ioniq,-5.5,-0.001073,0
+Hyundai Ioniq,-5,-0.001066,1
+Hyundai Ioniq,-2.4,-0.001056,0
+Hyundai Ioniq,-0.9,-0.001143,0
+Hyundai Ioniq,-0.9,-0.001129,0
+Hyundai Ioniq,-0.9,0.000304,1
+Hyundai Ioniq,-0.9,0.0003,1
+Hyundai Ioniq,-0.9,0.000297,1
+Hyundai Ioniq,-0.9,0.000333,0
+Hyundai Ioniq,-0.9,0.00033,1
+Hyundai Ioniq,-0.9,0.000322,1
+Hyundai Ioniq,-1,0.000318,1
+Hyundai Ioniq,-0.9,0.000315,1
+Hyundai Ioniq,-0.9,0.000191,1
+Hyundai Ioniq,-1,0.000189,1
+Hyundai Ioniq,-0.9,0.000208,1
+Hyundai Ioniq,-0.9,0.000207,1
+Hyundai Ioniq,-0.9,0.000205,1
+Hyundai Ioniq,-1,0.000139,0
+Hyundai Ioniq,-1,0.000138,0
+Hyundai Ioniq,-1,0.000152,0
+Hyundai Ioniq,-0.9,0.000151,1
+Hyundai Ioniq,-1,0.00015,1
+Hyundai Ioniq,-0.9,0.00017,0
+Hyundai Ioniq,-0.9,0.00017,0
+Hyundai Ioniq,-0.9,0.000251,1
+Hyundai Ioniq,-0.9,0.00025,1
+Hyundai Ioniq,-0.9,0.000249,0
+Hyundai Ioniq,-0.9,5.7e-05,1
+Hyundai Ioniq,-1,5.6e-05,0
+Hyundai Ioniq,-0.9,-6.4e-05,0
+Hyundai Ioniq,-0.9,-6.4e-05,1
+Hyundai Ioniq,-0.9,-6.4e-05,1
+Hyundai Ioniq,-0.9,3.6e-05,0
+Hyundai Ioniq,-1.2,3.6e-05,0
+Hyundai Ioniq,-0.9,-0.000111,0
+Hyundai Ioniq,-0.9,-0.00011,1
+Hyundai Ioniq,-0.9,-0.00011,1
+Hyundai Ioniq,-0.9,-1.8e-05,0
+Hyundai Ioniq,-0.9,-1.8e-05,1
+Hyundai Ioniq,-0.9,-0.000144,0
+Hyundai Ioniq,-1,-0.000144,1
+Hyundai Ioniq,-0.9,-0.000143,1
+Hyundai Ioniq,-0.9,0.000327,0
+Hyundai Ioniq,-0.9,0.000326,1
+Hyundai Ioniq,-0.9,0.000119,1
+Hyundai Ioniq,-0.9,0.000119,1
+Hyundai Ioniq,-0.4,0.000118,0
+Hyundai Ioniq,1.6,0.000403,1
+Hyundai Ioniq,1.4,0.000401,0
+Hyundai Ioniq,1.1,0.000709,1
+Hyundai Ioniq,0.6,0.000707,1
+Hyundai Ioniq,0.9,0.000709,0
+Hyundai Ioniq,-0.4,0.000915,1
+Hyundai Ioniq,-0.4,0.000912,1
+Hyundai Ioniq,-0.6,-0.001315,0
+Hyundai Ioniq,-0.9,-0.00131,0
+Hyundai Ioniq,-0.6,-0.001305,1
+Hyundai Ioniq,-0.9,-0.000143,1
+Hyundai Ioniq,-0.6,-0.000143,0
+Hyundai Ioniq,-0.9,-0.000184,1
+Hyundai Ioniq,-0.7,-0.000182,0
+Hyundai Ioniq,-0.7,-0.000181,0
+Hyundai Ioniq,-0.9,-0.000445,1
+Hyundai Ioniq,-0.7,-0.000446,1
+Hyundai Ioniq,-0.9,-0.00022,1
+Hyundai Ioniq,-0.6,-0.000219,0
+Hyundai Ioniq,-0.9,-0.000218,0
+Hyundai Ioniq,-0.9,-6.3e-05,1
+Hyundai Ioniq,-0.9,-6.3e-05,0
+Hyundai Ioniq,-0.9,-0.000225,0
+Hyundai Ioniq,-0.6,-0.000225,1
+Hyundai Ioniq,-0.6,-0.000224,0
+Hyundai Ioniq,-0.8,-0.00022,0
+Hyundai Ioniq,-0.6,-0.00022,1
+Hyundai Ioniq,-0.9,-0.000324,1
+Hyundai Ioniq,-0.7,-0.000324,1
+Hyundai Ioniq,-0.1,-0.000323,0
+Hyundai Ioniq,0.1,6e-06,1
+Hyundai Ioniq,0.1,6e-06,1
+Hyundai Ioniq,0.3,0.000399,1
+Hyundai Ioniq,0.1,0.0004,1
+Hyundai Ioniq,0.1,0.0004,1
+Hyundai Ioniq,0.1,0.000296,1
+Hyundai Ioniq,0.1,0.000296,1
+Hyundai Ioniq,0.1,0.000152,1
+Hyundai Ioniq,0.1,0.000153,1
+Hyundai Ioniq,0.3,0.000152,1
+Hyundai Ioniq,0.3,0.000239,1
+Hyundai Ioniq,0.3,0.00024,1
+Hyundai Ioniq,0.1,0.000219,0
+Hyundai Ioniq,0.1,0.000219,1
+Hyundai Ioniq,-0.4,0.000219,1
+Hyundai Ioniq,-2.3,0.000103,1
+Hyundai Ioniq,-3.6,0.000103,0
+Hyundai Ioniq,-4.7,-0.001426,0
+Hyundai Ioniq,-5.7,-0.001427,1
+Hyundai Ioniq,-7.6,-0.001428,1
+Hyundai Ioniq,-8.6,-0.002615,0
+Hyundai Ioniq,-8.7,-0.002616,0
+Hyundai Ioniq,-8.5,-0.003278,0
+Hyundai Ioniq,-8.7,-0.003288,1
+Hyundai Ioniq,-8.7,-0.003289,0
+Hyundai Ioniq,-8.7,-0.003518,1
+Hyundai Ioniq,-8.7,-0.003519,1
+Hyundai Ioniq,-8.7,-0.003245,1
+Hyundai Ioniq,-8.7,-0.003248,0
+Hyundai Ioniq,-8.7,-0.003249,0
+Hyundai Ioniq,-8.7,-0.003405,1
+Hyundai Ioniq,-8.7,-0.003408,1
+Hyundai Ioniq,-8.7,-0.00341,1
+Hyundai Ioniq,-8.7,-0.003414,1
+Hyundai Ioniq,-7.7,-0.003416,0
+Hyundai Ioniq,-6,-0.003091,1
+Hyundai Ioniq,-4.9,-0.003091,0
+Hyundai Ioniq,-4.2,-0.001652,1
+Hyundai Ioniq,-3.9,-0.001654,0
+Hyundai Ioniq,-3.9,-0.001653,1
+Hyundai Ioniq,-3.9,-0.001291,1
+Hyundai Ioniq,-3.7,-0.001292,1
+Hyundai Ioniq,-3.6,-0.001226,0
+Hyundai Ioniq,-3.6,-0.001227,1
+Hyundai Ioniq,-3.6,-0.001228,1
+Hyundai Ioniq,-3.6,-0.000985,1
+Hyundai Ioniq,-16.1,-0.007031,0
+Hyundai Ioniq,-16.2,-0.006301,1
+Hyundai Ioniq,-15.9,-0.006384,0
+Hyundai Ioniq,-16.2,-0.006454,0
+Hyundai Ioniq,-16.2,-0.006428,0
+Hyundai Ioniq,-15.9,-0.006506,0
+Hyundai Ioniq,-16.2,-0.00627,1
+Hyundai Ioniq,-15.7,-0.006301,1
+Hyundai Ioniq,-13.9,-0.006316,1
+Hyundai Ioniq,-10.6,-0.006179,0
+Hyundai Ioniq,-5.8,-0.006189,0
+Hyundai Ioniq,-1,-0.002369,1
+Hyundai Ioniq,2.2,-0.00238,1
+Hyundai Ioniq,3.3,-0.002389,0
+Hyundai Ioniq,3.3,0.001496,0
+Hyundai Ioniq,3.3,0.001501,1
+Hyundai Ioniq,3.3,0.002017,0
+Hyundai Ioniq,3.5,0.002022,0
+Hyundai Ioniq,3.3,0.002026,1
+Hyundai Ioniq,3.5,0.001792,0
+Hyundai Ioniq,3.5,0.001796,1
+Hyundai Ioniq,3.3,0.001531,0
+Hyundai Ioniq,3,0.001547,1
+Hyundai Ioniq,2.9,0.001569,1
+Hyundai Ioniq,2.3,0.001158,0
+Hyundai Ioniq,1.1,0.001171,0
+Hyundai Ioniq,1,0.000362,0
+Hyundai Ioniq,1.1,0.000366,1
+Hyundai Ioniq,0.3,0.000367,1
+Hyundai Ioniq,-0.4,0.000859,1
+Hyundai Ioniq,-1.4,0.000858,0
+Hyundai Ioniq,-2.9,-0.00048,1
+Hyundai Ioniq,-2.6,-0.000479,1
+Hyundai Ioniq,-1,-0.000476,0
+Hyundai Ioniq,-0.1,-0.000705,1
+Hyundai Ioniq,0.6,-0.000699,1
+Hyundai Ioniq,0.7,0.000758,1
+Hyundai Ioniq,0.9,0.00075,1
+Hyundai Ioniq,0.6,0.000742,1
+Hyundai Ioniq,0.9,0.000967,0
+Hyundai Ioniq,0.9,0.000963,1
+Hyundai Ioniq,0.9,0.000461,1
+Hyundai Ioniq,0.9,0.000459,0
+Hyundai Ioniq,-0.1,0.000457,1
+Hyundai Ioniq,-0.4,0.000226,1
+Hyundai Ioniq,-0.4,0.000226,0
+Hyundai Ioniq,-0.4,0.000546,0
+Hyundai Ioniq,-0.4,0.000544,0
+Hyundai Ioniq,-0.4,0.000543,1
+Hyundai Ioniq,-0.4,-0.000102,0
+Hyundai Ioniq,-0.1,-0.000102,0
+Hyundai Ioniq,0.3,0.000217,1
+Hyundai Ioniq,0.1,0.000217,1
+Hyundai Ioniq,0.2,0.000216,1
+Hyundai Ioniq,0.3,0.000486,1
+Hyundai Ioniq,0.1,0.000486,0
+Hyundai Ioniq,0.3,0.000414,1
+Hyundai Ioniq,-0.2,0.000415,1
+Hyundai Ioniq,-2,0.000419,0
+Hyundai Ioniq,-3.3,-0.000452,1
+Hyundai Ioniq,-4.1,-0.000457,1
+Hyundai Ioniq,-4.1,-0.001021,1
+Hyundai Ioniq,-4.9,-0.001032,1
+Hyundai Ioniq,-6.8,-0.001045,1
+Hyundai Ioniq,-7.1,-0.002754,1
+Hyundai Ioniq,-6.8,-0.002786,0
+Hyundai Ioniq,-5.7,-0.002408,0
+Hyundai Ioniq,-5.2,-0.002442,1
+Hyundai Ioniq,-5.1,-0.002473,0
+Hyundai Ioniq,-4.2,-0.0018,0
+Hyundai Ioniq,-2.8,-0.001836,1
+Hyundai Ioniq,-2.1,-0.000529,1
+Hyundai Ioniq,-2,-0.00054,0
+Hyundai Ioniq,-0.9,-0.000551,0
+Hyundai Ioniq,-0.6,-0.000701,1
+Hyundai Ioniq,-0.4,-0.000714,1
+Hyundai Ioniq,-0.4,0.000469,1
+Hyundai Ioniq,-0.4,0.000479,0
+Hyundai Ioniq,-0.4,0.000487,0
+Hyundai Ioniq,0,2e-06,0
+Hyundai Ioniq,0.3,2e-06,0
+Hyundai Ioniq,0.3,0.000841,0
+Hyundai Ioniq,0.6,0.000855,1
+Hyundai Ioniq,0.6,0.00087,0
+Hyundai Ioniq,0.6,0.000607,1
+Hyundai Ioniq,0.6,0.000621,1
+Hyundai Ioniq,0.6,0.001185,0
+Hyundai Ioniq,0.6,0.001208,1
+Hyundai Ioniq,0.5,0.00123,0
+Hyundai Ioniq,0.6,0.000886,1
+Hyundai Ioniq,0.6,0.000905,1
+Hyundai Ioniq,0.6,0.00072,0
+Hyundai Ioniq,0.6,0.000732,0
+Hyundai Ioniq,0.4,0.000747,0
+Hyundai Ioniq,0.6,0.000324,1
+Hyundai Ioniq,0.5,0.000339,1
+Hyundai Ioniq,0.6,0.000313,0
+Hyundai Ioniq,0.6,0.000333,0
+Hyundai Ioniq,0.6,0.000353,1
+Hyundai Ioniq,0.6,2.2e-05,1
+Hyundai Ioniq,0.6,2.3e-05,0
+Hyundai Ioniq,0.6,0.000764,1
+Hyundai Ioniq,0.6,0.000794,1
+Hyundai Ioniq,0.5,0.000817,0
+Hyundai Ioniq,0.6,0.000819,1
+Hyundai Ioniq,0.6,0.000824,0
+Hyundai Ioniq,0.8,0.001241,1
+Hyundai Ioniq,3.7,0.001237,1
+Hyundai Ioniq,5.2,0.001814,0
+Hyundai Ioniq,5,0.00172,0
+Hyundai Ioniq,4.9,0.001981,0
+Hyundai Ioniq,5.2,0.001812,0
+Hyundai Ioniq,5.2,0.00166,1
+Hyundai Ioniq,5.2,0.002585,1
+Hyundai Ioniq,4.9,0.00242,0
+Hyundai Ioniq,4.9,0.001657,1
+Hyundai Ioniq,4.9,0.001555,0
+Hyundai Ioniq,4.9,0.001476,0
+Hyundai Ioniq,4.9,0.001666,1
+Hyundai Ioniq,4.4,0.001582,0
+Hyundai Ioniq,3.3,0.00122,1
+Hyundai Ioniq,2.7,0.001169,0
+Hyundai Ioniq,2.5,0.001122,1
+Hyundai Ioniq,0.7,0.00048,1
+Hyundai Ioniq,-0.6,0.000462,0
+Hyundai Ioniq,-1.4,-0.000214,1
+Hyundai Ioniq,-2,-0.000207,0
+Hyundai Ioniq,-2,-0.0002,0
+Hyundai Ioniq,-1.7,-0.000655,0
+Hyundai Ioniq,-0.4,-0.000636,1
+Hyundai Ioniq,0.6,0.000765,1
+Hyundai Ioniq,0.6,0.000744,0
+Hyundai Ioniq,0.9,0.000726,1
+Hyundai Ioniq,0.9,0.000819,1
+Hyundai Ioniq,0.6,0.000803,1
+Hyundai Ioniq,0.9,0.000586,0
+Hyundai Ioniq,0.9,0.000575,0
+Hyundai Ioniq,1.7,0.000566,0
+Hyundai Ioniq,1.9,0.000699,1
+Hyundai Ioniq,2.5,0.000689,0
+Hyundai Ioniq,2.5,0.001241,1
+Hyundai Ioniq,2.5,0.001234,0
+Hyundai Ioniq,2.5,0.001232,1
+Hyundai Ioniq,2.5,0.001483,1
+Hyundai Ioniq,2.5,0.001481,0
+Hyundai Ioniq,2.5,0.001392,1
+Hyundai Ioniq,3,0.001388,0
+Hyundai Ioniq,4.1,0.00139,1
+Hyundai Ioniq,5.2,0.001996,1
+Hyundai Ioniq,5.2,0.001998,0
+Hyundai Ioniq,5.4,0.002707,1
+Hyundai Ioniq,5.4,0.002711,1
+Hyundai Ioniq,5.4,0.002716,1
+Hyundai Ioniq,5.2,0.002182,1
+Hyundai Ioniq,5.2,0.002187,1
+Hyundai Ioniq,5.2,0.003125,0
+Hyundai Ioniq,5.4,0.003127,0
+Hyundai Ioniq,5.2,0.003129,1
+Hyundai Ioniq,5.2,0.00215,1
+Hyundai Ioniq,5.2,0.002152,0
+Hyundai Ioniq,5.2,0.002921,0
+Hyundai Ioniq,5.4,0.002924,1
+Hyundai Ioniq,5.7,0.002934,0
+Hyundai Ioniq,5.7,0.002657,1
+Hyundai Ioniq,6,0.002677,1
+Hyundai Ioniq,6,0.003026,1
+Hyundai Ioniq,6.5,0.003036,0
+Hyundai Ioniq,7.8,0.003061,0
+Hyundai Ioniq,9.7,0.00354,1
+Hyundai Ioniq,9.7,0.00358,0
+Hyundai Ioniq,9.7,0.003517,1
+Hyundai Ioniq,10.5,0.003549,0
+Hyundai Ioniq,11.5,0.003585,0
+Hyundai Ioniq,11.9,0.006276,1
+Hyundai Ioniq,11.6,0.006374,1
+Hyundai Ioniq,12.1,0.004902,0
+Hyundai Ioniq,12.7,0.004951,1
+Hyundai Ioniq,13.4,0.005,0
+Hyundai Ioniq,13.7,0.006438,0
+Hyundai Ioniq,13.7,0.006556,0
+Hyundai Ioniq,14.3,0.006302,1
+Hyundai Ioniq,15.9,0.006381,0
+Hyundai Ioniq,18,0.006445,1
+Hyundai Ioniq,18.8,0.008528,0
+Hyundai Ioniq,19.1,0.008649,1
+Hyundai Ioniq,19.1,0.008211,0
+Hyundai Ioniq,19.1,0.008328,1
+Hyundai Ioniq,19.1,0.008436,1
+Hyundai Ioniq,19.1,0.008629,1
+Hyundai Ioniq,19.1,0.008648,0
+Hyundai Ioniq,19.1,0.008833,0
+Hyundai Ioniq,19.1,0.008822,1
+Hyundai Ioniq,19.1,0.008781,1
+Hyundai Ioniq,19.1,0.009134,0
+Hyundai Ioniq,19.1,0.009065,0
+Hyundai Ioniq,19.1,0.008818,0
+Hyundai Ioniq,19.1,0.008729,1
+Hyundai Ioniq,19.3,0.008637,1
+Hyundai Ioniq,19.4,0.008716,1
+Hyundai Ioniq,19.4,0.008583,1
+Hyundai Ioniq,19.4,0.008777,0
+Hyundai Ioniq,19.4,0.008643,0
+Hyundai Ioniq,19.4,0.008516,0
+Hyundai Ioniq,19.4,0.008666,1
+Hyundai Ioniq,19.4,0.00853,1
+Hyundai Ioniq,19.4,0.00864,1
+Hyundai Ioniq,19.1,0.008505,1
+Hyundai Ioniq,19.4,0.008385,1
+Hyundai Ioniq,19.4,0.008968,1
+Hyundai Ioniq,19.3,0.008866,1
+Hyundai Ioniq,19.4,0.008096,1
+Hyundai Ioniq,19.1,0.007991,0
+Hyundai Ioniq,19.4,0.007919,1
+Hyundai Ioniq,19.4,0.008933,1
+Hyundai Ioniq,19.4,0.008841,0
+Hyundai Ioniq,18.8,0.007889,0
+Hyundai Ioniq,18.3,0.007823,0
+Hyundai Ioniq,16.7,0.007771,1
+Hyundai Ioniq,13.6,0.007823,1
+Hyundai Ioniq,9.7,0.00776,0
+Hyundai Ioniq,5.7,0.004333,0
+Hyundai Ioniq,1.5,0.004295,0
+Hyundai Ioniq,-0.9,0.004268,1
+Hyundai Ioniq,-2,0.000134,1
+Hyundai Ioniq,-2.5,0.000134,0
+Hyundai Ioniq,-2.5,-0.001144,1
+Hyundai Ioniq,-2.5,-0.001137,1
+Hyundai Ioniq,-2.5,-0.001131,1
+Hyundai Ioniq,-2.5,-0.000999,0
+Hyundai Ioniq,-2.5,-0.000996,0
+Hyundai Ioniq,-2.5,-0.000821,1
+Hyundai Ioniq,-2.5,-0.000818,1
+Hyundai Ioniq,-2.5,-0.000813,0
+Hyundai Ioniq,-2.5,-0.000534,0
+Hyundai Ioniq,-2.6,-0.000536,1
+Hyundai Ioniq,-2.5,-0.001134,0
+Hyundai Ioniq,-2.5,-0.001136,1
+Hyundai Ioniq,-2.5,-0.001135,0
+Hyundai Ioniq,-2.6,-0.000883,1
+Hyundai Ioniq,-2.6,-0.000881,1
+Hyundai Ioniq,-2.8,-0.000712,0
+Hyundai Ioniq,-2.8,-0.000712,1
+Hyundai Ioniq,-3.1,-0.000712,0
+Hyundai Ioniq,-4.1,-0.000966,0
+Hyundai Ioniq,-5.2,-0.000967,1
+Hyundai Ioniq,-5.5,-0.001851,0
+Hyundai Ioniq,-5.2,-0.001853,1
+Hyundai Ioniq,-5.2,-0.00186,1
+Hyundai Ioniq,-5.5,-0.002124,1
+Hyundai Ioniq,-5.5,-0.00213,1
+Hyundai Ioniq,-3.2,-0.001944,0
+Hyundai Ioniq,-2.3,-0.001958,1
+Hyundai Ioniq,-2.3,-0.001967,1
+Hyundai Ioniq,-2.5,-0.000375,1
+Hyundai Ioniq,-2.3,-0.000377,0
+Hyundai Ioniq,-2.3,-0.000573,0
+Hyundai Ioniq,-2.3,-0.000577,0
+Hyundai Ioniq,-2.3,-0.000584,0
+Hyundai Ioniq,-1.7,-0.000436,0
+Hyundai Ioniq,-1.7,-0.000439,1
+Hyundai Ioniq,-1.7,-0.000399,0
+Hyundai Ioniq,-1.5,-0.000403,1
+Hyundai Ioniq,-1.7,-0.000405,1
+Hyundai Ioniq,-1.4,-2e-05,1
+Hyundai Ioniq,-1.7,-2e-05,1
+Hyundai Ioniq,-1.7,-0.000334,0
+Hyundai Ioniq,-1.5,-0.000338,1
+Hyundai Ioniq,-2.3,-0.000344,1
+Hyundai Ioniq,-3.1,-0.000362,1
+Hyundai Ioniq,-3.1,-0.000369,1
+Hyundai Ioniq,-3.1,-0.001051,0
+Hyundai Ioniq,-3.3,-0.001071,1
+Hyundai Ioniq,-3.3,-0.001094,1
+Hyundai Ioniq,-3.1,-0.001402,0
+Hyundai Ioniq,-3.1,-0.001429,0
+Hyundai Ioniq,-3.3,-0.000487,1
+Hyundai Ioniq,-3.3,-0.000495,0
+Hyundai Ioniq,-3.3,-0.0005,0
+Hyundai Ioniq,-3.1,-0.001434,0
+Hyundai Ioniq,-3.1,-0.001432,1
+Hyundai Ioniq,-3.3,-0.000611,0
+Hyundai Ioniq,-3.1,-0.000608,1
+Hyundai Ioniq,-3.3,-0.000604,0
+Hyundai Ioniq,-3.2,-0.001145,0
+Hyundai Ioniq,-3.3,-0.001125,1
+Hyundai Ioniq,-3.1,-0.001219,0
+Hyundai Ioniq,-3.1,-0.001209,1
+Hyundai Ioniq,-3.1,-0.001194,1
+Hyundai Ioniq,-2.9,-0.000543,1
+Hyundai Ioniq,-2.6,-0.000535,1
+Hyundai Ioniq,-2.5,-0.000565,0
+Hyundai Ioniq,-2.3,-0.000559,0
+Hyundai Ioniq,-2.3,-0.000552,1
+Hyundai Ioniq,-2,0.000305,0
+Hyundai Ioniq,-2,0.000301,1
+Hyundai Ioniq,-1.7,0.000242,0
+Hyundai Ioniq,-1.8,0.00024,0
+Hyundai Ioniq,-1.2,0.000237,1
+Hyundai Ioniq,-1.2,-8e-05,1
+Hyundai Ioniq,-1.2,-8e-05,0
+Hyundai Ioniq,-1.2,-0.000205,0
+Hyundai Ioniq,-0.9,-0.000204,0
+Hyundai Ioniq,-0.9,-0.000202,0
+Hyundai Ioniq,-1.1,-4.1e-05,1
+Hyundai Ioniq,-0.1,-4e-05,1
+Hyundai Ioniq,0.9,0.000566,0
+Hyundai Ioniq,1.4,0.000562,1
+Hyundai Ioniq,1.1,0.000559,0
+Hyundai Ioniq,1.1,0.000499,0
+Hyundai Ioniq,1.4,0.000497,1
+Hyundai Ioniq,3,0.000989,1
+Hyundai Ioniq,4.1,0.000984,1
+Hyundai Ioniq,4.1,0.000979,1
+Hyundai Ioniq,4.1,0.001921,0
+Hyundai Ioniq,4.1,0.001911,1
+Hyundai Ioniq,4.1,0.002004,1
+Hyundai Ioniq,4.1,0.001995,1
+Hyundai Ioniq,4.1,0.001985,0
+Hyundai Ioniq,4.1,0.001884,1
+Hyundai Ioniq,4.1,0.001876,1
+Hyundai Ioniq,2.8,0.00185,1
+Hyundai Ioniq,0.6,0.001843,1
+Hyundai Ioniq,0.8,0.001836,0
+Hyundai Ioniq,0.9,0.000297,1
+Hyundai Ioniq,0.9,0.000297,0
+Hyundai Ioniq,0.8,0.00094,1
+Hyundai Ioniq,0.6,0.000939,1
+Hyundai Ioniq,0.8,0.000941,1
+Hyundai Ioniq,0.6,0.000243,1
+Hyundai Ioniq,0.8,0.000243,1
+Hyundai Ioniq,0.9,0.000761,1
+Hyundai Ioniq,0.6,0.000765,1
+Hyundai Ioniq,0.6,0.000768,0
+Hyundai Ioniq,0.6,0.000627,1
+Hyundai Ioniq,0.6,0.000629,1
+Hyundai Ioniq,0.9,0.00059,1
+Hyundai Ioniq,0.6,0.000592,1
+Hyundai Ioniq,0.6,0.000595,1
+Hyundai Ioniq,0.6,0.000686,0
+Hyundai Ioniq,0.6,0.00069,1
+Hyundai Ioniq,0.9,0.000631,0
+Hyundai Ioniq,1.1,0.000634,1
+Hyundai Ioniq,0.9,0.000638,0
+Hyundai Ioniq,0.9,0.000913,1
+Hyundai Ioniq,0.9,0.000919,1
+Hyundai Ioniq,1.4,0.000735,0
+Hyundai Ioniq,2.7,0.00074,0
+Hyundai Ioniq,5.3,0.000744,1
+Hyundai Ioniq,7.2,0.001837,1
+Hyundai Ioniq,7.8,0.00185,0
+Hyundai Ioniq,7.8,0.003956,0
+Hyundai Ioniq,7.8,0.003979,1
+Hyundai Ioniq,5.8,0.004002,1
+Hyundai Ioniq,3.8,0.00343,0
+Hyundai Ioniq,3.3,0.003482,1
+Hyundai Ioniq,3,0.001526,0
+Hyundai Ioniq,2.5,0.001549,1
+Hyundai Ioniq,2.5,0.001572,1
+Hyundai Ioniq,2.2,0.00104,0
+Hyundai Ioniq,2.5,0.001056,0
+Hyundai Ioniq,2.4,0.001431,0
+Hyundai Ioniq,2.2,0.001452,0
+Hyundai Ioniq,2.2,0.001475,1
+Hyundai Ioniq,2.5,0.000794,0
+Hyundai Ioniq,2.5,0.000805,0
+Hyundai Ioniq,2.5,0.00131,1
+Hyundai Ioniq,2.7,0.001339,0
+Hyundai Ioniq,2.8,0.001355,0
+Hyundai Ioniq,3.3,0.001106,1
+Hyundai Ioniq,3,0.001118,1
+Hyundai Ioniq,3,0.001695,1
+Hyundai Ioniq,3.3,0.001725,1
+Hyundai Ioniq,3.8,0.00175,0
+Hyundai Ioniq,5.4,0.002365,1
+Hyundai Ioniq,6.5,0.002365,0
+Hyundai Ioniq,6.8,0.003577,1
+Hyundai Ioniq,6.8,0.003572,0
+Hyundai Ioniq,6.5,0.00356,0
+Hyundai Ioniq,7,0.003634,1
+Hyundai Ioniq,7.6,0.00361,1
+Hyundai Ioniq,8.4,0.003585,1
+Hyundai Ioniq,8.4,0.003563,1
+Hyundai Ioniq,9.1,0.003545,0
+Hyundai Ioniq,11.1,0.004163,0
+Hyundai Ioniq,13.2,0.004138,1
+Hyundai Ioniq,14.5,0.006797,0
+Hyundai Ioniq,14.5,0.006763,0
+Hyundai Ioniq,14.5,0.006726,1
+Hyundai Ioniq,14.5,0.005854,1
+Hyundai Ioniq,14.6,0.005837,0
+Hyundai Ioniq,14.3,0.00769,1
+Hyundai Ioniq,14.6,0.007686,0
+Hyundai Ioniq,14.5,0.007673,1
+Hyundai Ioniq,14.5,0.00589,0
+Hyundai Ioniq,14.5,0.005883,0
+Hyundai Ioniq,14.5,0.007245,0
+Hyundai Ioniq,14.5,0.00724,0
+Hyundai Ioniq,14.3,0.007219,1
+Hyundai Ioniq,12.9,0.006459,1
+Hyundai Ioniq,10.6,0.006462,0
+Hyundai Ioniq,10,0.005146,1
+Hyundai Ioniq,10,0.005145,0
+Hyundai Ioniq,8.7,0.005143,1
+Hyundai Ioniq,7,0.004083,1
+Hyundai Ioniq,6.2,0.004097,0
+Hyundai Ioniq,6.2,0.003032,0
+Hyundai Ioniq,6,0.003048,1
+Hyundai Ioniq,3.6,0.003071,1
+Hyundai Ioniq,2.5,0.002613,0
+Hyundai Ioniq,2.5,0.002634,1
+Hyundai Ioniq,2.5,0.001711,0
+Hyundai Ioniq,2.5,0.001727,1
+Hyundai Ioniq,2.5,0.001743,1
+Hyundai Ioniq,2.5,0.00066,0
+Hyundai Ioniq,2.5,0.000666,1
+Hyundai Ioniq,2.5,0.00155,1
+Hyundai Ioniq,2.5,0.001569,1
+Hyundai Ioniq,2.7,0.001586,0
+Hyundai Ioniq,4.6,0.001247,0
+Hyundai Ioniq,5.1,0.001263,1
+Hyundai Ioniq,4.9,0.003024,1
+Hyundai Ioniq,4.9,0.003054,0
+Hyundai Ioniq,4.9,0.003088,1
+Hyundai Ioniq,5.2,0.002236,0
+Hyundai Ioniq,5.1,0.002261,1
+Hyundai Ioniq,5.2,0.002871,1
+Hyundai Ioniq,5.1,0.002904,1
+Hyundai Ioniq,5.2,0.002938,1
+Hyundai Ioniq,5.2,0.002476,1
+Hyundai Ioniq,4.1,0.0025,1
+Hyundai Ioniq,4.1,0.001832,1
+Hyundai Ioniq,4,0.001857,1
+Hyundai Ioniq,3.8,0.001878,1
+Hyundai Ioniq,2.7,0.001814,1
+Hyundai Ioniq,2.7,0.001838,1
+Hyundai Ioniq,2.7,0.001276,1
+Hyundai Ioniq,2.7,0.001292,0
+Hyundai Ioniq,2.5,0.001307,0
+Hyundai Ioniq,1.9,0.000684,0
+Hyundai Ioniq,1.9,0.000692,1
+Hyundai Ioniq,1.9,0.001172,1
+Hyundai Ioniq,1.9,0.001185,0
+Hyundai Ioniq,1.9,0.001198,1
+Hyundai Ioniq,2.5,0.000313,1
+Hyundai Ioniq,3.8,0.000318,0
+Hyundai Ioniq,5,0.001712,1
+Hyundai Ioniq,5.4,0.001744,1
+Hyundai Ioniq,5.4,0.00178,1
+Hyundai Ioniq,4.4,0.002827,1
+Hyundai Ioniq,4.5,0.002882,1
+Hyundai Ioniq,4.6,0.001969,1
+Hyundai Ioniq,4.4,0.002001,1
+Hyundai Ioniq,4.4,0.002037,0
+Hyundai Ioniq,4.1,0.001213,0
+Hyundai Ioniq,4.4,0.001234,1
+Hyundai Ioniq,4.1,0.001857,0
+Hyundai Ioniq,4.4,0.001883,1
+Hyundai Ioniq,4.4,0.001912,0
+Hyundai Ioniq,4.3,0.002583,1
+Hyundai Ioniq,4.1,0.002612,0
+Hyundai Ioniq,4.1,0.002109,1
+Hyundai Ioniq,4.1,0.002134,1
+Hyundai Ioniq,4.1,0.002157,0
+Hyundai Ioniq,4.4,0.001346,0
+Hyundai Ioniq,4.4,0.001362,0
+Hyundai Ioniq,4.1,0.001858,0
+Hyundai Ioniq,4.1,0.001878,0
+Hyundai Ioniq,4.1,0.001898,0
+Hyundai Ioniq,4.1,0.001853,1
+Hyundai Ioniq,4.1,0.00187,0
+Hyundai Ioniq,4.1,0.002039,1
+Hyundai Ioniq,4.1,0.002059,1
+Hyundai Ioniq,4.4,0.002091,0
+Hyundai Ioniq,4.2,0.001187,0
+Hyundai Ioniq,4.4,0.001225,0
+Hyundai Ioniq,4.1,0.003027,1
+Hyundai Ioniq,4.1,0.003113,1
+Hyundai Ioniq,4.1,0.003197,0
+Hyundai Ioniq,4.3,0.002167,0
+Hyundai Ioniq,4.4,0.002241,1
+Hyundai Ioniq,4.1,0.002164,1
+Hyundai Ioniq,4.1,0.002255,0
+Hyundai Ioniq,4.1,0.000501,0
+Hyundai Ioniq,4.3,0.000472,1
+Hyundai Ioniq,4.1,0.001782,0
+Hyundai Ioniq,4.1,0.001696,1
+Hyundai Ioniq,4.1,0.00194,1
+Hyundai Ioniq,4.4,0.001876,1
+Hyundai Ioniq,4.1,0.001818,1
+Hyundai Ioniq,4.4,0.002154,1
+Hyundai Ioniq,4.4,0.002116,1
+Hyundai Ioniq,4.1,0.001339,0
+Hyundai Ioniq,4.3,0.001319,1
+Hyundai Ioniq,4.1,0.001301,1
+Hyundai Ioniq,4.3,0.001253,1
+Hyundai Ioniq,4.3,0.001239,0
+Hyundai Ioniq,4.4,0.001798,0
+Hyundai Ioniq,4.3,0.001775,1
+Hyundai Ioniq,4.1,0.001742,1
+Hyundai Ioniq,4.1,0.000675,1
+Hyundai Ioniq,4.1,0.000656,1
+Hyundai Ioniq,4.1,0.000929,1
+Hyundai Ioniq,4.1,0.000902,0
+Hyundai Ioniq,4.1,0.000878,0
+Hyundai Ioniq,4.4,0.001783,1
+Hyundai Ioniq,4.1,0.001742,1
+Hyundai Ioniq,4.4,0.003464,1
+Hyundai Ioniq,4.1,0.003382,1
+Hyundai Ioniq,4.1,0.003299,0
+Hyundai Ioniq,4.1,0.002224,1
+Hyundai Ioniq,4.1,0.002185,0
+Hyundai Ioniq,4.4,0.002045,1
+Hyundai Ioniq,4.1,0.002009,1
+Hyundai Ioniq,4.1,0.001978,0
+Hyundai Ioniq,4.2,0.001741,1
+Hyundai Ioniq,3.8,0.001715,0
+Hyundai Ioniq,4.1,0.001856,1
+Hyundai Ioniq,3.9,0.001837,0
+Hyundai Ioniq,3.8,0.001818,1
+Hyundai Ioniq,3.8,0.001475,0
+Hyundai Ioniq,3.8,0.001463,1
+Hyundai Ioniq,3.6,0.001682,0
+Hyundai Ioniq,3.8,0.001681,1
+Hyundai Ioniq,3.5,0.001678,1
+Hyundai Ioniq,3.6,0.002008,0
+Hyundai Ioniq,3.6,0.002006,1
+Hyundai Ioniq,3.5,0.00198,1
+Hyundai Ioniq,3.6,0.002002,1
+Hyundai Ioniq,3.5,0.002037,1
+Hyundai Ioniq,3.6,0.000958,1
+Hyundai Ioniq,3.6,0.000964,1
+Hyundai Ioniq,3.3,0.001837,1
+Hyundai Ioniq,3.5,0.001869,0
+Hyundai Ioniq,3.3,0.0019,1
+Hyundai Ioniq,3,0.00191,0
+Hyundai Ioniq,2.7,0.001928,1
+Hyundai Ioniq,2.5,0.002038,1
+Hyundai Ioniq,2.7,0.002067,1
+Hyundai Ioniq,2.7,0.002085,0
+Hyundai Ioniq,2.7,0.001903,1
+Hyundai Ioniq,2.7,0.001935,0
+Hyundai Ioniq,2.5,0.000148,1
+Hyundai Ioniq,2.7,0.000149,0
+Hyundai Ioniq,3.3,0.00015,1
+Hyundai Ioniq,3.8,0.001984,0
+Hyundai Ioniq,6.5,0.002015,0
+Hyundai Ioniq,12.8,0.003772,0
+Hyundai Ioniq,22.1,0.003773,1
+Hyundai Ioniq,32.2,0.003756,1
+Hyundai Ioniq,42.8,0.012767,0
+Hyundai Ioniq,52.9,0.012807,1
+Hyundai Ioniq,61.4,0.024175,1
+Hyundai Ioniq,69.5,0.024057,0
+Hyundai Ioniq,82,0.0242,0
+Hyundai Ioniq,95.6,0.035932,0
+Hyundai Ioniq,109.6,0.03664,1
+Hyundai Ioniq,124.4,0.048823,0
+Hyundai Ioniq,136.8,0.048431,1
+Hyundai Ioniq,147.7,0.04856,0
+Hyundai Ioniq,157.2,0.060987,0
+Hyundai Ioniq,166.6,0.06173,0
+Hyundai Ioniq,173,0.074671,1
+Hyundai Ioniq,177.6,0.075188,0
+Hyundai Ioniq,181.3,0.076242,1
+Hyundai Ioniq,187.5,0.080246,1
+Hyundai Ioniq,193.8,0.081597,0
+Hyundai Ioniq,200.7,0.092732,1
+Hyundai Ioniq,208.5,0.093119,1
+Hyundai Ioniq,213.7,0.095122,0
+Hyundai Ioniq,216.7,0.092161,0
+Hyundai Ioniq,221.4,0.0939,0
+Hyundai Ioniq,230,0.101411,1
+Hyundai Ioniq,238.8,0.102332,0
+Hyundai Ioniq,244.3,0.103592,0
+Hyundai Ioniq,245.4,0.108059,0
+Hyundai Ioniq,245.6,0.109734,0
+Hyundai Ioniq,245.4,0.110436,1
+Hyundai Ioniq,245.4,0.112957,1
+Hyundai Ioniq,245.4,0.117272,1
+Hyundai Ioniq,245.4,0.113347,1
+Hyundai Ioniq,245.1,0.118814,1
+Hyundai Ioniq,243.8,0.110294,1
+Hyundai Ioniq,242.7,0.116068,0
+Hyundai Ioniq,243,0.122915,1
+Hyundai Ioniq,242.9,0.114715,1
+Hyundai Ioniq,133.2,0.059282,0
+Hyundai Ioniq,125.3,0.056273,1
+Hyundai Ioniq,114,0.054685,1
+Hyundai Ioniq,103.3,0.051868,1
+Hyundai Ioniq,98.1,0.049064,1
+Hyundai Ioniq,95.6,0.040933,1
+Hyundai Ioniq,90.9,0.038921,1
+Hyundai Ioniq,86.5,0.039439,1
+Hyundai Ioniq,81.3,0.037522,0
+Hyundai Ioniq,74.8,0.035781,0
+Hyundai Ioniq,68,0.031894,0
+Hyundai Ioniq,65.1,0.030664,1
+Hyundai Ioniq,59.5,0.026392,1
+Hyundai Ioniq,50.6,0.025372,0
+Hyundai Ioniq,39.9,0.024547,0
+Hyundai Ioniq,30.8,0.018591,0
+Hyundai Ioniq,25.6,0.017991,1
+Hyundai Ioniq,24,0.010336,1
+Hyundai Ioniq,23.9,0.010032,1
+Hyundai Ioniq,23.1,0.009766,0
+Hyundai Ioniq,19.9,0.009562,1
+Hyundai Ioniq,15.4,0.009334,1
+Hyundai Ioniq,12,0.006356,1
+Hyundai Ioniq,10,0.006224,1
+Hyundai Ioniq,7,0.006128,0
+Hyundai Ioniq,3.9,0.003375,1
+Hyundai Ioniq,0.6,0.003325,0
+Hyundai Ioniq,-2.2,-9.9e-05,1
+Hyundai Ioniq,-4.7,-9.8e-05,0
+Hyundai Ioniq,-7.8,-9.6e-05,0
+Hyundai Ioniq,-9.4,-0.002484,0
+Hyundai Ioniq,-9.8,-0.002457,1
+Hyundai Ioniq,-10.8,-0.003836,0
+Hyundai Ioniq,-12.2,-0.003786,0
+Hyundai Ioniq,-12.3,-0.003742,1
+Hyundai Ioniq,-12.4,-0.00545,0
+Hyundai Ioniq,-12.2,-0.005403,0
+Hyundai Ioniq,-11.6,-0.005041,1
+Hyundai Ioniq,-10.6,-0.004994,0
+Hyundai Ioniq,-9.2,-0.004953,1
+Hyundai Ioniq,-8.4,-0.003827,1
+Hyundai Ioniq,-8.2,-0.0038,1
+Hyundai Ioniq,-7.1,-0.002915,1
+Hyundai Ioniq,-6,-0.002891,1
+Hyundai Ioniq,-4.4,-0.002868,0
+Hyundai Ioniq,-1.8,-0.002014,0
+Hyundai Ioniq,1.6,-0.001997,1
+Hyundai Ioniq,5.4,0.000647,0
+Hyundai Ioniq,7,0.000644,1
+Hyundai Ioniq,7,0.000639,0
+Hyundai Ioniq,5.7,0.00367,1
+Hyundai Ioniq,4.6,0.003649,1
+Hyundai Ioniq,4.2,0.002289,0
+Hyundai Ioniq,4.1,0.00227,1
+Hyundai Ioniq,3.8,0.002251,0
+Hyundai Ioniq,2.5,0.001995,1
+Hyundai Ioniq,2.5,0.001966,1
+Hyundai Ioniq,2.5,0.00096,0
+Hyundai Ioniq,2.2,0.000943,1
+Hyundai Ioniq,2.5,0.000923,0
+Hyundai Ioniq,2.4,0.001025,0
+Hyundai Ioniq,2.5,0.000999,0
+Hyundai Ioniq,2.4,0.000786,1
+Hyundai Ioniq,2.5,0.000764,1
+Hyundai Ioniq,2.5,0.000743,1
+Hyundai Ioniq,2.5,0.001044,0
+Hyundai Ioniq,2.2,0.001018,1
+Hyundai Ioniq,2.2,0.000956,0
+Hyundai Ioniq,2.2,0.000936,0
+Hyundai Ioniq,1.4,0.000922,1
+Hyundai Ioniq,1.4,0.000881,0
+Hyundai Ioniq,1.1,0.000868,0
+Hyundai Ioniq,1.1,0.000478,0
+Hyundai Ioniq,1.1,0.000473,1
+Hyundai Ioniq,1.1,0.000468,1
+Hyundai Ioniq,1.1,0.000585,1
+Hyundai Ioniq,0.9,0.000579,1
+Hyundai Ioniq,1.1,0.000317,0
+Hyundai Ioniq,0.9,0.000314,1
+Hyundai Ioniq,0.9,0.000312,1
+Hyundai Ioniq,0.9,0.000375,1
+Hyundai Ioniq,0.9,0.000373,1
+Hyundai Ioniq,0.9,0.000547,0
+Hyundai Ioniq,0.9,0.000543,0
+Hyundai Ioniq,0.6,0.000541,0
+Hyundai Ioniq,0.6,0.0003,1
+Hyundai Ioniq,0.6,0.000299,1
+Hyundai Ioniq,0.6,0.000384,0
+Hyundai Ioniq,0.3,0.000383,0
+Hyundai Ioniq,0.3,0.000381,1
+Hyundai Ioniq,0.1,0.000325,1
+Hyundai Ioniq,-0.9,0.000323,1
+Hyundai Ioniq,-1.2,-0.000166,1
+Hyundai Ioniq,-0.9,-0.000166,0
+Hyundai Ioniq,-1.2,-0.000165,1
+Hyundai Ioniq,-1.2,-0.000126,0
+Hyundai Ioniq,-0.9,-0.000126,1
+Hyundai Ioniq,-1.2,-0.000293,1
+Hyundai Ioniq,-1.2,-0.000292,1
+Hyundai Ioniq,-0.9,-0.000292,1
+Hyundai Ioniq,-1.2,-0.000154,0
+Hyundai Ioniq,-1.1,-0.000154,1
+Hyundai Ioniq,-1.4,-0.000248,1
+Hyundai Ioniq,-1.4,-0.000247,0
+Hyundai Ioniq,-1.4,-0.000246,0
+Hyundai Ioniq,-1.4,-0.000297,1
+Hyundai Ioniq,-1.3,-0.000296,0
+Hyundai Ioniq,-1.2,-0.000376,1
+Hyundai Ioniq,-1.4,-0.000374,1
+Hyundai Ioniq,-1.4,-0.000373,1
+Hyundai Ioniq,-1.4,-0.000233,0
+Hyundai Ioniq,-1.4,-0.000233,1
+Hyundai Ioniq,-1.2,-0.000233,1
+Hyundai Ioniq,-1.2,-0.000232,0
+Hyundai Ioniq,-1.4,-0.000231,1
+Hyundai Ioniq,-1.4,-0.000284,1
+Hyundai Ioniq,-1.4,-0.000281,1
+Hyundai Ioniq,-1.2,-0.000511,1
+Hyundai Ioniq,-1.4,-0.000507,1
+Hyundai Ioniq,-4.1,-0.001721,1
+Hyundai Ioniq,-4.1,-0.001739,1
+Hyundai Ioniq,-4.4,-0.001757,1
+Hyundai Ioniq,-4.7,-0.001457,0
+Hyundai Ioniq,-5.2,-0.00147,1
+Hyundai Ioniq,-5.5,-0.001687,1
+Hyundai Ioniq,-5.5,-0.001708,0
+Hyundai Ioniq,-6,-0.001726,0
+Hyundai Ioniq,-7.1,-0.001679,0
+Hyundai Ioniq,-7.5,-0.001695,1
+Hyundai Ioniq,-7.6,-0.002723,1
+Hyundai Ioniq,-8.2,-0.002757,0
+Hyundai Ioniq,-8.4,-0.002792,1
+Hyundai Ioniq,-8.7,-0.002765,1
+Hyundai Ioniq,-8.7,-0.002806,1
+Hyundai Ioniq,-8.7,-0.002774,1
+Hyundai Ioniq,-8.7,-0.002814,1
+Hyundai Ioniq,-8.4,-0.002857,1
+Hyundai Ioniq,-8.4,-0.00311,0
+Hyundai Ioniq,-8.7,-0.003153,1
+Hyundai Ioniq,-8.7,-0.003108,1
+Hyundai Ioniq,-8.7,-0.003153,1
+Hyundai Ioniq,-8.7,-0.003203,1
+Hyundai Ioniq,-8.4,-0.003052,0
+Hyundai Ioniq,-8.3,-0.003103,0
+Hyundai Ioniq,-7.7,-0.002745,0
+Hyundai Ioniq,-6.7,-0.002771,0
+Hyundai Ioniq,-6.8,-0.002797,0
+Hyundai Ioniq,-6.5,-0.002278,0
+Hyundai Ioniq,-4.8,-0.002303,1
+Hyundai Ioniq,-3.9,-0.001816,1
+Hyundai Ioniq,-2.8,-0.001835,1
+Hyundai Ioniq,-2.8,-0.00186,0
+Hyundai Ioniq,-2.3,-0.000262,0
+Hyundai Ioniq,-1.2,-0.000265,0
+Hyundai Ioniq,-0.6,-0.000327,0
+Hyundai Ioniq,-0.6,-0.00033,0
+Hyundai Ioniq,-0.9,-0.000335,1
+Hyundai Ioniq,-2.5,0.000189,0
+Hyundai Ioniq,-5.2,0.000192,1
+Hyundai Ioniq,-5.2,-0.001338,0
+Hyundai Ioniq,-3.6,-0.001356,0
+Hyundai Ioniq,-2,-0.001373,1
+Hyundai Ioniq,-1.7,-0.000677,0
+Hyundai Ioniq,-1.7,-0.000682,1
+Hyundai Ioniq,-1.9,-0.000376,1
+Hyundai Ioniq,-1.7,-0.000377,1
+Hyundai Ioniq,-1.7,-0.000378,0
+Hyundai Ioniq,-1.7,-0.000119,1
+Hyundai Ioniq,-1.7,-0.00012,0
+Hyundai Ioniq,-1.7,-0.000628,1
+Hyundai Ioniq,-1.7,-0.00063,0
+Hyundai Ioniq,-1.7,-0.000633,1
+Hyundai Ioniq,-1.8,-0.000654,0
+Hyundai Ioniq,-1.7,-0.000657,0
+Hyundai Ioniq,-2.8,-0.00047,0
+Hyundai Ioniq,-3.3,-0.000472,0
+Hyundai Ioniq,-3.3,-0.000475,0
+Hyundai Ioniq,-3.3,-0.00129,1
+Hyundai Ioniq,-3.3,-0.001294,1
+Hyundai Ioniq,-3.3,-0.001265,0
+Hyundai Ioniq,-3.1,-0.001273,0
+Hyundai Ioniq,-2.8,-0.001283,0
+Hyundai Ioniq,-3.1,-0.000885,0
+Hyundai Ioniq,-3.1,-0.000891,1
+Hyundai Ioniq,-3.1,-0.000827,1
+Hyundai Ioniq,-2.8,-0.000835,1
+Hyundai Ioniq,-3,-0.000845,0
+Hyundai Ioniq,-2.8,-0.000707,1
+Hyundai Ioniq,-3.1,-0.000715,0
+Hyundai Ioniq,-3.1,-0.000535,1
+Hyundai Ioniq,-2.8,-0.000542,0
+Hyundai Ioniq,-3.1,-0.000548,0
+Hyundai Ioniq,-2.8,-0.000946,1
+Hyundai Ioniq,-3.1,-0.000958,1
+Hyundai Ioniq,-2.8,-0.000811,0
+Hyundai Ioniq,-2.8,-0.000825,0
+Hyundai Ioniq,-2.8,-0.000839,0
+Hyundai Ioniq,-3.6,-0.000631,0
+Hyundai Ioniq,-3.9,-0.000643,1
+Hyundai Ioniq,-4.4,-0.001669,1
+Hyundai Ioniq,-5.5,-0.001699,1
+Hyundai Ioniq,-7.1,-0.001731,0
+Hyundai Ioniq,-7.6,-0.002743,1
+Hyundai Ioniq,-7.7,-0.002793,1
+Hyundai Ioniq,-8.3,-0.00234,0
+Hyundai Ioniq,-8.7,-0.002382,1
+Hyundai Ioniq,-9,-0.002427,0
+Hyundai Ioniq,-9,-0.003464,1
+Hyundai Ioniq,-9,-0.003526,1
+Hyundai Ioniq,-9.2,-0.004166,1
+Hyundai Ioniq,-9.2,-0.004246,1
+Hyundai Ioniq,-9.2,-0.004308,1
+Hyundai Ioniq,-9.8,-0.003483,0
+Hyundai Ioniq,-9.5,-0.003558,1
+Hyundai Ioniq,-9.5,-0.005528,1
+Hyundai Ioniq,-8.4,-0.005604,1
+Hyundai Ioniq,-8.2,-0.005699,1
+Hyundai Ioniq,-7.9,-0.002171,1
+Hyundai Ioniq,-7.7,-0.002205,0
+Hyundai Ioniq,-8.8,-0.003409,0
+Hyundai Ioniq,-13.2,-0.003457,1
+Hyundai Ioniq,-18.5,-0.003512,0
+Hyundai Ioniq,-22.9,-0.007041,1
+Hyundai Ioniq,-28.7,-0.007119,1
+Hyundai Ioniq,-35.9,-0.012531,1
+Hyundai Ioniq,-39.3,-0.012859,0
+Hyundai Ioniq,-39,-0.013222,0
+Hyundai Ioniq,-38.3,-0.017537,1
+Hyundai Ioniq,-37.1,-0.018106,1
+Hyundai Ioniq,-32.5,-0.016783,0
+Hyundai Ioniq,-24.7,-0.017374,1
+Hyundai Ioniq,-17.2,-0.018067,0
+Hyundai Ioniq,-10.1,-0.009209,0
+Hyundai Ioniq,-4.2,-0.009622,1
+Hyundai Ioniq,0,-0.000836,1
+Hyundai Ioniq,1.1,-0.000879,0
+Hyundai Ioniq,0.9,-0.000927,1
+Hyundai Ioniq,0.9,0.001123,1
+Ford F-150 Lightning,1,-0,1
+Ford F-150 Lightning,1.3,-0,1
+Ford F-150 Lightning,2.1,7.7e-05,1
+Ford F-150 Lightning,2.1,7.8e-05,1
+Ford F-150 Lightning,2,0.00022,1
+Ford F-150 Lightning,1.8,0.000223,1
+Ford F-150 Lightning,1.8,0.000285,1
+Ford F-150 Lightning,1.7,0.000288,1
+Ford F-150 Lightning,1.8,0.000128,1
+Ford F-150 Lightning,2,0.000129,1
+Ford F-150 Lightning,2,0.000121,1
+Ford F-150 Lightning,1.8,0.000122,1
+Ford F-150 Lightning,1.6,8e-06,1
+Ford F-150 Lightning,1.2,8e-06,1
+Ford F-150 Lightning,1.2,-1e-06,1
+Ford F-150 Lightning,1.2,-1e-06,1
+Ford F-150 Lightning,1.2,7.8e-05,1
+Ford F-150 Lightning,1.2,7.9e-05,1
+Ford F-150 Lightning,1.3,0.000109,1
+Ford F-150 Lightning,1.4,0.00011,1
+Ford F-150 Lightning,1.3,0.000206,1
+Ford F-150 Lightning,1.4,0.000206,1
+Ford F-150 Lightning,1.5,0.0002,1
+Ford F-150 Lightning,2.2,0.000202,1
+Ford F-150 Lightning,2.8,-2e-05,1
+Ford F-150 Lightning,2.3,-2.1e-05,1
+Ford F-150 Lightning,2.2,0.000329,1
+Ford F-150 Lightning,2.2,0.000332,1
+Ford F-150 Lightning,1.4,0.000209,1
+Ford F-150 Lightning,0.2,0.00021,1
+Ford F-150 Lightning,0,0.000189,1
+Ford F-150 Lightning,-0.2,0.000191,1
+Ford F-150 Lightning,-0.4,-0.000299,1
+Ford F-150 Lightning,-0.5,-0.000303,1
+Ford F-150 Lightning,-0.4,-0.000293,1
+Ford F-150 Lightning,-0.4,-0.000296,1
+Ford F-150 Lightning,-0.4,-0.000226,1
+Ford F-150 Lightning,-0.2,-0.000229,1
+Ford F-150 Lightning,0.2,-0.000243,1
+Ford F-150 Lightning,0.3,-0.000248,1
+Ford F-150 Lightning,0.3,-5.4e-05,1
+Ford F-150 Lightning,0.5,-5.4e-05,1
+Ford F-150 Lightning,0.7,-2.6e-05,1
+Ford F-150 Lightning,0.8,-2.6e-05,1
+Ford F-150 Lightning,0.7,-7e-06,1
+Ford F-150 Lightning,0.7,-7e-06,1
+Ford F-150 Lightning,0.8,-0.000141,1
+Ford F-150 Lightning,0.8,-0.000144,1
+Ford F-150 Lightning,0.7,-7e-05,1
+Ford F-150 Lightning,0.7,-7.2e-05,1
+Ford F-150 Lightning,0.7,0.000326,1
+Ford F-150 Lightning,2,0.000338,1
+Ford F-150 Lightning,3.5,5.6e-05,1
+Ford F-150 Lightning,3.6,5.7e-05,1
+Ford F-150 Lightning,3.1,0.000509,1
+Ford F-150 Lightning,2.3,0.000523,1
+Ford F-150 Lightning,2.4,0.000591,1
+Ford F-150 Lightning,2.4,0.000605,1
+Ford F-150 Lightning,2.4,0.000221,1
+Ford F-150 Lightning,2.3,0.000228,1
+Ford F-150 Lightning,1.9,0.000302,1
+Ford F-150 Lightning,1.5,0.000308,1
+Ford F-150 Lightning,1.1,9e-05,1
+Ford F-150 Lightning,0.5,9.3e-05,1
+Ford F-150 Lightning,0.2,0.000164,1
+Ford F-150 Lightning,0.2,0.000169,1
+Ford F-150 Lightning,0.1,-0.00021,1
+Ford F-150 Lightning,-0.1,-0.000217,1
+Ford F-150 Lightning,-0.4,9.5e-05,1
+Ford F-150 Lightning,-0.4,9.8e-05,1
+Ford F-150 Lightning,-0.5,-0.000217,1
+Ford F-150 Lightning,-0.5,-0.000226,1
+Ford F-150 Lightning,-0.5,-0.000306,1
+Ford F-150 Lightning,-0.5,-0.000317,1
+Ford F-150 Lightning,-0.6,-0.000588,1
+Ford F-150 Lightning,-0.6,-0.000612,1
+Ford F-150 Lightning,-0.6,-0.000263,1
+Ford F-150 Lightning,-0.6,-0.000273,1
+Ford F-150 Lightning,-0.6,-0.000147,1
+Ford F-150 Lightning,-0.6,-0.000153,1
+Ford F-150 Lightning,-0.6,9.7e-05,1
+Ford F-150 Lightning,-0.6,0.000103,1
+Ford F-150 Lightning,-0.6,-0.000201,1
+Ford F-150 Lightning,-0.6,-0.000211,1
+Ford F-150 Lightning,-0.5,0.000262,1
+Ford F-150 Lightning,-0.5,0.000263,1
+Ford F-150 Lightning,-0.5,0.000246,1
+Ford F-150 Lightning,-0.5,2.3e-05,1
+Ford F-150 Lightning,-0.6,2.2e-05,1
+Ford F-150 Lightning,-0.8,0.000193,1
+Ford F-150 Lightning,-0.8,0.000183,1
+Ford F-150 Lightning,-0.8,0.000139,1
+Ford F-150 Lightning,-0.9,0.000133,1
+Ford F-150 Lightning,-1,-9e-05,1
+Ford F-150 Lightning,-1,-8.5e-05,1
+Ford F-150 Lightning,-1.2,-0.000193,1
+Ford F-150 Lightning,-1.2,-0.000184,1
+Ford F-150 Lightning,-1.2,-0.000109,1
+Ford F-150 Lightning,-1.2,-0.000104,1
+Ford F-150 Lightning,-1.2,3.5e-05,1
+Ford F-150 Lightning,-0.6,3.3e-05,1
+Ford F-150 Lightning,0.4,-0.000141,1
+Ford F-150 Lightning,1.4,-0.000135,1
+Ford F-150 Lightning,3.2,0.000192,1
+Ford F-150 Lightning,3.2,0.000185,1
+Ford F-150 Lightning,3,0.00079,1
+Ford F-150 Lightning,2.8,0.000771,1
+Ford F-150 Lightning,2,0.000628,1
+Ford F-150 Lightning,0.8,0.000615,1
+Ford F-150 Lightning,0.4,0.000663,1
+Ford F-150 Lightning,0.3,0.000644,1
+Ford F-150 Lightning,0,8e-05,1
+Ford F-150 Lightning,-0.1,7.8e-05,1
+Ford F-150 Lightning,0.4,0.000105,1
+Ford F-150 Lightning,1.1,0.000103,1
+Ford F-150 Lightning,1,0.000126,1
+Ford F-150 Lightning,0.7,0.000123,1
+Ford F-150 Lightning,0.5,0.00032,1
+Ford F-150 Lightning,0.4,0.000315,1
+Ford F-150 Lightning,0.4,0.000165,1
+Ford F-150 Lightning,0.3,0.000162,1
+Ford F-150 Lightning,0.3,0.000375,1
+Ford F-150 Lightning,0.4,0.00037,1
+Ford F-150 Lightning,1.3,0.000317,1
+Ford F-150 Lightning,2,0.000312,1
+Ford F-150 Lightning,2,0.000213,1
+Ford F-150 Lightning,2.3,0.000209,1
+Ford F-150 Lightning,2.5,0.000328,1
+Ford F-150 Lightning,2.4,0.000323,1
+Ford F-150 Lightning,2.2,0.000929,1
+Ford F-150 Lightning,2.5,0.000911,1
+Ford F-150 Lightning,3.5,0.000609,1
+Ford F-150 Lightning,3.5,0.000602,1
+Ford F-150 Lightning,5.2,0.000671,1
+Ford F-150 Lightning,6.6,0.000662,1
+Ford F-150 Lightning,4.9,0.000859,1
+Ford F-150 Lightning,4.1,0.000848,1
+Ford F-150 Lightning,4.3,0.000823,1
+Ford F-150 Lightning,3.2,0.000811,1
+Ford F-150 Lightning,1.2,0.000823,1
+Ford F-150 Lightning,0,0.000812,1
+Ford F-150 Lightning,-1.8,0.000333,1
+Ford F-150 Lightning,-3.4,0.000329,1
+Ford F-150 Lightning,-4,-0.000319,1
+Ford F-150 Lightning,-4.7,-0.000316,1
+Ford F-150 Lightning,-7,-0.000534,1
+Ford F-150 Lightning,-8.9,-0.000528,1
+Ford F-150 Lightning,-9.9,-0.000792,1
+Ford F-150 Lightning,-11.1,-0.000783,1
+Ford F-150 Lightning,-12.6,-0.001817,1
+Ford F-150 Lightning,-14.3,-0.001795,1
+Ford F-150 Lightning,-15.8,-0.002347,1
+Ford F-150 Lightning,-6.5,-0.001925,1
+Ford F-150 Lightning,-6.6,-0.001949,1
+Ford F-150 Lightning,-6.5,-0.001479,1
+Ford F-150 Lightning,-6.6,-0.001499,1
+Ford F-150 Lightning,-6.6,-0.001495,1
+Ford F-150 Lightning,-6.6,-0.00152,1
+Ford F-150 Lightning,-6.5,-0.001334,1
+Ford F-150 Lightning,-6.1,-0.001361,1
+Ford F-150 Lightning,-5.2,-0.001326,1
+Ford F-150 Lightning,-4.7,-0.001352,1
+Ford F-150 Lightning,-3.9,-0.0012,1
+Ford F-150 Lightning,-3.6,-0.001225,1
+Ford F-150 Lightning,-3.6,-0.000618,1
+Ford F-150 Lightning,-3.5,-0.000636,1
+Ford F-150 Lightning,-3.5,-0.00069,1
+Ford F-150 Lightning,-3.1,-0.000711,1
+Ford F-150 Lightning,-2.6,-0.000912,1
+Ford F-150 Lightning,-1.7,-0.000946,1
+Ford F-150 Lightning,-0.4,-0.00071,1
+Ford F-150 Lightning,0.4,-0.000735,1
+Ford F-150 Lightning,0.8,-0.000222,1
+Ford F-150 Lightning,0.9,-0.000231,1
+Ford F-150 Lightning,0.9,8e-06,1
+Ford F-150 Lightning,0.9,8e-06,1
+Ford F-150 Lightning,0.9,5.9e-05,1
+Ford F-150 Lightning,0.9,6.2e-05,1
+Ford F-150 Lightning,0.9,-0.000169,1
+Ford F-150 Lightning,0.9,-0.000177,1
+Ford F-150 Lightning,0.9,-0.000229,1
+Ford F-150 Lightning,0.9,-0.000241,1
+Ford F-150 Lightning,0.9,-5.8e-05,1
+Ford F-150 Lightning,1,-6.2e-05,1
+Ford F-150 Lightning,1.1,-0.000148,1
+Ford F-150 Lightning,1.7,-0.000158,1
+Ford F-150 Lightning,2.1,-0.000192,1
+Ford F-150 Lightning,2.1,-0.000205,1
+Ford F-150 Lightning,2.1,0.00013,1
+Ford F-150 Lightning,2.1,0.00014,1
+Ford F-150 Lightning,2.1,0.000171,1
+Ford F-150 Lightning,2.1,0.000186,1
+Ford F-150 Lightning,2.1,0.000139,1
+Ford F-150 Lightning,2.1,0.000152,1
+Ford F-150 Lightning,-0.8,-0.000231,1
+Ford F-150 Lightning,-0.6,0.000128,1
+Ford F-150 Lightning,0.1,0.000112,1
+Ford F-150 Lightning,0.1,0.000141,1
+Ford F-150 Lightning,0.2,0.000126,1
+Ford F-150 Lightning,0.6,0.000597,1
+Ford F-150 Lightning,0.7,0.000546,1
+Ford F-150 Lightning,0.7,0.000351,1
+Ford F-150 Lightning,0.6,0.000332,1
+Ford F-150 Lightning,0.2,0.000373,1
+Ford F-150 Lightning,-0.5,0.000365,1
+Ford F-150 Lightning,-2.4,-6.6e-05,1
+Ford F-150 Lightning,-4.7,-6.4e-05,1
+Ford F-150 Lightning,-9.3,-0.000831,1
+Ford F-150 Lightning,-17.9,-0.0008,1
+Ford F-150 Lightning,-36.9,-0.00218,1
+Ford F-150 Lightning,-66.2,-0.002121,1
+Ford F-150 Lightning,-101.6,-0.011428,1
+Ford F-150 Lightning,-138.1,-0.011053,1
+Ford F-150 Lightning,-174.1,-0.028971,1
+Ford F-150 Lightning,-205.2,-0.028364,1
+Ford F-150 Lightning,-232.5,-0.046577,1
+Ford F-150 Lightning,-256.5,-0.04623,1
+Ford F-150 Lightning,-278.3,-0.061403,1
+Ford F-150 Lightning,-301,-0.06109,1
+Ford F-150 Lightning,-323.5,-0.072605,1
+Ford F-150 Lightning,-344.1,-0.071704,1
+Ford F-150 Lightning,-364,-0.082449,1
+Ford F-150 Lightning,-381.2,-0.083216,1
+Ford F-150 Lightning,-398.5,-0.093599,1
+Ford F-150 Lightning,-414.1,-0.093426,1
+Ford F-150 Lightning,-422.6,-0.105203,1
+Ford F-150 Lightning,-426.5,-0.106422,1
+Ford F-150 Lightning,-428.6,-0.106534,1
+Ford F-150 Lightning,-424.9,-0.103645,1
+Ford F-150 Lightning,-413.2,-0.108352,1
+Ford F-150 Lightning,-392,-0.107697,1
+Ford F-150 Lightning,-362.7,-0.101272,1
+Ford F-150 Lightning,-331.9,-0.098762,1
+Ford F-150 Lightning,-305,-0.084384,1
+Ford F-150 Lightning,-276.5,-0.082302,1
+Ford F-150 Lightning,-245.3,-0.068895,1
+Ford F-150 Lightning,-217.8,-0.066185,1
+Ford F-150 Lightning,-194.4,-0.052272,1
+Ford F-150 Lightning,-173.6,-0.05052,1
+Ford F-150 Lightning,-155,-0.042081,1
+Ford F-150 Lightning,-135.3,-0.040567,1
+Ford F-150 Lightning,-115.4,-0.03283,1
+Ford F-150 Lightning,-93.6,-0.031869,1
+Ford F-150 Lightning,-70.7,-0.023075,1
+Ford F-150 Lightning,-50.7,-0.022225,1
+Ford F-150 Lightning,-33.3,-0.01197,1
+Ford F-150 Lightning,95.4,0.020041,1
+Ford F-150 Lightning,98.6,0.020385,1
+Ford F-150 Lightning,101.8,0.021789,1
+Ford F-150 Lightning,105.6,0.02213,1
+Ford F-150 Lightning,107.7,0.023907,1
+Ford F-150 Lightning,108.8,0.024316,1
+Ford F-150 Lightning,109.4,0.024984,1
+Ford F-150 Lightning,109.4,0.025244,1
+Ford F-150 Lightning,109.4,0.026184,1
+Ford F-150 Lightning,109.4,0.02658,1
+Ford F-150 Lightning,108.2,0.025349,1
+Ford F-150 Lightning,106.1,0.025726,1
+Ford F-150 Lightning,104.4,0.02564,1
+Ford F-150 Lightning,102.6,0.026182,1
+Ford F-150 Lightning,101.9,0.024446,1
+Ford F-150 Lightning,101.1,0.024867,1
+Ford F-150 Lightning,99.3,0.024198,1
+Ford F-150 Lightning,96.3,0.024769,1
+Ford F-150 Lightning,94.5,0.024377,1
+Ford F-150 Lightning,91,0.024731,1
+Ford F-150 Lightning,84.9,0.021818,1
+Ford F-150 Lightning,78.2,0.022319,1
+Ford F-150 Lightning,72.1,0.020479,1
+Ford F-150 Lightning,68,0.020828,1
+Ford F-150 Lightning,64.4,0.016991,1
+Ford F-150 Lightning,61.7,0.017445,1
+Ford F-150 Lightning,60.4,0.015557,1
+Ford F-150 Lightning,58.4,0.016051,1
+Ford F-150 Lightning,55.6,0.014026,1
+Ford F-150 Lightning,53,0.01466,1
+Ford F-150 Lightning,50.6,0.01335,1
+Ford F-150 Lightning,48.7,0.014031,1
+Ford F-150 Lightning,47.1,0.012551,1
+Ford F-150 Lightning,44.7,0.013286,1
+Ford F-150 Lightning,42,0.011559,1
+Ford F-150 Lightning,40.8,0.012262,1
+Ford F-150 Lightning,39.8,0.010302,1
+Ford F-150 Lightning,38.6,0.011177,1
+Ford F-150 Lightning,37.9,0.010114,1
+Ford F-150 Lightning,37.8,0.011015,1
+Ford F-150 Lightning,37.2,0.010201,1
+Ford F-150 Lightning,36.2,0.011254,1
+Ford F-150 Lightning,34,0.008465,1
+Ford F-150 Lightning,30.7,0.009493,1
+Ford F-150 Lightning,26.6,0.010713,1
+Ford F-150 Lightning,14.1,0.003133,1
+Ford F-150 Lightning,16.4,0.003709,1
+Ford F-150 Lightning,21.7,0.003193,1
+Ford F-150 Lightning,30.7,0.00422,1
+Ford F-150 Lightning,38.5,0.003715,1
+Ford F-150 Lightning,46.6,0.008064,1
+Ford F-150 Lightning,53.4,0.007262,1
+Ford F-150 Lightning,59.4,0.012583,1
+Ford F-150 Lightning,66,0.011727,1
+Ford F-150 Lightning,75.4,0.01586,1
+Ford F-150 Lightning,86.7,0.014776,1
+Ford F-150 Lightning,99.1,0.018936,1
+Ford F-150 Lightning,111.2,0.017884,1
+Ford F-150 Lightning,121.5,0.023235,1
+Ford F-150 Lightning,130.2,0.02208,1
+Ford F-150 Lightning,137.8,0.029239,1
+Ford F-150 Lightning,146,0.027924,1
+Ford F-150 Lightning,154,0.032136,1
+Ford F-150 Lightning,157.7,0.031033,1
+Ford F-150 Lightning,157.7,0.034779,1
+Ford F-150 Lightning,156.5,0.033163,1
+Ford F-150 Lightning,150.9,0.035288,1
+Ford F-150 Lightning,141.8,0.034277,1
+Ford F-150 Lightning,132.9,0.032345,1
+Ford F-150 Lightning,124.9,0.031448,1
+Ford F-150 Lightning,-13.1,-0.002351,1
+Ford F-150 Lightning,-13,-0.002195,1
+Ford F-150 Lightning,-13,-0.002243,1
+Ford F-150 Lightning,-13.1,-0.002181,1
+Ford F-150 Lightning,-13.2,-0.002246,1
+Ford F-150 Lightning,-13.2,-0.002164,1
+Ford F-150 Lightning,-13.1,-0.00223,1
+Ford F-150 Lightning,-13.2,-0.002137,1
+Ford F-150 Lightning,-13.2,-0.002213,1
+Ford F-150 Lightning,-12.8,-0.002322,1
+Ford F-150 Lightning,-13.3,-0.00241,1
+Ford F-150 Lightning,-14.1,-0.002043,1
+Ford F-150 Lightning,-15.2,-0.002148,1
+Ford F-150 Lightning,-16.5,-0.002629,1
+Ford F-150 Lightning,-18.1,-0.002776,1
+Ford F-150 Lightning,-19.5,-0.003489,1
+Ford F-150 Lightning,-20.7,-0.003717,1
+Ford F-150 Lightning,-21.6,-0.004429,1
+Ford F-150 Lightning,-21.8,-0.004756,1
+Ford F-150 Lightning,-21.9,-0.004509,1
+Ford F-150 Lightning,-22.6,-0.004895,1
+Ford F-150 Lightning,-22.8,-0.004872,1
+Ford F-150 Lightning,-22.9,-0.005368,1
+Ford F-150 Lightning,-23.5,-0.005154,1
+Ford F-150 Lightning,-23.8,-0.005809,1
+Ford F-150 Lightning,-24.1,-0.005666,1
+Ford F-150 Lightning,-24.5,-0.006541,1
+Ford F-150 Lightning,-24.9,-0.005943,1
+Ford F-150 Lightning,-23.9,-0.003249,1
+Ford F-150 Lightning,-25.2,-0.002589,1
+Ford F-150 Lightning,-28.7,-0.003555,1
+Ford F-150 Lightning,-32.8,-0.003047,1
+Ford F-150 Lightning,-37.4,-0.005073,1
+Ford F-150 Lightning,-44.9,-0.004504,1
+Ford F-150 Lightning,-54.8,-0.007232,1
+Ford F-150 Lightning,-63.5,-0.006766,1
+Ford F-150 Lightning,-68.1,-0.012733,1
+Ford F-150 Lightning,-68.1,-0.012154,1
+Ford F-150 Lightning,-67.3,-0.014932,1
+Ford F-150 Lightning,-65.1,-0.01443,1
+Ford F-150 Lightning,-64.8,-0.014351,1
+Ford F-150 Lightning,-66.9,-0.013789,1
+Ford F-150 Lightning,-66.6,-0.013662,1
+Ford F-150 Lightning,-65.3,-0.013209,1
+Ford F-150 Lightning,-62.9,-0.016656,1
+Ford F-150 Lightning,-60.2,-0.017152,1
+Ford F-150 Lightning,-56.1,-0.01354,1
+Ford F-150 Lightning,-49.1,-0.012794,1
+Ford F-150 Lightning,-41.4,-0.010619,1
+Ford F-150 Lightning,-32.4,-0.010175,1
+Ford F-150 Lightning,-23.2,-0.007673,1
+Ford F-150 Lightning,-17.2,-0.007358,1
+Ford F-150 Lightning,-16.6,-0.003904,1
+Ford F-150 Lightning,-17.2,-0.003806,1
+Ford F-150 Lightning,-13,-0.004341,1
+Ford F-150 Lightning,-6.1,-0.004162,1
+Ford F-150 Lightning,-0.7,-0.001906,1
+Ford F-150 Lightning,0.7,-0.001861,1
+Ford F-150 Lightning,0,-6.5e-05,1
+Ford F-150 Lightning,-2.5,8.7e-05,1
+Ford F-150 Lightning,-2.9,8.8e-05,1
+Ford F-150 Lightning,-3.5,-0.000319,1
+Ford F-150 Lightning,-2.9,-0.000323,1
+Ford F-150 Lightning,-3.4,-0.000428,1
+Ford F-150 Lightning,-2.9,-0.000435,1
+Ford F-150 Lightning,-2.9,-0.000294,1
+Ford F-150 Lightning,-3.4,-0.000298,1
+Ford F-150 Lightning,-3.6,-0.000414,1
+Ford F-150 Lightning,-3.8,-0.00042,1
+Ford F-150 Lightning,-3.9,-0.000558,1
+Ford F-150 Lightning,-4.1,-0.000567,1
+Ford F-150 Lightning,-4.1,-0.00052,1
+Ford F-150 Lightning,-4.2,-0.000529,1
+Ford F-150 Lightning,-4.2,-0.00065,1
+Ford F-150 Lightning,-4.2,-0.000664,1
+Ford F-150 Lightning,-4.3,-0.000548,1
+Ford F-150 Lightning,-4.4,-0.000559,1
+Ford F-150 Lightning,-4.6,-0.000403,1
+Ford F-150 Lightning,-4.6,-0.000413,1
+Ford F-150 Lightning,-4.6,-0.000581,1
+Ford F-150 Lightning,-4.7,-0.000594,1
+Ford F-150 Lightning,-4.7,-0.00067,1
+Ford F-150 Lightning,-4.7,-0.000687,1
+Ford F-150 Lightning,-4.6,-0.000779,1
+Ford F-150 Lightning,-4.6,-0.000798,1
+Ford F-150 Lightning,-4.5,-0.000756,1
+Ford F-150 Lightning,-4.5,-0.000777,1
+Ford F-150 Lightning,-4.5,-0.000621,1
+Ford F-150 Lightning,-4.5,-0.000644,1
+Ford F-150 Lightning,-4.5,-0.000541,1
+Ford F-150 Lightning,-4.5,-0.000564,1
+Ford F-150 Lightning,-4.4,-0.000815,1
+Ford F-150 Lightning,-4.4,-0.000853,1
+Ford F-150 Lightning,-4.3,-0.000859,1
+Ford F-150 Lightning,-4,-0.000907,1
+Ford F-150 Lightning,-3.8,-0.000305,1
+Ford F-150 Lightning,-3.8,-0.000321,1
+Ford F-150 Lightning,-3.8,-0.000577,1
+Ford F-150 Lightning,-3.8,-0.000615,1
+Ford F-150 Lightning,-3.7,-0.000287,1
+Ford F-150 Lightning,-3.7,-0.000305,1
+Ford F-150 Lightning,-3.7,-0.000521,1
+Ford F-150 Lightning,-3.4,-0.000555,1
+Ford F-150 Lightning,-3.4,-0.000378,1
+Ford F-150 Lightning,-3.4,-0.000401,1
+Ford F-150 Lightning,-3.3,-0.001048,1
+Ford F-150 Lightning,-3.3,-0.001121,1
+Ford F-150 Lightning,-3.1,-5.6e-05,1
+Ford F-150 Lightning,-3.1,-5.9e-05,1
+Ford F-150 Lightning,-3.1,0.00012,1
+Ford F-150 Lightning,-2.4,1.1e-05,1
+Ford F-150 Lightning,-2.2,2.5e-05,1
+Ford F-150 Lightning,-2.2,2.4e-05,1
+Ford F-150 Lightning,-2.1,-5.2e-05,1
+Ford F-150 Lightning,-2.1,-4.9e-05,1
+Ford F-150 Lightning,-2.2,-5e-06,1
+Ford F-150 Lightning,-2.2,-5e-06,1
+Ford F-150 Lightning,-2.2,8.9e-05,1
+Ford F-150 Lightning,-2.2,8.8e-05,1
+Ford F-150 Lightning,-2.2,-0.000126,1
+Ford F-150 Lightning,-2.2,-0.000126,1
+Ford F-150 Lightning,-2.2,-0.000125,1
+Ford F-150 Lightning,-2.2,-0.000126,1
+Ford F-150 Lightning,-2.2,-0.000648,1
+Ford F-150 Lightning,-2.2,-0.000664,1
+Ford F-150 Lightning,-2.2,-0.000106,1
+Ford F-150 Lightning,-2.2,-0.00011,1
+Ford F-150 Lightning,-2.2,5.2e-05,1
+Ford F-150 Lightning,-2.2,5.5e-05,1
+Ford F-150 Lightning,-1.9,0.00032,1
+Ford F-150 Lightning,-1.9,0.000348,1
+Ford F-150 Lightning,144,0.030648,1
+Ford F-150 Lightning,153.9,0.027786,1
+Ford F-150 Lightning,165.6,0.035794,1
+Ford F-150 Lightning,179.4,0.032303,1
+Ford F-150 Lightning,195.4,0.04168,1
+Ford F-150 Lightning,215.1,0.03815,1
+Ford F-150 Lightning,237.5,0.049216,1
+Ford F-150 Lightning,257.7,0.045949,1
+Ford F-150 Lightning,277.2,0.061433,1
+Ford F-150 Lightning,295.1,0.057992,1
+Ford F-150 Lightning,312.7,0.069913,1
+Ford F-150 Lightning,329.7,0.067304,1
+Ford F-150 Lightning,347.2,0.080513,1
+Ford F-150 Lightning,363.2,0.076991,1
+Ford F-150 Lightning,376.7,0.08842,1
+Ford F-150 Lightning,387.9,0.085524,1
+Ford F-150 Lightning,398,0.095578,1
+Ford F-150 Lightning,406.7,0.093232,1
+Ford F-150 Lightning,411.4,0.102212,1
+Ford F-150 Lightning,411.1,0.101063,1
+Ford F-150 Lightning,408.2,0.106949,1
+Ford F-150 Lightning,403.8,0.104864,1
+Ford F-150 Lightning,396.6,0.10392,1
+Ford F-150 Lightning,384.6,0.102306,1
+Ford F-150 Lightning,366.9,0.099667,1
+Ford F-150 Lightning,338.5,0.098056,1
+Ford F-150 Lightning,303.9,0.08948,1
+Ford F-150 Lightning,272.4,0.088866,1
+Ford F-150 Lightning,245.3,0.071889,1
+Ford F-150 Lightning,219,0.071936,1
+Ford F-150 Lightning,192.6,0.057671,1
+Ford F-150 Lightning,170,0.056893,1
+Ford F-150 Lightning,150,0.044422,1
+Ford F-150 Lightning,132.5,0.044502,1
+Ford F-150 Lightning,118.8,0.034489,1
+Ford F-150 Lightning,110,0.034442,1
+Ford F-150 Lightning,107.4,0.028531,1
+Ford F-150 Lightning,111,0.028388,1
+Ford F-150 Lightning,114.3,0.025819,1
+Ford F-150 Lightning,113.3,0.025877,1
+Ford F-150 Lightning,110.5,0.028287,1
+Ford F-150 Lightning,105.3,0.028117,1
+Ford F-150 Lightning,96.6,0.025713,1
+Ford F-150 Lightning,86.7,0.025701,1
+Ford F-150 Lightning,77.2,0.022462,1
+Ford F-150 Lightning,70,0.022337,1
+Ford F-150 Lightning,65.1,0.01737,1
+Ford F-150 Lightning,60.6,0.017285,1
+Ford F-150 Lightning,52.3,0.015341,1
+Ford F-150 Lightning,38.9,0.015237,1
+Ford F-150 Lightning,24.2,0.011483,1
+Ford F-150 Lightning,12.2,0.011448,1
+Ford F-150 Lightning,3,0.004496,1
+Ford F-150 Lightning,-5.1,0.004471,1
+Ford F-150 Lightning,-12.2,-0.000268,1
+Ford F-150 Lightning,-19.1,-0.000268,1
+Ford F-150 Lightning,-25.2,-0.003509,1
+Ford F-150 Lightning,-31.4,-0.003498,1
+Ford F-150 Lightning,-37.5,-0.006556,1
+Ford F-150 Lightning,-41.9,-0.00653,1
+Ford F-150 Lightning,-43.8,-0.009284,1
+Ford F-150 Lightning,-44,-0.009268,1
+Ford F-150 Lightning,-44.9,-0.010382,1
+Ford F-150 Lightning,-47.1,-0.010372,1
+Ford F-150 Lightning,-49.8,-0.010776,1
+Ford F-150 Lightning,-52,-0.010836,1
+Ford F-150 Lightning,-53.2,-0.011713,1
+Ford F-150 Lightning,-55.1,-0.011866,1
+Ford F-150 Lightning,-59.2,-0.012485,1
+Ford F-150 Lightning,-64.4,-0.012695,1
+Ford F-150 Lightning,-70.2,-0.014178,1
+Ford F-150 Lightning,-77.5,-0.014481,1
+Ford F-150 Lightning,-86.6,-0.017139,1
+Ford F-150 Lightning,-97.3,-0.017513,1
+Ford F-150 Lightning,-109.1,-0.02203,1
+Ford F-150 Lightning,-121,-0.022539,1
+Ford F-150 Lightning,-129.8,-0.028072,1
+Ford F-150 Lightning,-136.2,-0.028744,1
+Ford F-150 Lightning,-139.4,-0.032899,1
+Ford F-150 Lightning,-139.4,-0.033743,1
+Ford F-150 Lightning,-137.2,-0.034456,1
+Ford F-150 Lightning,-132.4,-0.035284,1
+Ford F-150 Lightning,-125.2,-0.033683,1
+Ford F-150 Lightning,-113.8,-0.034592,1
+Ford F-150 Lightning,-99.9,-0.029767,1
+Ford F-150 Lightning,-84.6,-0.030391,1
+Ford F-150 Lightning,-67.4,-0.024205,1
+Ford F-150 Lightning,-49.3,-0.024619,1
+Ford F-150 Lightning,-30.7,-0.0139,1
+Ford F-150 Lightning,-12.3,-0.014143,1
+Ford F-150 Lightning,3.6,-0.004337,1
+Ford F-150 Lightning,18.3,-0.004365,1
+Ford F-150 Lightning,33.3,0.003819,1
+Ford F-150 Lightning,48.3,0.003862,1
+Ford F-150 Lightning,62.8,0.010177,1
+Ford F-150 Lightning,75.9,0.010237,1
+Ford F-150 Lightning,87.4,0.017665,1
+Ford F-150 Lightning,97,0.017785,1
+Ford F-150 Lightning,103.6,0.023268,1
+Ford F-150 Lightning,106.1,0.023401,1
+Ford F-150 Lightning,106.1,0.026764,1
+Ford F-150 Lightning,107.1,0.027125,1
+Ford F-150 Lightning,108.1,0.026617,1
+Ford F-150 Lightning,107.4,0.027092,1
+Ford F-150 Lightning,105.7,0.027596,1
+Ford F-150 Lightning,99.9,0.028051,1
+Ford F-150 Lightning,92.8,0.02591,1
+Ford F-150 Lightning,88.7,0.02635,1
+Ford F-150 Lightning,87.1,0.022588,1
+Ford F-150 Lightning,87.5,0.022951,1
+Ford F-150 Lightning,89.7,0.021818,1
+Ford F-150 Lightning,91.2,0.022169,1
+Ford F-150 Lightning,88.8,0.022911,1
+Ford F-150 Lightning,84.4,0.023362,1
+Ford F-150 Lightning,79.1,0.022185,1
+Ford F-150 Lightning,72.9,0.022663,1
+Ford F-150 Lightning,66.5,0.019595,1
+Ford F-150 Lightning,61.5,0.020109,1
+Ford F-150 Lightning,59.2,0.015764,1
+Ford F-150 Lightning,59.9,0.016188,1
+Ford F-150 Lightning,63.9,0.015125,1
+Ford F-150 Lightning,71.1,0.015671,1
+Ford F-150 Lightning,80.2,0.016572,1
+Ford F-150 Lightning,89.8,0.017295,1
+Ford F-150 Lightning,98,0.02228,1
+Ford F-150 Lightning,102.7,0.02348,1
+Ford F-150 Lightning,103.4,0.02638,1
+Ford F-150 Lightning,101.8,0.028276,1

@@ -159,6 +159,13 @@ def test_acronym_rule():
     assert R.hits_acronym(acronym().lower()) == 1
     assert R.hits_acronym(acronym() + "-TO") == 0
     assert R.hits_acronym(acronym() + "-TO-CF extractor") == 0
+    title = f"empirical characterization of human takeovers during {acronym()} engagement"
+    assert R.hits_acronym(title) == 0                                            # the cited title, one line
+    assert R.hits_acronym(title.replace(" during ", "\nduring ").replace(" engagement", "  engagement")) == 0
+    assert R.hits_acronym(f"takeovers during {acronym()} engagement") == 1      # not the full cited phrase
+    assert R.hits_acronym(f"{title}; our {acronym()} study") == 1               # the acronym elsewhere still counts
+    assert R.hits_acronym(f"we study human takeovers during {acronym()} engagement") == 1   # the title's tail in prose
+    assert R.hits_acronym(acronym() + "-TOTAL") == 1                                        # not the citation token
     assert R.hits_acronym(acronym() + "_WORD") == 0
     fence = "intro\n\n```bibtex\n@article{x,\n  title = {" + acronym() + "-TO: " + acronym() + " Engagement},\n}\n```\n"
     assert R.hits_acronym(fence, readme=True) == 0

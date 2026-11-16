@@ -1,0 +1,20 @@
+size_class,powertrain,hours
+LARGE,BEV,460.4
+LARGE,HEV,7.3
+LARGE,ICE,457.2
+LARGE,PHEV,10.1
+LARGE,mixed / unknown,101.6
+MID,BEV,494
+MID,HEV,148.6
+MID,ICE,371.3
+MID,PHEV,0.5
+MID,mixed / unknown,109.7
+SMALL,BEV,309
+SMALL,HEV,318.8
+SMALL,ICE,749.2
+SMALL,PHEV,189.4
+SMALL,mixed / unknown,217.4
+no size label,BEV,0.6
+no size label,ICE,3.8
+no size label,PHEV,0.1
+no size label,mixed / unknown,0.8

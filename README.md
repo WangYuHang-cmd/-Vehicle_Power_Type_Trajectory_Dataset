@@ -166,8 +166,6 @@ and standstill alone keep 88.1 (91.0 per vehicle). The zero-shot transfer study 
 
 ## Paper
 
-`paper/` holds the IEEE IV 2027 manuscript draft: `main.tex` (anonymous build by default; the author build is
-`pdflatex -jobname=main_authors "\def\withauthors{1}\input{main}"`), the sections, `refs.bib`, the figures and the
-generated tables, plus `OUTLINE.md`, the single source of every number quoted in the text (each traced to the
-experiment reports), and `check_draft.py`, which scans the sources for identifiers and wording rules. Compiled PDFs:
-`paper/main.pdf` (anonymous) and `paper/main_authors.pdf`.
+`paper/` holds the submitted IEEE IV 2027 manuscript (anonymous review version, 8 pages): `main.tex` with `sections/`, `tables/`, `figures/` (vector PDFs with PNG previews), `refs.bib`, the compiled `compiled/VTT_final.pdf`, `supporting/` (the experiment results and confidence intervals quoted by the tables and Section V) and `figure_source/` (the figure builder `build_figures.py`, the plotted data as CSV in `source_data/` and the component assets). The IEEE conference class `IEEEtran.cls` / `IEEEtran.bst` are the standard CTAN files and are not tracked; the bundled fonts are not redistributed (the builder uses the system's Liberation Sans), nor are the three third-party vehicle pictures of Fig. 1 as separate files (they stay embedded in `figures/vtt_teaser.*` and the compiled PDF; `build_figures.py` needs them and stops at Fig. 1 without them, see `paper/README.md`), nor the three blurred forward-camera stills of
+Fig. 5 (embedded in `figures/vtt_examples_physics.*`). `OUTLINE.md` traces the numbers of the text (the figure-derived values are traced in
+`figure_source/source_data/` and `FIGURE_DATA_CHECK.json`), and `check_draft.py` scans the sources for identifiers and wording rules (`python3 paper/check_draft.py paper`).

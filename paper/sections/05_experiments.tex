@@ -1,207 +1,67 @@
 \section{Experiments}\label{sec:experiments}
 
-\subsection{Set-Up}
+Experiments use one RTX 5080 GPU (16 GB); gradient-boosting models use scikit-learn~\cite{pedregosa2011sklearn}. Macro-F1 is reported as a percentage, with drive-level performance on unseen car models as the main result. Table captions specify seeds; multi-seed results are mean $\pm$ standard deviation. Confidence intervals follow Section~\ref{sec:dataset}, averaging interval endpoints across seeds when applicable.
 
-All runs used one RTX 5080 GPU (16 GB). Seeds are stated in the table captions; the gradient-boosting baselines (GBM) use scikit-learn~\cite{pedregosa2011sklearn}. Macro-F1 is in percent under the protocols of Section~\ref{sec:dataset}; the headline is the drive level on held-out car models, scored once per final model after all choices had been made on the internal folds. Unit-level intervals are 95\% cluster bootstraps over car models (with several seeds, the mean of the seeds' bounds); multi-seed entries are mean $\pm$ std.
+\subsection{Recognition on Unseen Models and Drivers}
+The four baseline sequence models have similar scores (Table~\ref{tab:main}). Averaging windows within a drive adds about 7--12 points; further aggregation to vehicles offers no consistent gain. Human-only windows are generally harder for size and easier for powertrain. Human-only drive results cover fewer drives than the full set.
 
-\subsection{Main Results on Held-Out Car Models}
+\input{tables/unseen_models}
 
-Table~\ref{tab:main} gives the headline results. Architecture is not the bottleneck: the four reference sequence models lie within about 2 points at window level and close together at drive level. Averaging the windows of a drive adds 7--12 points; pooling further to vehicle level does not. For the sequence models, windows without automation activity (human-only columns) are harder for size and easier for BEV vs ICE, which Section~\ref{sec:discussion} relates to the controller of the driving automation system (DAS); the human-only drive columns cover fewer drives and are not directly comparable with the full columns.
+Adapted training improves drive-level macro-F1 by 4--6 points for size and 2--4 points for powertrain, without consistent window-level gains. For bi-GRU, size rises from 62.9 [48.9, 72.4] to 67.1 [54.4, 74.2], and powertrain from 89.0 [81.8, 93.7] to 92.6 [87.1, 96.2]. Gains vary little across seeds, although the car-model confidence intervals overlap. Event MIL reaches 64.3 for size and 93.0 for powertrain with attention aggregation; its powertrain advantage on internal folds does not carry to the test models.
 
-\begin{table*}[t]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{3.2pt}
-\caption{Held-out car models (\texttt{split\_platform} test split; size / BEV vs ICE: 41 / 39 car models, 1,141 / 836 drives, 732 / 564 with human-only windows, 329 / 244 vehicles). Macro-F1 in percent (protocols of Section~\ref{sec:dataset}); deep models mean over three seeds (std where given), GBM single-seed; chance about 33 (size) and 50 (BEV vs ICE). S9 / B5: recipes selected on the internal folds (Section~\ref{sec:methods}); episode MIL with window-mean aggregation and its own bag prediction; bootstrap intervals in the text.}
-\label{tab:main}
-\begin{tabular}{@{}lcccccccccc@{}}
-\toprule
- & \multicolumn{5}{c}{Size (SMALL / MID / LARGE)} & \multicolumn{5}{c}{BEV vs ICE} \\
-\cmidrule(lr){2-6} \cmidrule(lr){7-11}
- & \multicolumn{2}{c}{window} & \multicolumn{2}{c}{drive} & vehicle & \multicolumn{2}{c}{window} & \multicolumn{2}{c}{drive} & vehicle \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5} \cmidrule(lr){6-6} \cmidrule(lr){7-8} \cmidrule(lr){9-10} \cmidrule(lr){11-11}
-Model & full & human & full & human & full & full & human & full & human & full \\
-\midrule
-Statistics + GBM & 49.7 & 46.3 & 54.7 & 50.5 & 51.5 & 69.5 & 73.5 & 73.2 & 74.3 & 76.0 \\
-LLM features + GBM & 40.5 & 47.3 & 63.2 & 58.9 & 58.6 & 69.6 & 84.2 & 89.4 & 89.1 & 90.1 \\
-LLM + statistics + GBM & 54.1 & 49.8 & 64.9 & 64.2 & 61.8 & 73.2 & 80.2 & 80.9 & 82.6 & 83.4 \\
-\midrule
-1-D ResNet & 53.6 $\pm$ 1.0 & 48.0 & 61.1 $\pm$ 1.3 & 60.3 & 56.4 & 78.4 $\pm$ 0.4 & 83.2 & 91.1 $\pm$ 0.8 & 89.5 & 90.3 \\
-bi-GRU & 54.7 $\pm$ 0.3 & 50.4 & 62.9 $\pm$ 0.8 & 63.3 & 57.2 & 79.2 $\pm$ 0.8 & 85.2 & 89.0 $\pm$ 0.1 & 90.8 & 88.6 \\
-Transformer & 52.5 $\pm$ 0.8 & 47.7 & 61.8 $\pm$ 0.9 & 61.3 & 55.3 & 77.0 $\pm$ 0.4 & 83.5 & 88.4 $\pm$ 0.6 & 90.1 & 89.0 \\
-Mamba-2 (bidirectional) & 53.1 $\pm$ 0.4 & 49.8 & 61.2 $\pm$ 0.3 & 61.1 & 55.2 & 77.3 $\pm$ 0.7 & 84.0 & 89.4 $\pm$ 0.3 & 90.9 & 90.6 \\
-\midrule
-bi-GRU, S9 & 53.2 $\pm$ 0.3 & 47.8 & 67.1 $\pm$ 0.0 & 61.7 & 60.0 $\pm$ 0.6 & -- & -- & -- & -- & -- \\
-1-D ResNet, S9 & 53.2 $\pm$ 0.8 & 49.5 & 66.8 $\pm$ 1.7 & 62.9 & 62.6 $\pm$ 1.4 & -- & -- & -- & -- & -- \\
-bi-GRU, B5 & -- & -- & -- & -- & -- & 77.0 $\pm$ 0.3 & 83.7 & 92.6 $\pm$ 0.1 & 89.1 & 93.4 $\pm$ 0.4 \\
-1-D ResNet, B5 & -- & -- & -- & -- & -- & 79.9 $\pm$ 0.7 & 83.2 & 93.0 $\pm$ 0.8 & 88.7 & 92.8 $\pm$ 0.4 \\
-Episode MIL, window mean & 54.2 $\pm$ 0.3 & 50.0 & 64.6 $\pm$ 0.5 & 62.5 & 62.3 $\pm$ 0.9 & 78.8 $\pm$ 0.1 & 82.2 & 90.2 $\pm$ 0.2 & 89.9 & 90.4 $\pm$ 0.5 \\
-Episode MIL, bag prediction & -- & -- & 64.3 & 63.2 & 62.4 & -- & -- & 93.0 & 91.5 & 92.8 \\
-\bottomrule
-\end{tabular}
-\end{table*}
+Scores are higher for unseen drivers when car models are shared across splits (Table~\ref{tab:drivers}). LLM features plus statistics and the adapted ResNet both reach 80.6 for drive-level size. Adapted GRU size training lowers window-level performance but raises drive-level performance from 78.1 to 79.5 [70.8, 84.4], illustrating the difference between within-model recognition and cross-model training objectives.
 
-The recipes selected on the folds raise the drive level without a matching gain at window level: S9 adds 4--6 points on size and B5 2--4 points on BEV vs ICE over the reference GRU and ResNet. The gains are stable over seeds, but the intervals over car models overlap (GRU S9 67.1 [54.4, 74.2] against the reference GRU 62.9 [48.9, 72.4]; GRU B5 92.6 [87.1, 96.2] against 89.0 [81.8, 93.7]). The episode MIL model matches but does not beat the window recipes under either aggregation; its fold advantage on BEV vs ICE (95.8, Table~\ref{tab:folds}) did not carry to the test models.
+\input{tables/unseen_drivers}
 
-\subsection{Held-Out Devices}
+\subsection{Training and Aggregation}
+Baseline internal-fold means fall within five points of their unseen-model test scores (Table~\ref{tab:folds}). On the first size fold, training changes span only four points and none reaches the target of 70. Powertrain benefits most from augmentation; adding DAS weighting yields a three-fold mean of 93.1 for GRU. Event MIL matches the adapted size model and improves powertrain by 2.7 points on the internal folds. Its window-mean scores are lower (61.1 and 88.8). On the first fold, gated attention outperforms a learned instance mean: 67.8 versus 66.7 for size and 96.0 versus 94.8 for powertrain.
 
-Table~\ref{tab:device} repeats the main rows with devices held out and car models shared: all drive-level scores are far higher and the LLM + statistics GBM becomes the best size model. The recipes appear to trade within-model recognition for cross-model generalisation, since GRU S9 is below the reference GRU at window level and slightly above it at drive level (79.5 [70.8, 84.4] against 78.1).
+Shared-model validation scores differ substantially from unseen-model results: 60.7/62.8 for adapted GRU/ResNet size, 75.6/79.3 for powertrain, and 79.1/97.5 for event MIL size/powertrain. We therefore use the training durations selected on model-disjoint folds.
 
-\begin{table}[t]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\caption{Held-out devices, car models shared (\texttt{split\_device} test split; size 1,218 drives / 219 vehicles / 81 car models, BEV vs ICE 922 / 143 / 63). Macro-F1 in percent per window and per drive (protocol full); mean $\pm$ std over three seeds, one seed for GBM and MIL.}
-\label{tab:device}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
- & \multicolumn{2}{c}{Size} & \multicolumn{2}{c}{BEV vs ICE} \\
-\cmidrule(lr){2-3} \cmidrule(lr){4-5}
-Model & window & drive & window & drive \\
-\midrule
-LLM + stat. + GBM & 72.4 & 80.6 & 84.4 & 94.1 \\
-1-D ResNet & 68.4 $\pm$ 3.0 & 77.4 $\pm$ 2.2 & 82.4 $\pm$ 0.7 & 96.2 $\pm$ 0.5 \\
-bi-GRU & 70.2 $\pm$ 0.9 & 78.1 $\pm$ 1.4 & 87.4 $\pm$ 0.4 & 96.5 $\pm$ 0.1 \\
-ResNet S9 / B5 & 64.8 $\pm$ 0.3 & 80.6 $\pm$ 0.1 & 83.1 $\pm$ 0.2 & 97.2 $\pm$ 0.3 \\
-GRU S9 / B5 & 62.9 $\pm$ 1.0 & 79.5 $\pm$ 0.7 & 78.8 $\pm$ 0.4 & 95.1 $\pm$ 0.3 \\
-MIL (1 seed) & 68.4 & 78.8 & 86.5 & 96.1 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables/training}
 
-\subsection{Internal Folds and Recipe Sweep}
+On internal folds with baseline GRU and ResNet predictions pooled, the best aggregation variant raises size from 67.5 to 67.8. DAS-weighted averaging raises powertrain from 93.0 to 94.8. Neither meets the one-point criterion on both tasks, so the main results retain plain averaging. A GRU--ResNet ensemble gains less than one point over the best member: 68.8 versus 68.2 for size and 93.9 versus 93.1--93.5 for powertrain. Stacking yields 66.5 and 92.3, respectively. On the six adapted runs per task, the supplementary weighted log-odds rule improves every run: size rises from 66.9 to 68.7 (about 1.7 points), and powertrain from 92.8 to 93.5 (+0.7).
 
-Table~\ref{tab:folds} summarises the campaign on the internal folds of Section~\ref{sec:methods}. Gate G1 passed: the three-fold means of the reference recipe lie within about 5 points of its test values in Table~\ref{tab:main}. The fold-0 size sweep spans 4 points, no more than the spread between folds, and no recipe approaches 70, so gate G2 for size fails; on BEV vs ICE, augmentation (B4) brings the gain and B5 reaches 93.1 over three folds, passing G2. The episode MIL model with gated attention~\cite{ilse2018mil} is level with S9 on size (G3 fails) and +2.7 over B5 on BEV vs ICE (G3 passes); its window-mean aggregation is weaker (61.1 and 88.8), and gated attention beats a learned instance mean on fold 0 (67.8 against 66.7; 96.0 against 94.8).
-
-The final models train for fixed epoch counts taken from the folds; their shared-model validation scores (GRU / ResNet S9 60.7 / 62.8 and B5 75.6 / 79.3; MIL 79.1 on size and 97.5 on BEV vs ICE) are no guide to the test values.
-
-\begin{table}[t]
-\centering
-\footnotesize
-\caption{Model-disjoint internal folds of Section~\ref{sec:methods}: drive-level macro-F1 (protocol full) on each fold's held-out car models and the three-fold mean, one seed per entry; MIL rows are the model's own bag prediction; S0 / B0 reference, S9 / B5 final recipes. (a) Fold-0 sweep with the bi-GRU; (b) candidates on all three folds.}
-\label{tab:folds}
-\setlength{\tabcolsep}{2.3pt}
-\begin{tabular}{@{}lcccccccccc@{}}
-\toprule
-\multicolumn{11}{@{}l}{(a) Fold 0, bi-GRU} \\
-\midrule
-Size & S0 & S1 & S2 & S3 & S4 & S5 & S6 & S7 & S8 & S9 \\
- & 65.3 & 62.8 & 66.8 & 64.8 & 65.2 & 66.2 & 64.8 & 65.6 & 66.5 & 66.9 \\
-\addlinespace
-BEV vs ICE & B0 & B1 & B2 & B3 & B4 & B5 & & & & \\
- & 89.4 & 88.0 & 87.4 & 88.7 & 92.8 & 92.8 & & & & \\
-\bottomrule
-\end{tabular}
-\par\smallskip
-\setlength{\tabcolsep}{4pt}
-\begin{tabular}{@{}lcccc@{}}
-\toprule
-\multicolumn{5}{@{}l}{(b) Three folds} \\
-\midrule
-Recipe & fold 0 & fold 1 & fold 2 & mean \\
-\midrule
-\multicolumn{5}{@{}l}{\emph{Size}} \\
-GRU S0 (reference) & 65.3 & 69.5 & 60.4 & 65.1 \\
-GRU S2 (footprint head) & 66.8 & -- & -- & 65.5 \\
-GRU S5 (augmentation) & 66.2 & -- & -- & 66.5 \\
-GRU S9 (final) & 66.9 & 70.5 & 64.8 & 67.4 \\
-ResNet S0 (reference) & -- & -- & -- & 66.6 \\
-ResNet S9 (final) & 67.0 & 70.4 & 61.2 & 66.2 \\
-Episode MIL, bag & 67.8 & 65.6 & 67.5 & 67.0 \\
-\addlinespace
-\multicolumn{5}{@{}l}{\emph{BEV vs ICE}} \\
-GRU B0 (reference) & 89.4 & 90.8 & 95.4 & 91.9 \\
-GRU B4 (augmentation) & 92.8 & -- & -- & 92.8 \\
-GRU B5 (final) & 92.8 & 91.1 & 95.4 & 93.1 \\
-ResNet B0 (reference) & -- & -- & -- & 93.1 \\
-ResNet B5 (final) & 95.7 & 93.9 & 96.1 & 95.2 \\
-Episode MIL, bag & 96.0 & 98.2 & 93.2 & 95.8 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
+\subsection{Error Analysis and Physical Cues}
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.75\columnwidth]{evidence_sufficiency.pdf}
-\caption{Evidence sufficiency on held-out car models (reference predictions, drive-level macro-F1 in percent): on test drives with at least 32 eligible windows, $m$ windows are drawn per drive and their probability vectors averaged (mean over 50 draws; band: one std). Size moves from 52.6 ($m = 1$) to 54.9 ($m = 32$; all windows 56.0), BEV vs ICE from 79.7 to 89.3 (all windows 89.1), saturating by 8--16 windows.}
+\includegraphics[width=0.88\columnwidth]{evidence_sufficiency.pdf}
+\caption{Observation length on unseen models. For drives with at least 32 windows, predictions average $m$ sampled windows (50 draws; band: one standard deviation). Size macro-F1 rises from 52.6 at $m=1$ to 54.9 at $m=32$ (all windows: 56.0); powertrain rises from 79.7 to 89.3 (all: 89.1), levelling off by 8--16 windows.}
 \label{fig:evidence}
 \end{figure}
 
-\subsection{Ceilings, Separability and Evidence Sufficiency}
-
-Three zero-training oracles bound the size task on the held-out models: a per-car-model majority oracle (every drive of a held-out model gets that model's majority prediction) lifts the ensemble of the 12 reference deep runs from 63.2 to 72.0, so perfect within-model consistency would still leave size far from 90 (BEV vs ICE: 89.8 to 93.5). The footprint-noise oracle of Fig.~\ref{fig:ceiling} scores 92.1 at $\sigma = 0.10$ m$^2$ and 86.6 at 0.15, so reaching 90 needs a footprint error of about $\pm$0.12 m$^2$, about 2.5\% of a 4.6 m$^2$ footprint. A curb-mass oracle (two mass cuts fitted on the training drives) scores 63.3 on the 1,139 test drives with a known mass, so mass is no better proxy.
+Three diagnostic calculations examine size errors without further training. Assigning every drive of a car model its majority predicted class raises the ensemble of 12 baseline sequence runs from 63.2 to 72.0 for size and from 89.8 to 93.5 for powertrain. Thus, correcting inconsistent predictions within each model leaves substantial size errors. Adding Gaussian noise to the true footprint gives size macro-F1 of 92.1 at $\sigma=0.10$ m$^2$ and 86.6 at $\sigma=0.15$ m$^2$ (Fig.~\ref{fig:ceiling}). In this simulation, a score near 90 corresponds to a footprint error scale of about 0.12 m$^2$, or 2.5\% of a 4.6 m$^2$ footprint. Using true curb mass with two thresholds fitted on training drives gives 63.3 on 1,139 test drives with known mass.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.75\columnwidth]{footprint_noise_oracle.pdf}
-\caption{Footprint-noise oracle for the size task on held-out car models (drive-level macro-F1 in percent, 200 repeats): each drive is classified from the true footprint of its car model plus an error, cut at the fixed thresholds 4.43 and 4.88 m$^2$; per-drive noise of std $\sigma$ (circles) or a per-car-model bias $\tau$ (squares), both in m$^2$. Lines: the reference ensemble of the twelve reference sequence-model runs (63.2), its per-car-model majority oracle (72.0) and the 90 target.}
+\includegraphics[width=0.88\columnwidth]{footprint_noise_oracle.pdf}
+\caption{Sensitivity to footprint error on unseen models (200 repeats). True footprint plus per-drive noise ($\sigma$, circles) or per-model bias ($\tau$, squares) is classified at 4.43 and 4.88 m$^2$. Horizontal lines show the baseline ensemble (63.2), its per-model majority prediction (72.0) and a target of 90.}
 \label{fig:ceiling}
 \end{figure}
 
-The errors sit where the labels are closest: 21 of the 41 held-out car models lie within 0.15 m$^2$ of a differently labelled training model, and in one reference GRU run window accuracy is 53.0\% within 0.1 m$^2$ of a threshold against 89.9\% beyond 0.8 m$^2$. With the reference predictions, LARGE unibody vehicles are read as MID or SMALL while pickups and body-on-frame SUVs are recognised (GMC Yukon, Ford Ranger and Ford F-150 Lightning 95.5--100\% of drives; Genesis G80 and G90, Volkswagen Atlas, Tesla Model~S and Kia EV9 0--5.6\%), and MID models just above the 4.43 m$^2$ cut are read as SMALL (drives correct: GWM Haval H6, Audi Q5, Lexus RX and Nissan Altima 0\%, Kia Stinger 25\%).
+Errors concentrate near class boundaries. Of 41 unseen models, 21 are within 0.15 m$^2$ of a differently labelled training model. In one baseline GRU run, window accuracy is 53.0\% within 0.1 m$^2$ of a threshold and 89.9\% beyond 0.8 m$^2$. Pickups and body-on-frame SUVs are often recognised as LARGE (GMC Yukon, Ford Ranger and Ford F-150 Lightning: 95.5--100\% of drives), while several large unibody models are assigned smaller classes (Genesis G80/G90, Volkswagen Atlas, Tesla Model S and Kia EV9: 0--5.6\% correct). MID models just above 4.43 m$^2$ are often classified as SMALL: GWM Haval H6, Audi Q5, Lexus RX and Nissan Altima have 0\% correct drives; Kia Stinger has 25\%.
 
-Evidence per drive is not the limit for the reference models (Fig.~\ref{fig:evidence}): drive accuracy stays between 63.8 and 73.8\% (size) and 85.7 and 93.2\% (BEV vs ICE) from 1--2 to more than 64 windows per drive, and it does not grow with the number of acceleration, deceleration or lead-acceleration episodes.
+Longer observation provides little additional size information for the baseline models (Fig.~\ref{fig:evidence}). Across drive-length groups from 1--2 to more than 64 windows, accuracy ranges from 63.8--73.8\% for size and 85.7--93.2\% for powertrain, without increasing with acceleration, deceleration or lead-acceleration event counts.
 
-\subsection{LLM-Proposed Physical Features}
-
-Table~\ref{tab:llm} compares gradient boosting on hand-crafted window statistics, on the 34 registered LLM-proposed features and on both: alone, the physical features are weak per window but strong per drive, on a par with the reference sequence models on BEV vs ICE, and adding the statistics helps size but lowers BEV vs ICE at drive level. By permutation importance of the LLM-features-only gradient boosting on the validation split, BEV vs ICE rests on lift-off deceleration (while moving and shortly after pedal release), the share of deceleration under a pressed accelerator or without the brake, the lead-to-ego deceleration delay and the 10th percentile of brake-free deceleration; size on the curvature-per-steering-angle gain at 6--18 m/s and at low speed, the Ackermann gain at 6--12 m/s and the same delay.
-
-\begin{table}[t]
+\begin{figure*}[t]
 \centering
-\footnotesize
-\setlength{\tabcolsep}{3.5pt}
-\caption{Gradient boosting on window statistics, on the 34 registered LLM-proposed features and on both (held-out car models, one seed); macro-F1 in percent per window (full and human-only) and per drive (protocol full).}
-\label{tab:llm}
-\begin{tabular}{@{}lcccccc@{}}
-\toprule
- & \multicolumn{3}{c}{Size} & \multicolumn{3}{c}{BEV vs ICE} \\
-\cmidrule(lr){2-4} \cmidrule(lr){5-7}
-Features & full & human & drive & full & human & drive \\
-\midrule
-Statistics & 49.7 & 46.3 & 54.7 & 69.5 & 73.5 & 73.2 \\
-LLM physical & 40.5 & 47.3 & 63.2 & 69.6 & 84.2 & 89.4 \\
-LLM + statistics & 54.1 & 49.8 & 64.9 & 73.2 & 80.2 & 80.9 \\
-\bottomrule
-\end{tabular}
-\end{table}
+\includegraphics[width=\textwidth]{vtt_examples_physics.pdf}
+\caption{Examples and physical cues. Top: three ego vehicles, 60-s signal windows and predicted-class probabilities. Camera frames provide context only; signal lanes show speed, acceleration, brake state, steering angle and yaw rate. Bottom: (a) acceleration in two slowing episodes, aligned at onset; percentages show brake use within each episode; (b) median per-drive brake-free slowing shares (bars) and interquartile ranges (whiskers), for $a<-1$ m/s$^2$, $v>3$ m/s and no DAS; (c) curvature versus steering angle at 2--12 m/s without DAS, with origin-constrained fits.}
+\label{fig:examples}
+\end{figure*}
+The 34 LLM-proposed features perform better after drive-level aggregation, reaching powertrain scores close to the baseline sequence models (Table~\ref{tab:llm}). Combining them with statistics improves size but reduces drive-level powertrain performance. Validation-set permutation importance associates powertrain with lift-off deceleration, deceleration with the accelerator pressed or brake released, lead-to-ego deceleration delay, and the 10th percentile of brake-free deceleration. Size relies on curvature per steering angle at 6--18 m/s and low speed, Ackermann gain at 6--12 m/s, and deceleration delay.
 
-\subsection{Aggregation and Ensembles}
+Figure~\ref{fig:examples} illustrates these cues. For drives with at least 50 qualifying slowing samples and brake use recorded at least once, median brake-free slowing shares are 84.7\% for BEVs and 1.0\% for ICE vehicles. The Ioniq-to-F-150 steering-response slope ratio is 1.80, compared with a wheelbase ratio of 1.37; steering ratio as well as geometry contributes to the difference.
 
-Out of fold on the reference recipe (GRU and ResNet pooled), the best aggregation variant moves size from 67.5 to 67.8 (+0.3) and down-weighting DAS windows in the mean moves BEV vs ICE from 93.0 to 94.8 (+1.8), short of the pre-registered +1.0 on both tasks, so the plain mean remains the headline. Ensembles stayed below the G4 gate: a GRU + ResNet mean gains under one point over the best member out of fold (BEV vs ICE 93.9 against 93.1--93.5; size 68.8 against 68.2) and stacking is worse (92.3 and 66.5). The supplementary rule fixed before the final test run, the DAS- and episode-weighted log-odds mean of Section~\ref{sec:methods}, moves size from 66.9 to 68.7 on the six final S9 runs (+1.7, 6 of 6 runs improved) and BEV vs ICE from 92.8 to 93.5 on the six B5 runs (+0.7, 6 of 6).
+\input{tables/features}
 
-\subsection{External Validation on Public Datasets}
+\subsection{External Validation}
+We apply the selected models to public logs without fine-tuning (Table~\ref{tab:external}). For datasets with fewer signals, models with the same training procedure are trained on the corresponding VTT subset: speed-only (speed, acceleration, standstill) or lateral plus speed (ten channels, excluding lead, torque and pedal flags). The accompanying code includes the full external evaluation.
 
-As a check beyond our own logs, the final models were run unchanged, without fine-tuning, on public driving logs with known car models (Table~\ref{tab:external}; the complete external study, including its limitations, accompanies the code release\ifanonymous\else{} in the repository of Section~\ref{sec:dataset}\fi). Where a set lacks channels, a variant of the same recipe trained on our data with that subset stands in: speed-only (speed, acceleration, standstill) or lateral + speed (the ten channels without lead, torque and pedal flags).
+commaCarSegments~\cite{commacarsegments} contains 45,763 one-minute windows (762.7 h) from 4,061 drivers absent from VTT, covering 113 car models and 161 openpilot platforms. Available CAN signals are decoded with opendbc. Yaw rate, curvature and lateral acceleration are derived from steering using a bicycle model; the understeer gradient $k=0.00079$ s$^2$/m$^2$ is fitted to IMU yaw on 62 VTT training and validation platforms. The full-input model classifies powertrain correctly for 86/88 labelled car models (97.7\% [96.2, 100.0]) and 87.8\% of 2,512 labelled drivers, rising to 88.9\% after yaw correction. Among 29 models from VTT's unseen-model test set, the 27 with powertrain labels are all classified correctly; driver accuracy is 94.2\% on 463 drivers.
 
-commaCarSegments~\cite{commacarsegments} is the largest set: 45,763 one-minute windows (762.7 h) from 4,061 devices absent from our library, 113 car models on 161 openpilot platforms, the 20 channels decoded from CAN with opendbc where the platform provides them; yaw rate, curvature and lateral acceleration follow from the steering angle by a bicycle model and one understeer gradient $k = 0.00079$ s$^2$/m$^2$ fitted on our own IMU yaw over 62 training and validation platforms. The full model calls BEV vs ICE right for 86 of 88 labelled car models (97.7\% [96.2, 100.0]) and 87.8\% of 2,512 labelled devices (88.9\% with the corrected yaw), and on our 29 held-out test models for 27 of 27 labelled models and 94.2\% of 463 devices. Size with the corrected yaw matches the internal held-out test at vehicle level (63.2\% of the devices and macro-F1 60.3 against 63.5 / 59.7), with LARGE device recall 51.9\% (internal 50.6\%): the Pacifica, Palisade, CX-9, Escalade and fourth-generation Sienna platforms and the pickups are recognised at platform level. Nine Honda platforms recovered with a decoder fix (230 devices, as-run decode) are SMALL for 226 and ICE for 227 of 229 devices, the held-out HR-V for 5 of 5.
+With corrected yaw, size accuracy is 63.2\% and macro-F1 is 60.3, close to internal vehicle-level values of 63.5\% and 59.7. LARGE recall is 51.9\% externally versus 50.6\% internally. Pacifica, Palisade, CX-9, Escalade, fourth-generation Sienna and pickup platforms are recognised at platform level. A decoder correction recovers nine Honda platforms: 226/230 drivers are correctly classified as SMALL and 227/229 as ICE, including all five drivers of the unseen HR-V.
 
-On commaSteeringControl~\cite{commasteeringcontrol} (36 platform archives of highway minutes under the lateral controller, 51,462 windows, 857.7 h, 25 car models, one archive per pseudo-vehicle, lateral and speed channels only) the speed-only variant calls 35 of 36 archives and 9 of 10 held-out-model archives right on powertrain, and the lateral + speed variant scores 63.9\% / 62.3 on size against its internal vehicle-level 62.6 / 58.0. On speed-only sets, 258 of 264 ICE cars of VED~\cite{oh2019ved} (1 Hz OBD speed) and 99.1\% of the 429 trips of the OpenACC~\cite{makridis2021openacc} one-vehicle campaign (a Fiat 500X, 20 drivers) are ICE.
+commaSteeringControl~\cite{commasteeringcontrol} provides 36 platform archives (51,462 highway windows, 857.7 h, 25 car models) under lateral control, with one archive treated as a vehicle. The speed-only model identifies powertrain correctly for 35/36 archives and 9/10 unseen-model archives. Lateral-plus-speed size accuracy/macro-F1 are 63.9\%/62.3, compared with 62.6\%/58.0 internally. With speed-only inputs, 258/264 ICE vehicles in VED~\cite{oh2019ved} and 99.1\% of 429 OpenACC trips~\cite{makridis2021openacc} are classified as ICE; the latter involve one Fiat 500X and 20 drivers. MoreTorque results are also reported in Table~\ref{tab:external}~\cite{moretorque}.
 
-\begin{table}[t]
-\centering
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\caption{Zero-shot external validation of the final models on public sets with known car models: vehicle-level accuracy in percent (count / support for small sets; 95\% cluster-bootstrap intervals over vehicles) and car models right. Inputs: full = 20 channels, S = speed-only, L+S = lateral + speed variant. CSC = commaSteeringControl; CCS = commaCarSegments, device-disjoint (the all-devices size row with the corrected yaw, the other CCS rows as run; macro-F1 in the text).}
-\label{tab:external}
-\begin{tabular}{@{}llll@{}}
-\toprule
-Set (vehicles) & Inputs & Vehicles right & Models \\
-\midrule
-\multicolumn{4}{@{}l}{\emph{BEV vs ICE}} \\
-CSC (36 archives) & S & 35 / 36 (97.2) & 24 / 25 \\
-CCS, labelled (2,512) & full & 87.8 [86.6, 89.1] & 86 / 88 \\
-CCS, labelled & S & 92.6 [91.5, 93.6] & 87 / 88 \\
-CCS, held-out models (463) & full & 94.2 [92.0, 96.2] & 27 / 27 \\
-CCS, 9 Honda platforms (229) & full & 227 / 229 (99.1) & 4 / 4 \\
-MoreTorque~\cite{moretorque}, 11 ICE cars & full & 11 / 11 & -- \\
-VED, 264 ICE cars & S & 258 / 264 (97.7) & -- \\
-OpenACC 500X (429 trips) & S & 99.1 of trips & -- \\
-\addlinespace
-\multicolumn{4}{@{}l}{\emph{Size (SMALL / MID / LARGE)}} \\
-CSC (36 archives) & L+S & 63.9 [50.0, 80.6] & 16 / 25 \\
-CCS, all (4,061) & full & 63.2 & 72 / 113 \\
-CCS, 9 Honda platforms (230) & full & 226 / 230 (98.3) & 5 / 5 \\
-MoreTorque, 8 SMALL cars & full & 8 / 8 & -- \\
-\bottomrule
-\end{tabular}
-\end{table}
+\input{tables/external}

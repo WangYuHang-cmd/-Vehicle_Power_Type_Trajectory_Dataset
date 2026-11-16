@@ -1,0 +1,44 @@
+\begin{table}[t]
+\caption{Training comparisons on model-disjoint internal folds: drive-level macro-F1 (\%).}
+\label{tab:folds}
+\centering\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.06}
+\begin{tabularx}{\columnwidth}{Lcc}
+\rowcolor{neutralband}\multicolumn{3}{l}{\bfseries\color{ink}(a) First-fold comparison, bi-GRU} \\
+\tabhead\textbf{Training change} & \textcolor{sizeblue}{\textbf{Size}} & \textcolor{powerteal}{\textbf{BEV--ICE}} \\
+Baseline & 65.3 & 89.4 \\
+\rowcolor{rowtint}Model-balanced sampling & 62.8 & 88.0 \\
+Footprint head & 66.8 & 87.4 \\
+\rowcolor{rowtint}Ordinal head (size only) & 64.8 & -- \\
+Mass and powertrain heads & 65.2 & 88.7 \\
+\rowcolor{rowtint}Data augmentation & 66.2 & 92.8 \\
+Cross-model window mixing & 64.8 & -- \\
+\rowcolor{powerband}DAS weighting & 65.6 & 92.8 \\
+Adversarial model head & 66.5 & -- \\
+\rowcolor{sizeband}Per-model loss weighting & 66.9 & -- \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\vspace{4pt}
+\begin{tabularx}{\columnwidth}{Lcccc}
+\rowcolor{neutralband}\multicolumn{5}{l}{\bfseries\color{ink}(b) Three-fold evaluation} \\
+\tabhead\textbf{Training} & Fold 1 & Fold 2 & Fold 3 & Mean \\
+\rowcolor{sizeband}\multicolumn{5}{l}{\bfseries\color{sizeblue}Size} \\
+GRU, baseline & 65.3 & 69.5 & 60.4 & 65.1 \\
+\rowcolor{rowtint}GRU, footprint head & 66.8 & -- & -- & 65.5 \\
+GRU, augmentation & 66.2 & -- & -- & 66.5 \\
+\rowcolor{rowtint}GRU, model weighting & 66.9 & 70.5 & 64.8 & 67.4 \\
+ResNet, baseline & -- & -- & -- & 66.6 \\
+\rowcolor{rowtint}ResNet, model weighting & 67.0 & 70.4 & 61.2 & 66.2 \\
+Event MIL, attention & 67.8 & 65.6 & 67.5 & 67.0 \\
+\rowcolor{powerband}\multicolumn{5}{l}{\bfseries\color{powerteal}BEV versus ICE} \\
+GRU, baseline & 89.4 & 90.8 & 95.4 & 91.9 \\
+\rowcolor{rowtint}GRU, augmentation & 92.8 & -- & -- & 92.8 \\
+GRU, DAS weighting & 92.8 & 91.1 & 95.4 & 93.1 \\
+\rowcolor{rowtint}ResNet, baseline & -- & -- & -- & 93.1 \\
+ResNet, DAS weighting & 95.7 & 93.9 & 96.1 & 95.2 \\
+\rowcolor{eventband}Event MIL, attention & 96.0 & 98.2 & 93.2 & 95.8 \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\tabnote{Full evaluation set; one seed per entry. Changes in (a) accumulate through augmentation; subsequent rows branch from that model. Powertrain omits the ordinal head and window mixing. MIL uses its attention-based drive prediction. Dashes denote unreported fold scores.}
+\end{table}

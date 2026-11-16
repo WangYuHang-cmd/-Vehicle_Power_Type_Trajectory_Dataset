@@ -1,0 +1,13 @@
+metric,value,shown,definition,source
+hours,3949.8,"3,950 h","hours of all drives (nominal, 10 Hz sample count / 10)","release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+moving_h,3078.1,"3,078 h",hours with the car moving,"release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+drives,9062,"9,062",drives,"release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+models,174,174,"car models (incl. one robot development platform, as in Table I)","release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+brands,38,38,brands,"release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+platforms,360,360,vehicle platforms,"release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+vehicles,1431,"1,431",pseudonymous vehicles = device x platform pairs,"release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+groups,1157,"1,157","contributors = identity groups (same device, same vehicle identity or shared drive names); the logs hold no driver identities","release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+windows_eligible,201390,"201,390","eligible 60-s windows (600 consecutive samples, no gap, >= 20 % moving)","release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+windows_total,241476,"241,476",60-s windows listed,"release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+das_pct,47.9,47.9 %,share of samples with the DAS engaged,"release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"
+any_pct,62.6,62.6 %,share of samples with any automation activity (not shown on the slide),"release index (drives, windows_60s); checked against paper/OUTLINE.md lines 53-55"

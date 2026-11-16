@@ -1,0 +1,54 @@
+\begin{table}[t]
+\caption{Dataset coverage and class support.}
+\label{tab:dataset}
+\centering\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabularx}{\columnwidth}{Lr}
+\rowcolor{neutralband}\multicolumn{2}{l}{\bfseries\color{ink}Fleet and signal coverage} \\
+Drives (one ignition cycle each) & 9,062 \\
+Hours, nominal & 3,949.8 \\
+Hours moving & 3,078.1 \\
+Pseudonymous vehicles & 1,431 \\
+Identity groups (unit of the splits) & 1,157 \\
+Platforms / brands / car models & 360 / 38 / 174 \\
+Samples with DAS engaged & 47.9\% \\
+Samples with any automation activity & 62.6\% \\
+\rowcolor{tablehead}\multicolumn{2}{l}{\bfseries\color{ink}Window availability} \\
+Windows listed & 241,476 \\
+Windows eligible & 201,390 \\
+Windows human-only (strict) & 37,942 \\
+Eligible windows, size & 201,169 \\
+Eligible windows, BEV vs ICE & 144,534 \\
+Eligible windows, four-class powertrain & 178,827 \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\vspace{3pt}
+\begin{tabularx}{\columnwidth}{Lrrrr}
+\tabhead\textbf{Class} & Windows & Hours & Vehicles & Platforms \\
+\midrule
+SMALL & 91,369 & 1,522.8 & 673 & 169 \\
+MID & 56,059 & 934.3 & 392 & 104 \\
+LARGE & 53,741 & 895.7 & 295 & 76 \\
+\midrule
+ICE & 79,566 & 1,326.1 & 598 & 200 \\
+HEV & 23,708 & 395.1 & 197 & 57 \\
+PHEV & 10,585 & 176.4 & 68 & 21 \\
+BEV & 64,968 & 1,082.8 & 366 & 71 \\
+Powertrain null & 22,563 & 376.1 & 156 & 34 \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\vspace{3pt}
+\begin{tabularx}{\columnwidth}{Lrr}
+\tabhead\textbf{Unseen-model test split} & Size & BEV vs ICE \\
+\midrule
+Eligible windows & 26,144 & 18,295 \\
+Hours & 435.7 & 304.9 \\
+Drives & 1,141 & 836 \\
+Vehicles & 329 & 244 \\
+Car models & 41 & 39 \\
+\arrayrulecolor{ink}\bottomrule\arrayrulecolor{black}
+\end{tabularx}
+\vspace{3pt}
+\tabnote{Vehicles are driver--platform pairs. Class counts refer to eligible 60-s windows; test counts cover the corresponding windows, drives, vehicles and car models.}
+\end{table}

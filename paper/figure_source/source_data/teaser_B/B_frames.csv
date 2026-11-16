@@ -1,0 +1,10 @@
+cell,car_model,frame,moment,t_window_s,still_file
+SMALL-BEV,Hyundai Ioniq,1,turn,6,teaser_B_subfigures/frame1_turn_SMALL-BEV_hyundai_ioniq.png
+SMALL-BEV,Hyundai Ioniq,2,slowing,25,teaser_B_subfigures/frame2_slowing_SMALL-BEV_hyundai_ioniq.png
+SMALL-BEV,Hyundai Ioniq,3,launch,41,teaser_B_subfigures/frame3_launch_SMALL-BEV_hyundai_ioniq.png
+MID-ICE,Genesis GV70,1,stop,13,teaser_B_subfigures/frame1_stop_MID-ICE_genesis_gv70.png
+MID-ICE,Genesis GV70,2,launch,25,teaser_B_subfigures/frame2_launch_MID-ICE_genesis_gv70.png
+MID-ICE,Genesis GV70,3,brake,35,teaser_B_subfigures/frame3_brake_MID-ICE_genesis_gv70.png
+LARGE-BEV,Ford F-150 Lightning,1,slowing,9,teaser_B_subfigures/frame1_slowing_LARGE-BEV_ford_f_150_lightning.png
+LARGE-BEV,Ford F-150 Lightning,2,stop,15,teaser_B_subfigures/frame2_stop_LARGE-BEV_ford_f_150_lightning.png
+LARGE-BEV,Ford F-150 Lightning,3,launch,49,teaser_B_subfigures/frame3_launch_LARGE-BEV_ford_f_150_lightning.png

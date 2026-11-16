@@ -1,0 +1,16 @@
+cell,car_model,task,class,true_class,window_probability,window_printed,windows_in_drive
+SMALL-BEV,Hyundai Ioniq,size,SMALL,1,0.958,0.96,34
+SMALL-BEV,Hyundai Ioniq,size,MID,0,0.039,0.04,34
+SMALL-BEV,Hyundai Ioniq,size,LARGE,0,0.003,0.00,34
+SMALL-BEV,Hyundai Ioniq,powertrain,BEV,1,0.973,0.97,34
+SMALL-BEV,Hyundai Ioniq,powertrain,ICE,0,0.027,0.03,34
+MID-ICE,Genesis GV70,size,SMALL,0,0.067,0.07,60
+MID-ICE,Genesis GV70,size,MID,1,0.737,0.74,60
+MID-ICE,Genesis GV70,size,LARGE,0,0.196,0.20,60
+MID-ICE,Genesis GV70,powertrain,BEV,0,0.162,0.16,60
+MID-ICE,Genesis GV70,powertrain,ICE,1,0.838,0.84,60
+LARGE-BEV,Ford F-150 Lightning,size,SMALL,0,0.039,0.04,8
+LARGE-BEV,Ford F-150 Lightning,size,MID,0,0.042,0.04,8
+LARGE-BEV,Ford F-150 Lightning,size,LARGE,1,0.918,0.92,8
+LARGE-BEV,Ford F-150 Lightning,powertrain,BEV,1,0.962,0.96,8
+LARGE-BEV,Ford F-150 Lightning,powertrain,ICE,0,0.038,0.04,8
